@@ -23,7 +23,7 @@ function LandingPage() {
                     <VStack gap={5} justifyContent={"center"}>
                         <LandingPageButtons />
 
-                        <Box textAlign={"center"} fontWeight={"bold"} fontFamily={"Inter, sans-serif"}>Get the app.</Box>
+                        <Box textAlign={"center"} fontWeight={"bold"} fontFamily={"Inter, sans-serif"}>Obtenha o app.</Box>
                         <Flex gap={5} justifyContent={"center"}>
                             <Image src="./google.png" h={"10"} alt={"Play Store"} />
                             <Image src="./apple.png" h={"10"} alt={"App Store"} />
