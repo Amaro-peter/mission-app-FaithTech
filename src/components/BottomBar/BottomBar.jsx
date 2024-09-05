@@ -11,7 +11,7 @@ function BottomBar() {
     position={"fixes"}
     bottom={0}
     py={{base: 2}}
-    display={{base: "block", md: "none"}}
+    display={{base: "block", lg: "none"}}
     >
         <Flex 
         direction={"column"} 
