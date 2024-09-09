@@ -4,9 +4,9 @@ import LandingPageButtons from './LandingPageButtons';
 
 function LandingPage() {
   return (
-    <Flex minH={"100vh"} justifyContent={"center"} alignItems={"center"} px={4}>
+    <Flex  justifyContent={"center"} alignItems={"center"} px={4}>
         <Container maxW={"container.md"} padding={0}>
-            <VStack justifyContent={"center"} alignItems={"center"} gap={10}>
+            <VStack justifyContent={"center"} alignItems={"center"} gap={0}>
                 <Box
                 width={["100%", "75%", "50%"]}
                 height={"auto"}

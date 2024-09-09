@@ -1,17 +1,19 @@
+/* Minimalist and responsive scrollbar for white background */
+
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 6px; /* Reduced width for a minimalist look */
 }
 
 ::-webkit-scrollbar-track {
-  background-color: #1e1e24;
-  border-radius: 10px;
+  background-color: #f0f0f0; /* Light background suitable for white background */
+  border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: hsl(240, 1%, 25%);
-    border-radius: 10px;
+  background-color: #888; /* Visible color on a white background */
+  border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background-color: #ffffff;
+  background-color: #555; /* Darker color on hover for better visibility */
 }

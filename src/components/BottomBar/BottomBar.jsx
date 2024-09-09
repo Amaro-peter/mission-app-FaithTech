@@ -1,17 +1,20 @@
 import { Box, Flex, Link, Image } from "@chakra-ui/react"
 import { Link as RouterLink } from "react-router-dom"
+import { useState, useEffect } from "react"
 
 function BottomBar() {
+
   return (
     <Box
     width={"full"}
-    borderBottom={"1px solid"}
+    borderTop={"1px solid"}
     borderColor={"blackAlpha.600"}
     px={2}
-    position={"fixes"}
+    position={"fixed"}
     bottom={0}
     py={{base: 2}}
-    display={{base: "block", lg: "none"}}
+    zIndex={1000}
+    bg={"white"}
     >
         <Flex 
         direction={"column"} 
@@ -19,8 +22,8 @@ function BottomBar() {
         w={"full"} 
         height={"full"}
         >
-            
-        </Flex>     
+          
+        </Flex>   
     </Box>
   )
 }
