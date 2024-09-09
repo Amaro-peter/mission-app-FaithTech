@@ -45,6 +45,7 @@ function PageLayout({children}) {
     <VStack minH={"100vh"} spacing={0}>
       {canRenderNavBar && (
         <Box w={"full"} justifyContent={"center"} alignItems={"center"}
+        minHeight={"80px"}
         >
           <NavBar isLargerThanBase={isLargerThanBase} />
         </Box>
