@@ -1,6 +1,10 @@
 import { Box, Flex, Link, Image } from "@chakra-ui/react"
 import { Link as RouterLink } from "react-router-dom"
 import { useState, useEffect } from "react"
+import { IoBagOutline, IoHomeOutline, IoSearchOutline } from "react-icons/io5"
+import { IoIosLogOut, IoIosNotificationsOutline } from "react-icons/io"
+import BottomBarItems from "../BottomBarItems/BottomBarItems"
+
 
 function BottomBar() {
 
@@ -12,17 +16,19 @@ function BottomBar() {
     px={2}
     position={"fixed"}
     bottom={0}
-    py={{base: 2}}
+    py={{base: 1}}
     zIndex={1000}
     bg={"white"}
     >
         <Flex 
-        direction={"column"} 
-        gap={10} 
+        direction={"row"} 
+        gap={5} 
         w={"full"} 
         height={"full"}
+        justifyContent={"center"}
+        alignItems={"center"}
         >
-          
+          <BottomBarItems sizeOfIcon={"1.0em"} sizeOfText={"0.5em"} />
         </Flex>   
     </Box>
   )

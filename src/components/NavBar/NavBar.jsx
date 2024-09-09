@@ -2,8 +2,9 @@ import { Box, Flex, Link, Image, Avatar, useMediaQuery, Spacer } from "@chakra-u
 import { Link as RouterLink } from "react-router-dom"
 import { MissionLogo } from "../../assets/constants"
 import { IoBagOutline, IoHomeOutline, IoSearchOutline } from "react-icons/io5"
-import { IoIosNotificationsOutline } from "react-icons/io"
+import { IoIosLogOut, IoIosNotificationsOutline } from "react-icons/io"
 import { useEffect, useState } from "react"
+import NavBarItems from "../NavBarItems/NavBarItems"
 
 function NavBar( { isLargerThanBase } ) {
   
@@ -35,18 +36,15 @@ function NavBar( { isLargerThanBase } ) {
             alt="Mission Logo"
             width={{ base: "50%", md: "20%", lg: "10%" }}  // Responsive width
             maxWidth="200px"  // Max width to ensure proper scaling
-            minWidth="50px"  // Min width to ensure visibility at smaller sizes
+            minWidth="100px"  // Min width to ensure visibility at smaller sizes
             height="auto"  // Auto height to maintain aspect ratio
             m={2}
             />
   
-            <Flex direction={"row"} gap={5} cursor={"pointer"}>
-              <IoHomeOutline size={"1.5em"} />
-              <IoSearchOutline size={"1.5em"} />
-              <IoBagOutline size={"1.5em"} />
-              <IoIosNotificationsOutline size={"1.75em"} />
-              <Avatar size={"xs"} src={""}/>
-            </Flex>  
+            <Flex direction={"row"} gap={5}>
+              <NavBarItems sizeOfIcon={"1.5em"} sizeOfText={"0.75em"} />  
+            </Flex>
+            
           </Flex> 
         ) : (
           <>

@@ -24,7 +24,7 @@ function PageLayout({children}) {
 
   useEffect(() =>{
     const handleScroll = () => {
-      if(window.innerWidth < 480) {
+      if(window.innerWidth < 500) {
         if(window.scrollY > lastScrollY.current) {
           setShowNavBar(false)
         } else {
@@ -43,7 +43,7 @@ function PageLayout({children}) {
 
   return (
     <VStack minH={"100vh"} spacing={0}>
-      {canRenderNavBar && (
+      {canRenderNavBar && showNavBar && (
         <Box w={"full"} justifyContent={"center"} alignItems={"center"}
         >
           <NavBar isLargerThanBase={isLargerThanBase} />
