@@ -28,7 +28,7 @@ function BottomBar() {
         justifyContent={"center"}
         alignItems={"center"}
         >
-          <BottomBarItems sizeOfIcon={"1.0em"} sizeOfText={"0.5em"} />
+          <BottomBarItems sizeOfIcon={"1.35em"} sizeOfText={"0.75em"} />
         </Flex>   
     </Box>
   )
