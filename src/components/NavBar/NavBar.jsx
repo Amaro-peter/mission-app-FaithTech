@@ -60,7 +60,8 @@ function NavBar( { isLargerThanBase } ) {
               src={"./Mission.png"}  // Image source
               alt="Mission Logo"
               width={{ base: "50%", md: "20%", lg: "10%" }}  // Responsive width
-              
+              maxWidth="200px"  // Max width to ensure proper scaling
+              minWidth="100px"
               height="auto"  // Auto height to maintain aspect ratio
               m={2}
               />
