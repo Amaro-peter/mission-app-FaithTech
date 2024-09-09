@@ -10,7 +10,7 @@ function NavBar( { isLargerThanBase } ) {
   return (
     <Box
     width={"full"}
-    h={"35px"}
+    h={"45px"}
     borderBottom={"1px solid"}
     borderColor={"blackAlpha.400"}
     px={{ base: 4, md: 8 }}
@@ -33,7 +33,7 @@ function NavBar( { isLargerThanBase } ) {
             <Image
             src={"./Mission.png"}  // Image source
             alt="Mission Logo"
-            width={{ base: "30%", md: "20%", lg: "10%" }}  // Responsive width
+            width={{ base: "50%", md: "20%", lg: "10%" }}  // Responsive width
             maxWidth="200px"  // Max width to ensure proper scaling
             minWidth="50px"  // Min width to ensure visibility at smaller sizes
             height="auto"  // Auto height to maintain aspect ratio
@@ -61,9 +61,8 @@ function NavBar( { isLargerThanBase } ) {
               <Image
               src={"./Mission.png"}  // Image source
               alt="Mission Logo"
-              width={{ base: "30%", md: "20%", lg: "10%" }}  // Responsive width
-              maxWidth="200px"  // Max width to ensure proper scaling
-              minWidth="50px"  // Min width to ensure visibility at smaller sizes
+              width={{ base: "50%", md: "20%", lg: "10%" }}  // Responsive width
+              
               height="auto"  // Auto height to maintain aspect ratio
               m={2}
               />

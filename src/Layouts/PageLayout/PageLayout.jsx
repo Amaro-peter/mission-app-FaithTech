@@ -45,14 +45,13 @@ function PageLayout({children}) {
     <VStack minH={"100vh"} spacing={0}>
       {canRenderNavBar && (
         <Box w={"full"} justifyContent={"center"} alignItems={"center"}
-        minHeight={"80px"}
         >
           <NavBar isLargerThanBase={isLargerThanBase} />
         </Box>
       )}
             
       <Box flex={1} w={{base:"calc(100%-70px)", md:"calc(100% -240px)"}} mx={"auto"}
-      mt={"35px"}
+      mt={"45px"}
       overflow={"auto"}
       position={"relative"}
       mb={"50px"}
