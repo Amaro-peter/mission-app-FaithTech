@@ -10,7 +10,7 @@ function BottomBarItems( {sizeOfIcon, sizeOfText} ) {
     <>
         <Flex
         direction={"row"}
-        gap={5}
+        gap={10}
         w={"full"}
         h={"full"}
         justifyContent={"center"}

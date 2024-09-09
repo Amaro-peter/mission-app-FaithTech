@@ -22,13 +22,13 @@ function BottomBar() {
     >
         <Flex 
         direction={"row"} 
-        gap={5} 
+        gap={10} 
         w={"full"} 
         height={"full"}
         justifyContent={"center"}
         alignItems={"center"}
         >
-          <BottomBarItems sizeOfIcon={"1.35em"} sizeOfText={"0.75em"} />
+          <BottomBarItems sizeOfIcon={"1.5em"} sizeOfText={"0.75em"} />
         </Flex>   
     </Box>
   )
