@@ -9,12 +9,12 @@ function PageLayout({children}) {
   const canRenderNavBar = pathname === "/";
   const canRenderBottomBar = pathname === "/";
   const [showNavBar, setShowNavBar] = useState(true)
-  const [isLargerThanBase, setIsLargerThanBase] = useState(window.innerWidth >= 600)
+  const [isLargerThanBase, setIsLargerThanBase] = useState(window.innerWidth >= 780)
   const lastScrollY = useRef(0)
 
   useEffect(() => {
     const handleResize = () => {
-      setIsLargerThanBase(window.innerWidth >= 600)
+      setIsLargerThanBase(window.innerWidth >= 780)
     }
     window.addEventListener("resize", handleResize)
     return () => {
@@ -24,7 +24,7 @@ function PageLayout({children}) {
 
   useEffect(() =>{
     const handleScroll = () => {
-      if(window.innerWidth <= 600) {
+      if(window.innerWidth <= 780) {
         if(window.scrollY > lastScrollY.current) {
           setShowNavBar(false)
         } else {
