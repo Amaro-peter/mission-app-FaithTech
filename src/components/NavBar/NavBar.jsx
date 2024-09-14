@@ -21,6 +21,7 @@ function NavBar( { isLargerThanBase } ) {
     mb={0}
     zIndex={1000}
     bg={"white"}
+    overflow={"hidden"}
     >
         {isLargerThanBase ? (
           <Flex 
@@ -30,6 +31,7 @@ function NavBar( { isLargerThanBase } ) {
           height={"full"}
           alignItems={"center"}
           justifyContent={"center"}
+          
           >
             <Image
             src={"./Mission.png"}  // Image source
@@ -40,10 +42,8 @@ function NavBar( { isLargerThanBase } ) {
             height="auto"  // Auto height to maintain aspect ratio
             m={2}
             />
-  
-            <Flex direction={"row"} gap={5}>
-              <NavBarItems sizeOfIcon={"1.5em"} sizeOfText={"0.75em"} />  
-            </Flex>
+          
+            <NavBarItems sizeOfIcon={"1.5em"} sizeOfText={"0.75em"} />
             
           </Flex> 
         ) : (
@@ -55,6 +55,7 @@ function NavBar( { isLargerThanBase } ) {
             height={"full"}
             alignItems={"center"}
             justifyContent={"center"}
+            
             >
               <Image
               src={"./Mission.png"}  // Image source

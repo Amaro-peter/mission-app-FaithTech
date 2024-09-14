@@ -1,5 +1,5 @@
 import {Route, Routes} from "react-router-dom";
-import HomePage from "./Pages/HomePage/HomePage";
+import MissionaryHomePage from "./Pages/HomePagesFolder/MissionaryHomePage/MissionaryHomePage";
 import LandingPage from "./Pages/LandingPage/LandingPage";
 import PageLayout from "./Layouts/PageLayout/PageLayout";
 import AuthDonorForm from "./Pages/AuthForms/AuthDonorPages/AuthDonorForm";
@@ -13,7 +13,7 @@ function App() {
     <>
       <PageLayout>
         <Routes>
-          <Route path='/' element={ <HomePage />} />
+          <Route path='/' element={ <MissionaryHomePage />} />
           <Route path='/landingPage' element={<LandingPage />} />
           <Route path='/donorSignPage' element={<AuthDonorForm />} />
           <Route path="/resetPassword" element={<ResetPassword />} />
