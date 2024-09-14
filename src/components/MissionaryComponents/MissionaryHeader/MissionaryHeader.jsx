@@ -18,35 +18,52 @@ function MissionaryHeader() {
       <Flex 
         direction="row"
         alignItems="center"
-        justifyContent="flex-start"
+        justifyContent="space-between"
         height="100%"
         gap={{base: 4, sm: 7}}
       >
         <Avatar src='' alt="Missionary" size={{base: "md", md: "lg"}} />
         <Flex gap={4}>
-          <Text fontSize="sm" fontWeight="bold"
-          fontFamily={"Inter, sans-serif"}
-          >
-            @_SamiMendonça
-          </Text>
           <Button
+          width={"100px"}
+          height={"35px"}
           border={"1px solid black"}
           borderRadius={50}
-          backgroundColor={"#FFEFE7BF"}
+          backgroundColor={"#FFEFE7"}
           _hover={{background: "#FFB999"}}
           >
             Seguir
           </Button>
           <Button
+          width={"100px"}
+          height={"35px"}
           border={"1px solid black"}
           borderRadius={50}
-          backgroundColor={"#FFEFE7BF"}
+          backgroundColor={"#FFEFE7"}
           _hover={{background: "#FFB999"}}
           >
             Doar
           </Button>
+
+          <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          _hover={{ background: "gray.400", borderRadius: "50%" }}
+          width="50px"
+          height="50px"
+          >
+            <Image 
+            src='./pencil_editor.png' 
+            alt="Missionary" 
+            width="30px" 
+            height="30px" 
+            cursor={"pointer"} 
+            />
+          </Box>
         </Flex>
       </Flex>
+      
     </Flex>
   )
 }
