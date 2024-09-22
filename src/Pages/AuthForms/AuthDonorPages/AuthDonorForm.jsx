@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 function AuthDonorForm() {
   const [isLogin, setIsLogin] = useState(true)
   return (
-    <Flex justifyContent={"center"} alignItems={"center"} px={4}>
+    <Flex minHeight={"100vh"} justifyContent={"center"} alignItems={"center"} px={4}>
         <Container maxW={"container.md"} padding={0}>
             <VStack justifyContent={"center"} alignItems={"center"} gap={4}>
                 <Box
@@ -118,12 +118,6 @@ function AuthDonorForm() {
                         </VStack>
                     </Box>
                 </VStack>
-
-                <Box textAlign={"center"} fontWeight={"bold"} fontFamily={"Inter, sans-serif"}>Obtenha o app.</Box>
-                <Flex gap={5} justifyContent={"center"}>
-                    <Image src="./google.png" h={"10"} alt={"Play Store"} />
-                    <Image src="./apple.png" h={"10"} alt={"App Store"} />
-                </Flex>
             </VStack>
         </Container>
     </Flex>

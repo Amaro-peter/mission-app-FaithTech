@@ -78,7 +78,9 @@ function PageLayout({children}) {
             width="100%"
             direction="column"
             >
-              <Box mb={"100px"} width={"full"} />
+              {canRenderNavBar && (
+                <Box mb={"100px"} width={"full"} />
+              )}
             </Flex>
 
           </Flex>

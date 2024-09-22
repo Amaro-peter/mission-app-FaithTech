@@ -417,8 +417,8 @@ export const MessagesLogo = () => (
 export const NotificationsLogo = () => (
 	<svg
 		aria-label='Notifications'
-		color='rgb(245, 245, 245)'
-		fill='rgb(245, 245, 245)'
+		color='rgb(0, 0, 0)'
+		fill='rgb(0, 0, 0)'
 		height='24'
 		role='img'
 		viewBox='0 0 24 24'
@@ -489,8 +489,8 @@ export const CreatePostLogo = () => (
 export const CommentLogo = () => (
 	<svg
 		aria-label='Comment'
-		color='rgb(245, 245, 245)'
-		fill='rgb(245, 245, 245)'
+		color='rgb(0, 0, 0)'
+		fill='rgb(0, 0, 0)'
 		height='24'
 		role='img'
 		viewBox='0 0 24 24'

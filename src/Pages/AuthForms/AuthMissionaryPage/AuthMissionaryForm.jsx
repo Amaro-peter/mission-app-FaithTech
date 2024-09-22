@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 function AuthMissionaryForm() {
   const [isLogin, setIsLogin] = useState(true)
   return (
-    <Flex justifyContent={"center"} alignItems={"center"} px={4}>
+    <Flex minHeight={"100vh"} justifyContent={"center"} alignItems={"center"} px={4}>
       <Container maxW={"container.md"} padding={0}>
         <VStack justifyContent={"center"} alignItems={"center"} gap={4}>
           <Box
@@ -49,6 +49,21 @@ function AuthMissionaryForm() {
                   {isLogin ? "Sign up" : "Log in"}
                 </Box>
               </VStack>            
+            </Box>
+
+            <Box border={"1px solid black"} borderRadius={4} padding={1}>
+              <VStack alignItems={"center"} justifyContent={"center"}>
+                <Text color={"black"} fontSize="20px" fontFamily={"Inter, sans-serif"} cursor={"pointer"}>
+                  Apoiador ou projeto social?
+                </Text>
+                <Box mx={2}>
+                  <Link to={"/landingPage"}>
+                    <Text color={"orange.600"} fontSize="20px" fontFamily={"Inter, sans-serif"} cursor={"pointer"}>
+                      Página inicial
+                    </Text>
+                  </Link>
+                </Box>
+              </VStack>
             </Box>
 
             <Box border={"1px solid black"}
@@ -117,28 +132,7 @@ function AuthMissionaryForm() {
                 </Flex>
               ) :(null)}
             </Box>
-
-            <Box border={"1px solid black"} borderRadius={4} padding={1}>
-              <VStack alignItems={"center"} justifyContent={"center"}>
-                <Text color={"black"} fontSize="20px" fontFamily={"Inter, sans-serif"} cursor={"pointer"}>
-                  Apoiador ou projeto social?
-                </Text>
-                <Box mx={2}>
-                  <Link to={"/landingPage"}>
-                    <Text color={"orange.600"} fontSize="20px" fontFamily={"Inter, sans-serif"} cursor={"pointer"}>
-                      Página inicial
-                    </Text>
-                  </Link>
-                </Box>
-              </VStack>
-            </Box>
           </VStack>
-
-          <Box textAlign={"center"} fontWeight={"bold"} fontFamily={"Inter, sans-serif"}>Obtenha o app.</Box>
-          <Flex gap={5} justifyContent={"center"}>
-            <Image src="./google.png" h={"10"} alt={"Play Store"} />
-            <Image src="./apple.png" h={"10"} alt={"App Store"} />
-          </Flex>
         </VStack>
       </Container>
     </Flex>
