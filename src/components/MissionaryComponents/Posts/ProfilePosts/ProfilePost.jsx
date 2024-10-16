@@ -2,7 +2,7 @@ import { Box, Flex, Image, Text } from "@chakra-ui/react"
 import PostHeader from "../PostHeader/PostHeader"
 import PostFooter from "../PostFooter/PostFooter"
 
-function FeedPost({source}) {
+function ProfilePost({source}) {
   return (
     <Flex
     width={{base: "100%", md: "80%"}}
@@ -29,7 +29,7 @@ function FeedPost({source}) {
             whiteSpace="normal" // Allow text to wrap
             textAlign="justfied" // Justify text
             >
-                Distribuindo alimento para quem precisa !
+                Hoje, fizemos uma leitura bíblica com as crianças sobre a vida de Jesus. Ensinamos a elas como manusear a bíblia e a diferença entre o novo e velho Testamento.
             </Text>
 
             <Box
@@ -50,4 +50,4 @@ function FeedPost({source}) {
   )
 }
 
-export default FeedPost
+export default ProfilePost

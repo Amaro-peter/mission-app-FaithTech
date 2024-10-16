@@ -13,10 +13,10 @@ function BottomBar() {
     width={"full"}
     borderTop={"1px solid"}
     borderColor={"blackAlpha.600"}
-    px={2}
+    px={1}
     position={"fixed"}
     bottom={0}
-    py={{base: 1}}
+    py={0}
     zIndex={1000}
     bg={"white"}
     >

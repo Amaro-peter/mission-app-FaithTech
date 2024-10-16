@@ -1,14 +1,23 @@
-import { Box, Container, Divider, Flex, VStack } from '@chakra-ui/react';
+import { Box, Container, Divider, Flex, Select, VStack } from '@chakra-ui/react';
 import MissionaryHeader from '../../../components/MissionaryComponents/MissionaryHeader/MissionaryHeader';
 import { useState } from 'react';
 import NewPost from '../../../components/MissionaryComponents/Posts/NewPost/NewPost';
 import Campaign from '../../../components/MissionaryComponents/Campaign/Campaign';
 import MyWork from '../../../components/MissionaryComponents/MyWork/MyWork';
 import HomePageFooter from '../../../components/HomePageFooter/HomePageFooter';
+import ProfilePosts from '../../../components/MissionaryComponents/Posts/ProfilePosts/ProfilePosts';
+import SelectPostType from '../../../components/MissionaryComponents/Posts/SelectPostType/SelectPostType';
 import FeedPosts from '../../../components/MissionaryComponents/Posts/FeedPosts/FeedPosts';
+import { useParams } from 'react-router-dom';
 
 function HomePage() {
+  const {username} = useParams();
   const[activeTab, setActiveTab] = useState('Meu projeto')
+  const[myPosts, setMyPosts] = useState('Meu feed')
+
+  const handleSelectionPostTabClick = (tab) => {
+    setMyPosts(tab);
+  }
 
   const handleTabClick = (tab) => {
     setActiveTab(tab)
@@ -41,15 +50,33 @@ function HomePage() {
             <Box flex={2} mt={10}>
               <MissionaryHeader activeTab={activeTab} handleTabClick={handleTabClick} />
             </Box>
+            { activeTab === 'Postagens' ? (
+              <Box>
+                <SelectPostType myPosts={myPosts} handleSelectionPostTabClick={handleSelectionPostTabClick} />
+              </Box>
+            ) : (null)
+            }
             <Box>
               {activeTab === 'Meu projeto' && <MyWork />}
               {activeTab === 'Campanha' && <Campaign />}
               {activeTab === 'Postagens' && <NewPost />}
             </Box>
             {activeTab === 'Postagens' ? (
-              <Box>
-                <FeedPosts />
-              </Box>
+              <>
+              {myPosts === 'Meu feed' && 
+              
+                <Box>
+                  <ProfilePosts />
+                </Box>
+              }
+              {myPosts === 'Feed de amigos' && 
+                <Box>
+                  <FeedPosts />
+                </Box>
+              }
+
+              </>
+              
             ) : (null)}
           </VStack>
         </Container>

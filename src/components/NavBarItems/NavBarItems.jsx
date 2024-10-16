@@ -23,8 +23,8 @@ function BarItems( {sizeOfIcon, sizeOfText} ) {
         <ProfileLink sizeOfIcon={sizeOfIcon} sizeOfText={sizeOfText} />
         <Spacer />
         <Spacer />
-        <Spacer />
-        <LogOut sizeOfIcon={sizeOfIcon} sizeOfText={sizeOfText} />     
+        <LogOut sizeOfIcon={sizeOfIcon} sizeOfText={sizeOfText} />
+            
     </Flex>
   )
 }

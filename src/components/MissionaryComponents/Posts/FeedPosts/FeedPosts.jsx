@@ -7,7 +7,7 @@ function FeedPosts() {
     <Container
     maxW={"container.lg"}
     >
-        <FeedPost source={"./Kids.png"} />
+        <FeedPost source={"./alimentos.jpg"} />
         <FeedPost source={"./igreja.png"} />
     </Container>
   )

@@ -81,7 +81,7 @@ function MissionaryHeader({activeTab, handleTabClick}) {
             _hover={{background: "#FFB999"}}
             >
               <Text fontSize={fontSize}>
-                Doar
+                Apoiar
               </Text>
             </Button>
 
@@ -109,7 +109,7 @@ function MissionaryHeader({activeTab, handleTabClick}) {
           <Text
           fontFamily={"Inter, sans-serif"}
           fontWeight={"bold"}
-          fontSize={"25px"}
+          fontSize={["20px", "25px", "30px"]}
           whiteSpace="normal" // Allow text to wrap
           textAlign="justify" // Justify text
           >
@@ -139,7 +139,7 @@ function MissionaryHeader({activeTab, handleTabClick}) {
         alignItems={"center"}
         >
           <Button
-            width={"auto"}
+            width={"auto"} 
             height={["30px", "35px", "35px", "35px", "35px"]}
             border={"2px solid black"}
             borderRadius={50}
@@ -181,7 +181,7 @@ function MissionaryHeader({activeTab, handleTabClick}) {
             whiteSpace={"nowrap"}
             >
               <Text fontSize={fontSize}>
-                Editar área de doações
+                Área de doações
               </Text>
             </Button>
         </Flex>
@@ -194,7 +194,8 @@ function MissionaryHeader({activeTab, handleTabClick}) {
         >
           {['Meu projeto', 'Campanha', 'Postagens'].map((tab) =>(
             <Box key={tab} onClick={() => handleTabClick(tab)} cursor="pointer">
-              <Text fontSize={"md"}
+              <Text 
+              fontSize={"md"}
               fontWeight={activeTab === tab ? "bold" : "normal"}
               >
                 {tab}

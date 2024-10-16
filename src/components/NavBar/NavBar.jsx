@@ -1,12 +1,15 @@
-import { Box, Flex, Link, Image, Avatar, useMediaQuery, Spacer } from "@chakra-ui/react"
+import { Box, Flex, Link, Image, Avatar, useMediaQuery, Spacer, Button, Text } from "@chakra-ui/react"
 import { Link as RouterLink } from "react-router-dom"
 import { MissionLogo } from "../../assets/constants"
 import { IoBagOutline, IoHomeOutline, IoSearchOutline } from "react-icons/io5"
 import { IoIosLogOut, IoIosNotificationsOutline } from "react-icons/io"
 import { useEffect, useState } from "react"
 import NavBarItems from "../NavBarItems/NavBarItems"
+import useLogOut from "../../hooks/useLogOut"
 
 function NavBar( { isLargerThanBase } ) {
+
+  const {handleLogOut, isLoggingOut} = useLogOut()
   
   return (
     <Box

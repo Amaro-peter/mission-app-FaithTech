@@ -88,40 +88,6 @@ function AuthMissionaryForm() {
                   {isLogin ? <Login /> : <SignUp />}
               </VStack>
 
-              {/* OR text */ }
-              <Flex 
-              alignItems={"center"} 
-              justifyContent={"center"}
-              my={4}
-              gap={1}
-              w={"full"}
-              >
-                <Box flex={2} h={"1px"} bg={"black"} />
-                <Text mx={1} color={"black"}
-                fontFamily={"Inter, sans-serif"}
-                fontWeight={"bold"}
-                >
-                  OU
-                </Text>
-                <Box flex={2} h={"1px"} bg={"black"} />
-              </Flex>
-              <Flex 
-              justifyContent={"center"}
-              alignItems={"center"}
-              gap={2}
-              my={1}
-              w={"full"}
-              >
-                <Image src={"./googleLogo.png"} h={"6"} alt={"Google"} cursor={"pointer"} />
-                <Text color={"blue.600"}
-                fontSize="20px"
-                fontFamily={"Inter, sans-serif"}
-                cursor={"pointer"}
-                >
-                  Sign in with Google
-                </Text>
-              </Flex>
-
               {isLogin ? (
                 <Flex justifyContent={"center"} alignItems={"center"} gap={2} marginTop={7} w={"full"}>
                   <Link to={"/resetPassword"}>
