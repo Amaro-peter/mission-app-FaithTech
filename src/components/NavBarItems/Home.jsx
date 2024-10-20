@@ -1,24 +1,32 @@
-import { Box, Link, VStack, Text } from '@chakra-ui/react'
+import { Box, Flex, Button, Link, VStack, Text } from '@chakra-ui/react'
 import { Link as RouterLink } from 'react-router-dom'
 import { IoHomeOutline } from 'react-icons/io5'
 
 function Home({ sizeOfIcon, sizeOfText }) {
   return (
-    <Link
+    <Flex
     display={"flex"}
-    to={"/"}
-    as={RouterLink}
     alignItems={"center"}
-    flexDirection={"column"}
-    _hover={{bg: "gray.100"}}
-    borderRadius={4}
-    p={2}
-    w={{base: 10, md: "full"}}
     justifyContent={"center"}
-    >
-        <IoHomeOutline size={sizeOfIcon} />
-        <Text fontSize={sizeOfText} color={"black"}>Home</Text>
-    </Link> 
+    > 
+        <Button
+        display={"flex"}
+        justifyContent={"center"}
+        alignItems={"center"}
+        backgroundColor={"transparent"}
+        gap={1}
+        >
+          <Flex
+          direction={"column"}
+          justifyContent={"center"}
+          alignItems={"center"}
+          mb={1}
+          >
+            <IoHomeOutline size={sizeOfIcon} />
+            <Text fontSize={sizeOfText} color={"black"}>Home</Text>
+          </Flex>
+        </Button> 
+    </Flex>
   )
 }
 

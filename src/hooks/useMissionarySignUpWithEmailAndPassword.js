@@ -93,8 +93,9 @@ function useMissionarySignUpWithEmailAndPassword() {
                     reject("Falha ao criar conta");
                 }
             });
+
             toast.promise(userCreationPromise, {
-                succes: { title: 'Success', description: 'Conta criada com sucesso', status: 'success', duration: 7000, isClosable: true, position: 'top' },
+                success: { title: 'Success', description: 'Conta criada com sucesso', status: 'success', duration: 7000, isClosable: true, position: 'top' },
                 error: { title: 'Erro', description: 'Falha ao criar conta', status: 'error', duration: 9000, position: 'top' },
                 loading: { title: 'Criando conta', description: 'Por favor, espere', isClosable: true, position: 'top' },
             });

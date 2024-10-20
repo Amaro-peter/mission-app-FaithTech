@@ -1,51 +1,38 @@
-import { Button, Box, Flex, VStack, Spinner, Text} from "@chakra-ui/react"
+import { Box, Flex, VStack, Spinner, Text} from "@chakra-ui/react"
 import { useLocation } from "react-router-dom"
 import NavBar from "../../components/NavBar/NavBar"
 import BottomBar from "../../components/BottomBar/BottomBar"
 import { useState, useEffect, useRef } from "react"
-import useAuthStore from "../../store/authStore"
 import { path } from "framer-motion/client"
+import { onAuthStateChanged } from "firebase/auth"
+import { auth } from "../../utils/firebase"
 
 
-function PageLayout({children, authUser}) {
+function PageLayout({children, loading, authUser}) {
   const {pathname} = useLocation()
-  const userAuth = useAuthStore((state) => state.user)
-  const canRenderNavBar = pathname !== "/landingPage"
-  && pathname !== "/donorSignPage"
-  && pathname !== "/missionarySignPage"
-  && pathname !== "/resetPassword"
-  && pathname !== "/socialProjectSignPage";
-  const canRenderBottomBar = pathname !== "/landingPage"
-  && pathname !== "/donorSignPage"
-  && pathname !== "/missionarySignPage"
-  && pathname !== "/resetPassword"
-  && pathname !== "/socialProjectSignPage";
+  
   const [showNavBar, setShowNavBar] = useState(true)
-  const [loading, setLoading] = useState(true)
+
   const [isLargerThanBase, setIsLargerThanBase] = useState(window.innerWidth >= 1000)
+
   const lastScrollY = useRef(0)
 
-  useEffect(() => {
-    const waitForUserAuth = () => {
-      return new Promise((resolve) => {
-        const interval = setInterval(() => {
-          if(userAuth !== undefined) {
-            clearInterval(interval)
-            resolve(userAuth)
-          } 
-        }, 100);
-      });
-    };
 
-    waitForUserAuth().then((user) => {
-      setLoading(false);
-    });
-  }, [userAuth])
+  const canRenderNavBar = authUser !== null
+  pathname !== "/landingPage"
+  && pathname !== "/donorSignPage"
+  && pathname !== "/missionarySignPage"
+  && pathname !== "/resetForm"
+  && pathname !== "/resetPassword"
+  && pathname !== "/socialProjectSignPage";
 
-  const checkingUserAuth = null;
-  if(checkingUserAuth) {
-    return <PageLayoutSpinner />
-  }
+  const canRenderBottomBar = authUser !== null
+  pathname !== "/landingPage"
+  && pathname !== "/donorSignPage"
+  && pathname !== "/missionarySignPage"
+  && pathname !== "/resetForm"
+  && pathname !== "/resetPassword"
+  && pathname !== "/socialProjectSignPage";
 
   
   useEffect(() => {
@@ -106,19 +93,23 @@ function PageLayout({children, authUser}) {
           width="100%"
           direction={"column"}
           >
-
-            {children} {/* This will be MissionaryHomePage */}
-
-            <Flex
-            bg={"#FFEFE759"}
-            flex="1"
-            width="100%"
-            direction="column"
-            >
-              {canRenderNavBar && (
-                <Box mb={"100px"} width={"full"} />
-              )}
-            </Flex>
+            {loading ? (
+              <Spinner size="xl" />
+            ) : (
+              <>
+                {children}
+                <Flex
+                  bg={"#FFEFE759"}
+                  flex="1"
+                  width="100%"
+                  direction="column"
+                >
+                  {canRenderNavBar && (
+                    <Box mb={"100px"} width={"full"} />
+                  )}
+                </Flex>
+              </>
+            )}
 
           </Flex>
         </Flex>
@@ -130,13 +121,5 @@ function PageLayout({children, authUser}) {
 }
 
 export default PageLayout;
-
-const PageLayoutSpinner = () => {
-  return (
-      <Flex flexDir="column" h="100vh" alignItems={"center"} justifyContent={"center"}>
-          <Spinner size="xl" />
-      </Flex>
-  );
-}
 
 

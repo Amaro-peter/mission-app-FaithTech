@@ -1,24 +1,33 @@
-import { Box, Link, VStack, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Link, VStack, Text } from '@chakra-ui/react'
 import { Link as RouterLink } from 'react-router-dom'
 import {IoNotificationsOutline} from 'react-icons/io5'
 
 function Notifications({ sizeOfIcon, sizeOfText }) {
   return (
-    <Link
+    <Flex
     display={"flex"}
-    to={"/"}
-    as={RouterLink}
     alignItems={"center"}
-    flexDirection={"column"}
-    _hover={{bg: "gray.100"}}
-    borderRadius={4}
-    
-    w={{base: 10, md: "full"}}
     justifyContent={"center"}
-    >
-        <IoNotificationsOutline size={sizeOfIcon} />
-        <Text fontSize={sizeOfText} color={"black"}>Notificações</Text>
-    </Link> 
+    > 
+        <Button
+        display={"flex"}
+        justifyContent={"center"}
+        alignItems={"center"}
+        backgroundColor={"transparent"}
+        gap={1}
+        >
+          <Flex
+          direction={"column"}
+          justifyContent={"center"}
+          alignItems={"center"}
+          mb={1}
+          >
+            <IoNotificationsOutline size={sizeOfIcon} />
+            <Text fontSize={sizeOfText} color={"black"}>Alertas</Text>
+          </Flex>
+          
+        </Button> 
+    </Flex>
   )
 }
 

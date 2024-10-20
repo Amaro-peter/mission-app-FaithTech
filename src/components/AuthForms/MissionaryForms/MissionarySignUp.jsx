@@ -1,10 +1,10 @@
 import { Alert, AlertIcon, Button, Input, InputGroup, InputRightElement } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react'
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
-import useMissionarySignUpWithEmailAndPassword from '../../hooks/useMissionarySignUpWithEmailAndPassword';
+import useMissionarySignUpWithEmailAndPassword from '../../../hooks/useMissionarySignUpWithEmailAndPassword';
 
 
-function SignUp() {
+function MissionarySignUp() {
   const [inputs, setInputs] = useState({
     fullName: "",
     username: "",
@@ -16,6 +16,7 @@ function SignUp() {
 
   const[showPassword, setShowPassword] = useState(false)
   const {signUp, errorMessage, setErrorMessage, loading} = useMissionarySignUpWithEmailAndPassword()
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -196,4 +197,4 @@ function SignUp() {
   )
 }
 
-export default SignUp
+export default MissionarySignUp

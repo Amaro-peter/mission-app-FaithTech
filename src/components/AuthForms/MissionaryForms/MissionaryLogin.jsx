@@ -1,19 +1,21 @@
-import { Button, Input } from '@chakra-ui/react';
+import { Alert, AlertIcon, Button, Input } from '@chakra-ui/react';
 import React, { useState } from 'react'
-{/* import userLogin from "../../hooks/useLogin"; */}
-function Login() {
+import useLogin from '../../../hooks/useLogin';
+
+
+function MissionaryLogin() {
   const [inputs, setInputs] = useState({
     email: "",
     password: "",
   });
 
-  {/*const {loading, error, setError, login} = userLogin*/}
+  const {loading, error, setError, login} = useLogin();
 
-  {/*const handleInputFocus = () => {
+  const handleInputFocus = () => {
     if(error) {
       setError(null);
     }
-  }*/}
+  };
 
   return (
     <>
@@ -60,6 +62,13 @@ function Login() {
       onChange={(e) => setInputs({...inputs, password: e.target.value})}
       />
 
+      {error && (
+        <Alert status='error' w={"full"} fontSize={"14"}>
+          <AlertIcon />
+          {error}
+        </Alert>
+      )}
+
       <Button
       w={"full"}
       height={"50px"}
@@ -70,11 +79,13 @@ function Login() {
       fontSize={"20"}
       fontFamily={"Inter, sans-serif"}
       _hover={{ background: "#FF8866" }}
+      isLoading={loading}
+      onClick={() => login(inputs)}
       >
-        Log in
+        Login
       </Button>
     </>
   )
 }
 
-export default Login
+export default MissionaryLogin

@@ -1,24 +1,33 @@
-import { Box, Link, VStack, Text } from '@chakra-ui/react'
+import { Box, Flex, Link, VStack, Text, Button } from '@chakra-ui/react'
 import { Link as RouterLink } from 'react-router-dom'
 import { IoBagOutline } from 'react-icons/io5'
 
 function Projetos({ sizeOfIcon, sizeOfText }) {
   return (
-    <Link
+
+    <Flex
     display={"flex"}
-    to={"/"}
-    as={RouterLink}
     alignItems={"center"}
-    flexDirection={"column"}
-    _hover={{bg: "gray.100"}}
-    borderRadius={4}
-    
-    w={{base: 10, md: "full"}}
     justifyContent={"center"}
-    >
-        <IoBagOutline size={sizeOfIcon} />
-        <Text fontSize={sizeOfText} color={"black"}>Projetos</Text>
-    </Link> 
+    > 
+        <Button
+        display={"flex"}
+        justifyContent={"center"}
+        alignItems={"center"}
+        backgroundColor={"transparent"}
+        >
+          <Flex
+          direction={"column"}
+          justifyContent={"center"}
+          alignItems={"center"}
+          mb={1}
+          >
+            <IoBagOutline size={sizeOfIcon} />
+            <Text fontSize={sizeOfText} color={"black"}>Projetos</Text>
+          </Flex>
+          
+        </Button>
+    </Flex>
   )
 }
 

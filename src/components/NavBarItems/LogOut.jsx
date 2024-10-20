@@ -12,10 +12,6 @@ function LogOut({ sizeOfIcon, sizeOfText }) {
     <Flex
     display={"flex"}
     alignItems={"center"}
-    flexDirection={"column"}
-    borderRadius={4}
-    p={2}
-    w={{base: 10, md: "80%"}}
     justifyContent={"center"}
     >   
         <Button
@@ -23,12 +19,13 @@ function LogOut({ sizeOfIcon, sizeOfText }) {
         display={"flex"}
         justifyContent={"center"}
         alignItems={"center"}
-        
+        gap={2}
+        mb={1}
         >
           <IoIosLogOut size={sizeOfIcon} />
           <Text fontSize={sizeOfText}>Sair</Text>
-        </Button>
-    </Flex> 
+        </Button> 
+    </Flex>
   )
 }
 

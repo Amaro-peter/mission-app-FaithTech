@@ -1,13 +1,43 @@
-import { Box, Flex, Link, Image, Avatar, useMediaQuery, Spacer, Button, Text } from "@chakra-ui/react"
-import { Link as RouterLink } from "react-router-dom"
-import { MissionLogo } from "../../assets/constants"
-import { IoBagOutline, IoHomeOutline, IoSearchOutline } from "react-icons/io5"
-import { IoIosLogOut, IoIosNotificationsOutline } from "react-icons/io"
-import { useEffect, useState } from "react"
+import { Box, Flex, Button, Image, Avatar, Spacer, useBreakpointValue } from "@chakra-ui/react"
+import LogOut from "../NavBarItems/LogOut"
+import Notification from "../NavBarItems/Notification"
 import NavBarItems from "../NavBarItems/NavBarItems"
 import useLogOut from "../../hooks/useLogOut"
+import { base } from "framer-motion/client";
 
 function NavBar( { isLargerThanBase } ) {
+
+  const imageWidth = useBreakpointValue({
+    base: "40%", // For very small screens
+    sm: "30%", // Small screens
+    md: "30%", // Medium screens
+    lg: "25%", // Large screens
+    xl: "20%" // Extra large screens
+  });
+
+  const maxImageWidth = useBreakpointValue({
+    base: "150px", // For very small screens
+    sm: "200px", // Small screens
+    md: "250px", // Medium screens
+    lg: "300px", // Large screens
+    xl: "350px" // Extra large screens
+  });
+
+  const sizeOfIcon = useBreakpointValue({
+    base: "1.5em", // For very small screens
+    sm: "1.5em", // Small screens
+    md: "1.5em", // Medium screens
+    lg: "1.75em", // Large screens
+    xl: "2em" // Extra large screens
+  });
+
+  const sizeOfText = useBreakpointValue({
+    base: "0.875em", // For very small screens
+    sm: "0.875em", // Small screens
+    md: "1em", // Medium screens
+    lg: "1em", // Large screens
+    xl: "1em" // Extra large screens
+  });
 
   const {handleLogOut, isLoggingOut} = useLogOut()
   
@@ -41,7 +71,7 @@ function NavBar( { isLargerThanBase } ) {
             alt="Mission Logo"
             width={{ base: "50%", md: "20%", lg: "10%" }}  // Responsive width
             maxWidth="200px"  // Max width to ensure proper scaling
-            minWidth="100px"  // Min width to ensure visibility at smaller sizes
+            minWidth="100px"
             height="auto"  // Auto height to maintain aspect ratio
             m={2}
             />
@@ -53,7 +83,7 @@ function NavBar( { isLargerThanBase } ) {
           <>
             <Flex 
             direction={"row"} 
-            gap={10} 
+            gap={3} 
             w={"full"} 
             height={"full"}
             alignItems={"center"}
@@ -67,11 +97,18 @@ function NavBar( { isLargerThanBase } ) {
               maxWidth="200px"  // Max width to ensure proper scaling
               minWidth="100px"
               height="auto"  // Auto height to maintain aspect ratio
-              m={2}
+              m={1}
               />
               <Spacer />
-              <Flex direction={"row"} cursor={"pointer"}>
-                <Avatar size={{base:"xs", sm:"xs", md:"xs"}}  src={""}/>
+              <Flex 
+              direction={"row"} 
+              cursor={"pointer"} 
+              justifyContent={"center"}
+              alignItems={"center"}
+              gap={3}
+              >
+                <Notification sizeOfIcon={sizeOfIcon} sizeOfText={sizeOfText} />
+                <LogOut sizeOfIcon={sizeOfIcon} sizeOfText={sizeOfText} />
               </Flex>
             </Flex> 
           </>

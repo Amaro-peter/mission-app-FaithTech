@@ -1,12 +1,20 @@
 import { Box, Flex, VStack, Text, Image, Container, Input, Button } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import useResetPassword from '../../../hooks/useResetPassword'
 
 function ResetPassword() {
     const [isLogin, setIsLogin] = useState(true)
     const[inputs, setInputs] = useState({
         email: "",
     })
+
+    const {resetPassword, loading} = useResetPassword();
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        resetPassword(inputs.email);
+    };
 
     return (
         <Flex minH={"100vh"} justifyContent={"center"} alignItems={"center"} px={4}>
@@ -32,7 +40,7 @@ function ResetPassword() {
                         >
                             <Box justifyContent={"center"} alignItems={"center"} gap={2} my={2} w={"full"}>
                                 <Text textAlign={"center"} fontSize="2xl" fontWeight={"bold"} fontFamily={"Inter, sans-serif"}>
-                                    Reset your password
+                                    Redefina sua senha
                                 </Text>
                             </Box>
 
@@ -47,7 +55,7 @@ function ResetPassword() {
                             flexDirection="column"
                             >
                                 <Text justifyContent={"center"} textAlign={"center"} fontSize="17px" fontFamily={"Inter, sans-serif"}>
-                                    Insert your email address below and we will send a link to your email.
+                                    Coloque seu email para receber um link de redefinição de senha
                                 </Text>
                             </Box>
 
@@ -82,8 +90,10 @@ function ResetPassword() {
                                 fontSize={"17"}
                                 fontFamily={"Inter, sans-serif"}
                                 _hover={{ background: "#FF8866" }}
+                                isLoading={loading}
+                                onClick={handleSubmit}
                                 >
-                                    Send Link to Login
+                                    Enviar link de redefinição
                                 </Button>
                             </VStack>
                         </Box>

@@ -1,7 +1,7 @@
 import { Box, Flex, VStack, Text, Image, Container } from '@chakra-ui/react'
 import React, { useState } from 'react'
-import Login from '../../../components/AuthForms/Login'
-import SignUp from '../../../components/AuthForms/SignUp'
+import Login from '../../../components/AuthForms/MissionaryForms/MissionaryLogin'
+import SignUp from '../../../components/AuthForms/MissionaryForms/MissionarySignUp'
 import { Link } from 'react-router-dom'
 
 function AuthSocialProjectForm() {
@@ -124,7 +124,7 @@ function AuthSocialProjectForm() {
 
               {isLogin ? (
                 <Flex justifyContent={"center"} alignItems={"center"} gap={2} marginTop={7} w={"full"}>
-                  <Link to={"/resetPassword"}>
+                  <Link to={"/resetForm"}>
                     <Text color={"orange.700"} fontSize="20px" fontFamily={"Inter, sans-serif"} cursor={"pointer"}>
                       Esqueceu a senha?
                     </Text>
