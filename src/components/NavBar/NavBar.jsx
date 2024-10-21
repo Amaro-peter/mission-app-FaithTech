@@ -1,9 +1,10 @@
 import { Box, Flex, Button, Image, Avatar, Spacer, useBreakpointValue } from "@chakra-ui/react"
 import LogOut from "../NavBarItems/LogOut"
-import Notification from "../NavBarItems/Notification"
+import Notification from "../NavBarItems/Notifications"
 import NavBarItems from "../NavBarItems/NavBarItems"
 import useLogOut from "../../hooks/useLogOut"
 import { base } from "framer-motion/client";
+import { useState } from "react"
 
 function NavBar( { isLargerThanBase } ) {
 
@@ -76,7 +77,7 @@ function NavBar( { isLargerThanBase } ) {
             m={2}
             />
           
-            <NavBarItems sizeOfIcon={"1.5em"} sizeOfText={"0.75em"} />
+            <NavBarItems sizeOfIcon={"1.5em"} sizeOfText={"0.75em"} isLargerThanBase={isLargerThanBase} />
             
           </Flex> 
         ) : (
@@ -107,7 +108,7 @@ function NavBar( { isLargerThanBase } ) {
               alignItems={"center"}
               gap={3}
               >
-                <Notification sizeOfIcon={sizeOfIcon} sizeOfText={sizeOfText} />
+                <Notification isLargerThanBase={isLargerThanBase} sizeOfIcon={sizeOfIcon} sizeOfText={sizeOfText} />
                 <LogOut sizeOfIcon={sizeOfIcon} sizeOfText={sizeOfText} />
               </Flex>
             </Flex> 

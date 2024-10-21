@@ -6,7 +6,7 @@ import ProfileLink from "./ProfileLink"
 import { Flex, Spacer } from "@chakra-ui/react"
 import LogOut from "./LogOut"
 
-function BarItems( {sizeOfIcon, sizeOfText} ) {
+function BarItems( {sizeOfIcon, sizeOfText, isLargerThanBase} ) {
   return (
     <Flex
     direction={"row"}
@@ -19,7 +19,7 @@ function BarItems( {sizeOfIcon, sizeOfText} ) {
         <Home sizeOfIcon={sizeOfIcon} sizeOfText={sizeOfText} />
         <Search sizeOfIcon={sizeOfIcon} sizeOfText={sizeOfText} />
         <Projetos sizeOfIcon={sizeOfIcon} sizeOfText={sizeOfText} />
-        <Notifications sizeOfIcon={sizeOfIcon} sizeOfText={sizeOfText} />
+        <Notifications isLargerThanBase={isLargerThanBase} sizeOfIcon={sizeOfIcon} sizeOfText={sizeOfText} />
         <ProfileLink sizeOfIcon={sizeOfIcon} sizeOfText={sizeOfText} />
         <Spacer />
         <Spacer />

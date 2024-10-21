@@ -1,4 +1,4 @@
-import { Container, Flex, Box, Text } from '@chakra-ui/react'
+import { Container, Flex, Box, Text, VStack, Button } from '@chakra-ui/react'
 import React from 'react'
 
 function SelectPostType({myPosts, handleSelectionPostTabClick}) {
@@ -24,20 +24,35 @@ function SelectPostType({myPosts, handleSelectionPostTabClick}) {
         direction={"row"}
         width={"full"}
         justifyContent={"space-between"}
+        alignItems={"center"}
         gap={2}
         >
           {["Meu feed", "Feed de amigos"].map((tab) =>(
-            <Box key={tab} onClick={() => handleSelectionPostTabClick(tab)} cursor="pointer">
-              <Text 
-              fontSize={"md"}
-              fontWeight={myPosts === tab ? "bold" : "normal"}
+            <VStack
+            align={"stretch"}
+            >
+              <Button 
+              key={tab} 
+              onClick={() => handleSelectionPostTabClick(tab)} 
+              cursor="pointer" 
+              background={"transparent"}
               >
-                {tab}
-              </Text>
+                <Text 
+                fontSize={"md"}
+                fontWeight={myPosts === tab ? "bold" : "normal"}
+                >
+                  {tab}
+                </Text>
+              </Button>
               {myPosts === tab && (
-                <Box height={"2px"} bg={"#E89871"} mt={1} />
+                <Box 
+                height={"2px"} 
+                bg={"#E89871"} 
+                width="100%" 
+                mt={1} 
+                /> 
               )}
-            </Box>
+            </VStack>
           ))}
         </Flex>
       </Flex>

@@ -2,7 +2,7 @@ import { Box, Button, Flex, Link, VStack, Text } from '@chakra-ui/react'
 import { Link as RouterLink } from 'react-router-dom'
 import {IoNotificationsOutline} from 'react-icons/io5'
 
-function Notifications({ sizeOfIcon, sizeOfText }) {
+function Notifications({ sizeOfIcon, sizeOfText, isLargerThanBase }) {
   return (
     <Flex
     display={"flex"}
@@ -17,7 +17,8 @@ function Notifications({ sizeOfIcon, sizeOfText }) {
         gap={1}
         >
           <Flex
-          direction={"column"}
+          direction={isLargerThanBase ? "column" : "row"}
+          gap={isLargerThanBase ? 0 : 2}
           justifyContent={"center"}
           alignItems={"center"}
           mb={1}

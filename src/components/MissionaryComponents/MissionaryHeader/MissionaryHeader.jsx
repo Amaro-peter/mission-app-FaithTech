@@ -189,21 +189,36 @@ function MissionaryHeader({activeTab, handleTabClick}) {
         <Flex
         direction={"row"}
         width={"full"}
-        justifyContent={"space-between"}
+        justifyContent={{base: "center", md: "space-between"}}
+        alignItems={"center"}
         gap={2}
         >
           {['Meu projeto', 'Campanha', 'Postagens'].map((tab) =>(
-            <Box key={tab} onClick={() => handleTabClick(tab)} cursor="pointer">
+            <VStack
+            align={"stretch"}
+            >
+            <Button 
+              key={tab} 
+              onClick={() => handleTabClick(tab)} 
+              cursor="pointer" 
+              background={"transparent"}
+            >
               <Text 
-              fontSize={"md"}
-              fontWeight={activeTab === tab ? "bold" : "normal"}
+                fontSize={"md"}
+                fontWeight={activeTab === tab ? "bold" : "normal"}
               >
                 {tab}
               </Text>
-              {activeTab === tab && (
-                <Box height={"2px"} bg={"#E89871"} mt={1} />
-              )}
-            </Box>
+            </Button>
+            {activeTab === tab && (
+              <Box 
+                height={"2px"} 
+                bg={"#E89871"} 
+                width="100%" 
+                mt={1} 
+              />
+            )}
+          </VStack>
           ))}
         </Flex>
 
