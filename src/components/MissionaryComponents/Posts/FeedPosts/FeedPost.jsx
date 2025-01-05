@@ -1,6 +1,8 @@
 import { Box, Flex, Image, Text } from "@chakra-ui/react"
 import PostHeader from "../PostHeader/PostHeader"
 import PostFooter from "../PostFooter/PostFooter"
+import Zoom from 'react-medium-image-zoom';
+import 'react-medium-image-zoom/dist/styles.css';
 
 function FeedPost({source}) {
   return (
@@ -34,16 +36,26 @@ function FeedPost({source}) {
 
             <Box
             my={2}
-            borderRadius={"4"}
+            borderRadius={4}
             overflow={"hidden"}
+            cursor={"pointer"}
             >
-                <Image 
-                src= {source}
-                alt="Missionary" 
-                width="100%" 
-                height="100%" 
+              <Zoom
+                zoomMargin={10} // Adjusts the margin around the zoomed image
+                overlayBgColorEnd="rgba(0, 0, 0, 0.85)" // Smooth dark overlay for better focus
+                transitionDuration={300} // Smooth zoom animation duration
+              >
+                <img
+                  src={source}
+                  alt="Missionary"
+                  style={{
+                    width: '100%',
+                    height: 'auto',
+                    borderRadius: '4px',
+                  }}
                 />
-            </Box>
+              </Zoom>
+          </Box>
         </Flex>
         <PostFooter />    
     </Flex>
