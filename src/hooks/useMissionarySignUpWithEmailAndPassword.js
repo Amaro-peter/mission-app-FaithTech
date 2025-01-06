@@ -3,7 +3,7 @@ import { useToast } from "@chakra-ui/react"
 import { useState } from "react"
 import useAuthStore from "../store/authStore";
 import { auth, db } from "../utils/firebase";
-import { collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
+import { collection, doc, getDocs, query, setDoc, where, serverTimestamp } from "firebase/firestore";
 
 function useMissionarySignUpWithEmailAndPassword() {
   const toast = useToast();
@@ -73,7 +73,7 @@ function useMissionarySignUpWithEmailAndPassword() {
                 missionaryAgency: inputs.missionaryAgency,
                 bio: "",
                 profilePicture: "",
-                createdAt: Date.now(),
+                createdAt: serverTimestamp(),
             };
 
             const userCreationPromise = new Promise(async (resolve, reject) => {
