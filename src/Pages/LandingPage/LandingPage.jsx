@@ -1,6 +1,7 @@
-import { Box, Flex, Container, VStack, Image } from '@chakra-ui/react'
+import { Box, Flex, Container, VStack, Image, Button } from '@chakra-ui/react'
 import React from 'react'
 import LandingPageButtons from './LandingPageButtons';
+import { Link } from 'react-router-dom';
 
 function LandingPage() {
   return (
@@ -22,6 +23,22 @@ function LandingPage() {
                     
                     <VStack gap={5} justifyContent={"center"}>
                         <LandingPageButtons />
+
+                        <Link to={"/authAdmin"}>
+                            <Button
+                            width={{ base: "120px" }}
+                            height={{ base: "35px" }}
+                            backgroundColor="#E0E0E0"
+                            border="1px solid #CCC"
+                            borderRadius="5px"
+                            fontSize="16px"
+                            fontWeight="bold"
+                            color="#333"
+                            _hover={{ backgroundColor: "#BDBDBD" }}
+                            >
+                                Administrador
+                            </Button>
+                        </Link>
 
                         <Box textAlign={"center"} fontWeight={"bold"} fontFamily={"Inter, sans-serif"}>Obtenha o app.</Box>
                         <Flex gap={5} justifyContent={"center"}>

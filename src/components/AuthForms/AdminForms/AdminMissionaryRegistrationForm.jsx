@@ -4,7 +4,7 @@ import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import useMissionarySignUpWithEmailAndPassword from '../../../hooks/useMissionarySignUpWithEmailAndPassword';
 
 
-function MissionarySignUp() {
+function AdminRegistersMissionary() {
   const [inputs, setInputs] = useState({
     fullName: "",
     username: "",
@@ -197,4 +197,4 @@ function MissionarySignUp() {
   )
 }
 
-export default MissionarySignUp;
+export default AdminRegistersMissionary;

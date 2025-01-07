@@ -12,7 +12,8 @@ import { auth, db } from "./utils/firebase";
 import { useState, useEffect } from "react";
 import { getDoc, doc, collection, getDocs, query, where } from "firebase/firestore";
 import CustomPasswordReset from "./Pages/AuthForms/ResetPassword/CustomPasswordReset";
-
+import AuthAdmin from "./Pages/AuthForms/AuthAdmin/AuthAdmin";
+import AuthRegistrationPanel from "./Pages/AuthForms/AuthAdmin/AuthRegistrationPanel";
 
 function App() {
 
@@ -45,6 +46,8 @@ function App() {
 
   const isMissionary = authUser && authUser.role === "missionary";
 
+  const isAdmin = authUser && authUser.role === "admin";
+
   if(loading) {
     return <PageLayoutSpinner />
   }
@@ -59,6 +62,20 @@ function App() {
           <Route path='/donorSignPage' element={<AuthDonorForm />} />
           <Route path="/resetForm" element={<EmailFormResetPassword />} />
           <Route path="/resetPassword" element={<CustomPasswordReset />} />
+          <Route path="/adminRegistrationPanel" element={<AuthRegistrationPanel/>} />
+          <Route
+            path='/authAdmin'
+            element={
+              authUser ? (
+                (isAdmin && (
+                  <Navigate to={"/adminRegistrationPanel"} />
+                  )
+                )
+              ) : (
+                  <AuthAdmin />
+                )
+            }
+          />
           <Route
             path='/missionarySignPage'
             element={
@@ -117,4 +134,5 @@ function UsernameRoute({ isMissionary, authUser }) {
   return isMissionary ? <MissionaryHomePage errorMessage={errorMessage} setErrorMessage={setErrorMessage} /> : <Navigate to="/landingPage" />;
 }
 
-export default App
+
+export default App;

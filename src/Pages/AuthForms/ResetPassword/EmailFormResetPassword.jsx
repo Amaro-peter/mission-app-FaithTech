@@ -98,7 +98,7 @@ function ResetPassword() {
                             </VStack>
                         </Box>
                         
-                        <Link to={"/donorSignPage"}>
+                        <Link to={"/landingPage"}>
                             <Button 
                             w={"full"}
                             background={"#FFA888"}
@@ -118,7 +118,7 @@ function ResetPassword() {
                                     fontFamily={"Inter, sans-serif"}
                                     cursor={"pointer"}
                                     >
-                                        Voltar para o login
+                                        Voltar para área inicial
                                     </Text>      
                             </Button>
                         </Link>

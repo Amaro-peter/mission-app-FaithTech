@@ -59,6 +59,7 @@ function LandingPageButtons() {
                     Sou um projeto social
                 </Button>
             </Link>
+            
         </VStack>
     </Box>
   )

@@ -19,20 +19,24 @@ function PageLayout({children, loading, authUser}) {
 
 
   const canRenderNavBar = authUser !== null
-  pathname !== "/landingPage"
+  && pathname !== "/landingPage"
   && pathname !== "/donorSignPage"
   && pathname !== "/missionarySignPage"
   && pathname !== "/resetForm"
   && pathname !== "/resetPassword"
-  && pathname !== "/socialProjectSignPage";
+  && pathname !== "/socialProjectSignPage"
+  && pathname !== "/authAdmin"
+  && pathname !== "/adminRegistrationPanel";
 
   const canRenderBottomBar = authUser !== null
-  pathname !== "/landingPage"
+  && pathname !== "/landingPage"
   && pathname !== "/donorSignPage"
   && pathname !== "/missionarySignPage"
   && pathname !== "/resetForm"
   && pathname !== "/resetPassword"
-  && pathname !== "/socialProjectSignPage";
+  && pathname !== "/socialProjectSignPage"
+  && pathname !== "/authAdmin"
+  && pathname !== "/adminRegistrationPanel";
 
   
   useEffect(() => {
