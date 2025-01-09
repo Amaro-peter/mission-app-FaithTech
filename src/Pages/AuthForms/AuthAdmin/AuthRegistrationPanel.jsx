@@ -1,8 +1,28 @@
-import { Box, Flex, VStack, Text, Image, Container } from '@chakra-ui/react'
+import { Box, Flex, VStack, Text, Image, useToast, Container } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import AdminRegistersMissionary from '../../../components/AuthForms/AdminForms/AdminMissionaryRegistrationForm'
+import LogOut from '../../../components/NavBarItems/LogOut';
 
-function AuthRegistrationPanel() {
+function AuthRegistrationPanel({errorMessage, setErrorMessage}) {
+
+  const toast = useToast();
+  const toastId = 'error-toast';
+
+  if(errorMessage !== null) {
+    if(!toast.isActive(toastId)) {
+      toast({
+        id: toastId,
+        title: "Erro",
+        description: "Usuário não encontrado",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "top"
+      })
+      setErrorMessage(null);
+    }
+  }
+
   return (
     <Flex minHeight={"100vh"} justifyContent={"center"} alignItems={"center"} px={4}>
       <Container maxW={"container.md"} padding={0}>
@@ -42,6 +62,18 @@ function AuthRegistrationPanel() {
                 <AdminRegistersMissionary />
               </VStack>
             </Box>
+            <Box
+            my={2}
+            backgroundColor={"#FFFFF"}
+            justifyContent={"center"}
+            alignItems={"center"}
+            padding={4}
+            borderRadius={10}
+            boxShadow={"0 4px 6px rgba(0, 0, 0, 0.1)"}
+            >
+              <LogOut />
+            </Box>
+            
           </VStack>
         </VStack>
       </Container>

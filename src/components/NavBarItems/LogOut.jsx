@@ -29,4 +29,4 @@ function LogOut({ sizeOfIcon, sizeOfText }) {
   )
 }
 
-export default LogOut
+export default LogOut;

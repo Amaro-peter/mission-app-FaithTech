@@ -56,37 +56,80 @@ function App() {
     <>
       <PageLayout loading={loading} authUser={authUser}>
         <Routes>
-          <Route path="/" element={isMissionary ? <Navigate to={`/${authUser.username}`} /> : <LandingPage />} />
-          <Route path='/:username' element={<UsernameRoute isMissionary={isMissionary} authUser={authUser} />} />
-          <Route path='/landingPage' element={isMissionary ? <Navigate to={`/${authUser.username}`} /> : <LandingPage />} />
-          <Route path='/donorSignPage' element={<AuthDonorForm />} />
+          <Route 
+          path="/" 
+          element= {isMissionary ? ( <Navigate to={`/${authUser.username}`} />) : isAdmin ? (
+                <Navigate to="/adminRegistrationPanel" />
+              ) : (
+                <Navigate to="/landingPage" />
+              )} />
+
+          <Route 
+            path="/:username" 
+            element={isMissionary ? (
+              <UsernameRoute isMissionary={isMissionary} authUser={authUser} />
+            ) : isAdmin ? (
+              <Navigate to="/adminRegistrationPanel" />
+            ) : (
+              <Navigate to="/landingPage" />
+            )} 
+          />
+
+          <Route 
+          path='/landingPage' 
+          element={isMissionary ? (
+              <Navigate to={`/${authUser.username}`} />
+              ) : isAdmin ? (
+              <Navigate to="/adminRegistrationPanel" />
+              ) : (
+                <LandingPage />
+              )} 
+          />
+          <Route 
+          path='/donorSignPage' 
+          element={isMissionary ? (
+              <Navigate to={`/${authUser.username}`} />
+            ) : isAdmin ? (
+              <Navigate to="/adminRegistrationPanel" />
+            ) : (
+              <AuthDonorForm />
+            )} 
+          />
           <Route path="/resetForm" element={<EmailFormResetPassword />} />
           <Route path="/resetPassword" element={<CustomPasswordReset />} />
-          <Route path="/adminRegistrationPanel" element={<AuthRegistrationPanel/>} />
-          <Route
-            path='/authAdmin'
-            element={
-              authUser ? (
-                (isAdmin && (
-                  <Navigate to={"/adminRegistrationPanel"} />
-                  )
-                )
-              ) : (
-                  <AuthAdmin />
-                )
-            }
+          <Route 
+          path="/adminRegistrationPanel" 
+          element={isMissionary ? (
+            <Navigate to={`/${authUser.username}`} />
+          ) : isAdmin ? (
+            <AdminRoute isAdmin={isAdmin} authUser={authUser} />
+          ) : (
+            <Navigate to="/landingPage" />
+          )} 
           />
           <Route
-            path='/missionarySignPage'
-            element={
-              authUser ? (
-                (isMissionary && (
-                  <Navigate to={`/${authUser.username}`} />
-                  )
-                )
+          path='/authAdmin'
+          element={
+            isMissionary ? (
+              <Navigate to={`/${authUser.username}`} />
+            ) : isAdmin ? (
+              <Navigate to="/adminRegistrationPanel" />
+            ) : (
+              <AuthAdmin />
+            )
+          }
+          />
+
+          <Route
+          path='/missionarySignPage'
+          element={
+              isMissionary ? (
+                <Navigate to={`/${authUser.username}`} />
+              ) : isAdmin ? (
+                <Navigate to="/adminRegistrationPanel" />
               ) : (
-                  <AuthMissionaryForm />
-                )
+                <AuthMissionaryForm />
+              )
             }
           />
           <Route path='/socialProjectSignPage' element={<AuthSocialProjectForm />} />
@@ -132,6 +175,31 @@ function UsernameRoute({ isMissionary, authUser }) {
   }
 
   return isMissionary ? <MissionaryHomePage errorMessage={errorMessage} setErrorMessage={setErrorMessage} /> : <Navigate to="/landingPage" />;
+}
+
+function AdminRoute({ isAdmin, authUser }) {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState(null);
+
+  useEffect(() => {
+    const checkAdminExists = async () => {
+      if (authUser.role === "admin") {
+        setLoading(false);
+      } else {
+        setErrorMessage("Acesso negado");
+        navigate("/landingPage");
+      }
+    };
+
+    checkAdminExists();
+  }, [authUser, navigate]);
+
+  if (loading) {
+    return <PageLayoutSpinner />;
+  }
+
+  return isAdmin ? <AuthRegistrationPanel errorMessage={errorMessage} setErrorMessage={setErrorMessage} /> : <Navigate to="/landingPage" />;
 }
 
 
