@@ -1,8 +1,9 @@
-import { Box, Button, Flex, VStack, Text, Spacer, Image, Avatar, AvatarGroup, Divider, Container } from '@chakra-ui/react'
+import { Box, Button, Flex, VStack, Text, Spacer, Image, Avatar, AvatarGroup, Divider, Container, useMediaQuery } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 
 function MissionaryHeader({activeTab, handleTabClick}) {
-  const[fontSize, setFontSize] = useState("16px")
+  const[fontSize, setFontSize] = useState("16px");
+  const [isLargerThan360] = useMediaQuery("(min-width: 371px)");
 
   useEffect(() => {
     const handleResize = () => {
@@ -187,41 +188,42 @@ function MissionaryHeader({activeTab, handleTabClick}) {
         </Flex>
         <Divider my={3} mx={-4} width={"calc(100% + 32px)"} h={"1px"} bg={"black"} />
         <Flex
-        direction={"row"}
+        direction={isLargerThan360 ? "row" : "column"}
         width={"full"}
-        justifyContent={{base: "center", md: "space-between"}}
+        justifyContent={{ base: "center", md: "space-between" }}
         alignItems={"center"}
-        gap={2}
+        gap={{ base: 4, md: 2 }}
         >
-          {['Meu projeto', 'Campanha', 'Postagens'].map((tab) =>(
+          {['Meu projeto', 'Campanha', 'Postagens'].map((tab) => (
             <VStack
-            align={"stretch"}
+              align={"stretch"}
+              key={tab}
+              width={{ base: "full", md: "auto" }}
             >
-            <Button 
-              key={tab} 
-              onClick={() => handleTabClick(tab)} 
-              cursor="pointer" 
-              background={"transparent"}
-            >
-              <Text 
-                fontSize={"md"}
-                fontWeight={activeTab === tab ? "bold" : "normal"}
+              <Button
+                onClick={() => handleTabClick(tab)}
+                cursor="pointer"
+                background={"transparent"}
+                width={{ base: "full", md: "auto" }}
               >
-                {tab}
-              </Text>
-            </Button>
-            {activeTab === tab && (
-              <Box 
-                height={"2px"} 
-                bg={"#E89871"} 
-                width="100%" 
-                mt={1} 
-              />
-            )}
-          </VStack>
+                <Text
+                  fontSize={{ base: "sm", md: "md" }}
+                  fontWeight={activeTab === tab ? "bold" : "normal"}
+                >
+                  {tab}
+                </Text>
+              </Button>
+              {activeTab === tab && (
+                <Box
+                  height={"2px"}
+                  bg={"#E89871"}
+                  width="100%"
+                  mt={1}
+                />
+              )}
+            </VStack>
           ))}
         </Flex>
-
       </Flex>
     </Container>
   )
