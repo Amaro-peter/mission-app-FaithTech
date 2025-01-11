@@ -1,7 +1,7 @@
 import { Box, Flex, VStack, Text, Image, useToast, Container } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import AdminRegistersMissionary from '../../../components/AuthForms/AdminForms/AdminMissionaryRegistrationForm'
-import LogOut from '../../../components/NavBarItems/LogOut';
+import LogOutAdmin from '../../../components/NavBarItems/LogOutAdmin';
 
 function AuthRegistrationPanel({errorMessage, setErrorMessage}) {
 
@@ -71,7 +71,7 @@ function AuthRegistrationPanel({errorMessage, setErrorMessage}) {
             borderRadius={10}
             boxShadow={"0 4px 6px rgba(0, 0, 0, 0.1)"}
             >
-              <LogOut />
+              <LogOutAdmin />
             </Box>
             
           </VStack>

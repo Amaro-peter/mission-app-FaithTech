@@ -26,7 +26,8 @@ function PageLayout({children, loading, authUser}) {
   && pathname !== "/resetPassword"
   && pathname !== "/socialProjectSignPage"
   && pathname !== "/authAdmin"
-  && pathname !== "/adminRegistrationPanel";
+  && pathname !== "/adminRegistrationPanel"
+  && pathname !== "/adminMissionarySignUpSucess";
 
   const canRenderBottomBar = authUser !== null
   && pathname !== "/landingPage"
@@ -36,7 +37,8 @@ function PageLayout({children, loading, authUser}) {
   && pathname !== "/resetPassword"
   && pathname !== "/socialProjectSignPage"
   && pathname !== "/authAdmin"
-  && pathname !== "/adminRegistrationPanel";
+  && pathname !== "/adminRegistrationPanel"
+  && pathname !== "/adminMissionarySignUpSucess";
 
   
   useEffect(() => {

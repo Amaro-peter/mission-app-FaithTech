@@ -1,8 +1,8 @@
 import { Alert, AlertIcon, Button, Input, InputGroup, InputRightElement } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react'
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
-import useMissionarySignUpWithEmailAndPassword from '../../../hooks/useMissionarySignUpWithEmailAndPassword';
-
+import useAdminRegistrationWithEmailAndPassword from '../../../hooks/useAdminRegistrationWithEmailAndPassword';
+import { useNavigate } from 'react-router-dom';
 
 function AdminRegistersMissionary() {
   const [inputs, setInputs] = useState({
@@ -14,13 +14,14 @@ function AdminRegistersMissionary() {
     password:"",
   });
 
-  const[showPassword, setShowPassword] = useState(false)
-  const {signUp, errorMessage, setErrorMessage, loading} = useMissionarySignUpWithEmailAndPassword()
+  const[showPassword, setShowPassword] = useState(false);
+  const {signUp, errorMessage, setErrorMessage, loading} = useAdminRegistrationWithEmailAndPassword();
 
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    await signUp(inputs);
+    const result = await signUp(inputs);
   };
 
   const handleInputFocus = () => {

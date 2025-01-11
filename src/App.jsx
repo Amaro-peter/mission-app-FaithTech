@@ -7,42 +7,56 @@ import EmailFormResetPassword from "./Pages/AuthForms/ResetPassword/EmailFormRes
 import PageLayoutSpinner from "./Layouts/PageLayoutSpinner/PageLayoutSpinner";
 import AuthMissionaryForm from "./Pages/AuthForms/AuthMissionaryPage/AuthMissionaryForm";
 import AuthSocialProjectForm from "./Pages/AuthForms/AuthSocialProjectPage/AuthSocialProjectForm";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, updateProfile } from "firebase/auth";
 import { auth, db } from "./utils/firebase";
 import { useState, useEffect } from "react";
 import { getDoc, doc, collection, getDocs, query, where } from "firebase/firestore";
 import CustomPasswordReset from "./Pages/AuthForms/ResetPassword/CustomPasswordReset";
 import AuthAdmin from "./Pages/AuthForms/AuthAdmin/AuthAdmin";
 import AuthRegistrationPanel from "./Pages/AuthForms/AuthAdmin/AuthRegistrationPanel";
+import AdminMissionarySignUpSucess from "./components/AuthForms/AdminForms/AdminSuccessPage";
+import useAuthStore from "./store/authStore";
+import useAuthAdminStore from "./store/authAdminStore";
 
 function App() {
 
   const [authUser, setAuthUser] = useState(null);
-  const [loading, setLoading] = useState(true)
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const storedAdminUser = useAuthAdminStore((state) => state.user);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if(user) {
-        try{
-          const userDoc = await getDoc(doc(db, "users", user.uid));
-          if(userDoc.exists()) {
-            const userData = userDoc.data();
-            setAuthUser({ ...user, username: userData.username, role: userData.role });
-          } else {
-            setAuthUser(null)
-          }
-        } catch (error) {
-          setAuthUser(null)
-        }
-      } else {
+
+      if (!user) {
         setAuthUser(null);
+        setLoading(false);
+        return;
       }
-      setLoading(false);
-    })
+
+      if (storedAdminUser?.role === "admin") {
+        setAuthUser({ ...storedAdminUser });
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setAuthUser({ ...user, username: userData.username, role: userData.role });
+        } else {
+          setAuthUser(null);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        setAuthUser(null);
+      } finally {
+        setLoading(false);
+      }
+    });
 
     return () => unsubscribe();
-  }, [setAuthUser]);
+  }, [storedAdminUser]);
 
   const isMissionary = authUser && authUser.role === "missionary";
 
@@ -56,6 +70,7 @@ function App() {
     <>
       <PageLayout loading={loading} authUser={authUser}>
         <Routes>
+          <Route path="/adminMissionarySignUpSucess" element={ isAdmin ? <AdminMissionarySignUpSucess /> : <Navigate to={"/landingPage"} />} />
           <Route 
           path="/" 
           element= {isMissionary ? ( <Navigate to={`/${authUser.username}`} />) : isAdmin ? (
@@ -132,6 +147,7 @@ function App() {
               )
             }
           />
+          
           <Route path='/socialProjectSignPage' element={<AuthSocialProjectForm />} />
         </Routes>
       </PageLayout>

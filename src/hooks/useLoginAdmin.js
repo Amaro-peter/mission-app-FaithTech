@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useToast } from '@chakra-ui/react';
-import useAuthStore from '../store/authStore';
+import useAuthStoreAdmin from '../store/authAdminStore';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth, db} from "../utils/firebase";
 import { doc, getDoc } from 'firebase/firestore';
@@ -10,7 +10,7 @@ function useLoginAdmin() {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    const loginUser = useAuthStore((state) => state.login);
+    const loginUser = useAuthStoreAdmin((state) => state.login);
 
     const login = async (inputs) => {
         setLoading(true); 
