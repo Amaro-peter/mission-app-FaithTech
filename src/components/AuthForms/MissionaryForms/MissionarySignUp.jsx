@@ -1,26 +1,46 @@
-import { Alert, AlertIcon, Button, Input, InputGroup, InputRightElement } from '@chakra-ui/react';
+import { Alert, AlertIcon, Button, Input, InputGroup, InputRightElement, useToast } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react'
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
+import useMissionaryRegisterForm from '../../../hooks/useMissionaryRegisterForm';
+import { useNavigate } from 'react-router-dom';
 import useMissionarySignUpWithEmailAndPassword from '../../../hooks/useMissionarySignUpWithEmailAndPassword';
-
 
 function MissionarySignUp() {
   const [inputs, setInputs] = useState({
     fullName: "",
     username: "",
-    email:"",
+    emailForm:"",
     faithCommunity: "",
     missionaryAgency: "",
     password:"",
   });
 
-  const[showPassword, setShowPassword] = useState(false)
-  const {signUp, errorMessage, setErrorMessage, loading} = useMissionarySignUpWithEmailAndPassword()
+  const[showPassword, setShowPassword] = useState(false);
+  const {signUp, errorMessage, setErrorMessage, loading} = useMissionaryRegisterForm();
+  const navigate = useNavigate();
+  const toast = useToast();
 
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    await signUp(inputs);
+  const handleSignUp = async () => {
+    if(!inputs.emailForm || !inputs.password || !inputs.username || !inputs.fullName) {
+      toast({
+        title: "Erro",
+        description: "Preencha todos os campos",
+        status: "error",
+        duration: 8000,
+        isClosable: true,
+        position: "top",
+      });
+      return;
+    }
+    try {
+      const result = await signUp(inputs);
+      if(result.success) {
+        navigate("/missionarySignUpSuccess");
+      }
+    } catch(error) {
+      setErrorMessage(error.message);
+    }
   };
 
   const handleInputFocus = () => {
@@ -52,9 +72,9 @@ function MissionarySignUp() {
     _focus={{border: "1px solid black", outline: "none"}}
     fontSize={20}
     type='email'
-    value={inputs.email}
+    value={inputs.emailForm}
     size={"sm"}
-    onChange={(e) => setInputs({...inputs, email: e.target.value})}
+    onChange={(e) => setInputs({...inputs, emailForm: e.target.value})}
     onFocus={handleInputFocus}
     />
     <Input 
@@ -114,10 +134,10 @@ function MissionarySignUp() {
       _hover={{border: "1px solid black"}}
       fontSize={20}
       type="email"
-      value={inputs.missionaryAgency}
+      value={inputs.faithCommunity}
       size={"sm"}
       color={"black"}
-      onChange={(e) => setInputs({...inputs, missionaryAgency: e.target.value})}
+      onChange={(e) => setInputs({...inputs, faithCommunity: e.target.value})}
       onFocus={handleInputFocus}
     />
     <Input 
@@ -135,10 +155,10 @@ function MissionarySignUp() {
       _hover={{border: "1px solid black"}}
       fontSize={20}
       type="email"
-      value={inputs.faithCommunity}
+      value={inputs.missionaryAgency}
       size={"sm"}
       color={"black"}
-      onChange={(e) => setInputs({...inputs, faithCommunity: e.target.value})}
+      onChange={(e) => setInputs({...inputs, missionaryAgency: e.target.value})}
       onFocus={handleInputFocus}
     />
     <InputGroup>
@@ -178,7 +198,7 @@ function MissionarySignUp() {
     color={"black"}
     fontFamily={"Inter, sans-serif"}
     _hover={{ background: "#FF8866" }}
-    onClick={handleSubmit}
+    onClick={handleSignUp}
     isLoading={loading}
     >
       Sign up

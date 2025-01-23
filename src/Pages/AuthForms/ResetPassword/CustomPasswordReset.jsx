@@ -49,7 +49,7 @@ function CustomPasswordReset() {
             await confirmPasswordReset(auth, oobCode, newPassword);
             toast({
                 title: "Success",
-                description: "Password has been reset successfully",
+                description: "Senha definida como sucesso!",
                 status: "success",
                 duration: 8000,
                 isClosable: true,
@@ -87,7 +87,7 @@ function CustomPasswordReset() {
 
                     <Box border={"1px solid black"} borderRadius={4} padding={5} marginBottom={10}>
                         <Text textAlign={"center"} fontSize="xl" fontWeight={"bold"} fontFamily={"Inter, sans-serif"}>
-                            Redefina sua senha
+                            Coloque sua senha
                         </Text>
                         <VStack spacing={4} mt={4}>
                             <Input

@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword} from "firebase/auth";
 import { useToast } from "@chakra-ui/react"
 import { useState } from "react"
 import { auth, db } from "../utils/firebase";
@@ -102,6 +102,75 @@ function useAdminRegistrationWithEmailAndPassword() {
                         await setDoc(doc(db, "followers", newUser.user.uid), {});
                         await setDoc(doc(db, "following", newUser.user.uid), {});
                         await setDoc(doc(db, "posts", newUser.user.uid), {});
+
+                        const actionCodeSettings = {
+                            url: 'http://localhost:5173/resetPassword',
+                            handleCodeInApp: true,
+                        };
+
+                        const answer = await fetch('/api/generateResetLink', {
+                            method: 'POST',
+                            headers: {
+                              'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ email: inputs.email }),
+                          });
+                        
+                        if (!answer.ok) {
+                            let errorData = { message: 'Unknown error' };
+                            try {
+                                const text = await answer.text();
+                                if (text) {
+                                    errorData = JSON.parse(text);
+                                }
+                            } catch (e) {
+                                console.error("Failed to parse error response:", e);
+                            }
+                            console.error("Error generating reset link:", errorData);
+                            throw new Error(`Network response was not ok: ${errorData.message}`);
+                        }
+                        
+                        const { resetLink } = await answer.json();
+
+
+                        const msg = {
+                            personalizations: [
+                              {
+                                to: [{ email: inputs.email }],
+                                subject: "Mission App - Parabéns !",
+                              },
+                            ],
+                            from: { email: 'ph_amaro@id.uff.br' },
+                            content: [
+                              {
+                                type: 'text/plain',
+                                value: `Parabéns, você foi aceito na plataformar. Por favor, clique no link para definir sua senha: 
+                                ${resetLink}`,
+                              },
+                            ],
+                          };
+
+                          const response = await fetch('/api/sendgrid', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(msg),
+                        });
+
+                        if (!response.ok) {
+                            let errorData = { message: 'Unknown error' };
+                            try {
+                                const text = await response.text();
+                                if (text) {
+                                    errorData = JSON.parse(text);
+                                }
+                            } catch (e) {
+                                console.error("Failed to parse error response:", e);
+                            }
+                            console.error("Error sending email:", errorData);
+                            throw new Error(`Network response was not ok: ${errorData.message}`);
+                        }
 
                         resolve("Conta criada com sucesso");
                     } catch (error) {

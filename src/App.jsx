@@ -17,6 +17,7 @@ import AuthRegistrationPanel from "./Pages/AuthForms/AuthAdmin/AuthRegistrationP
 import AdminMissionarySignUpSucess from "./components/AuthForms/AdminForms/AdminSuccessPage";
 import useAuthStore from "./store/authStore";
 import useAuthAdminStore from "./store/authAdminStore";
+import MissionarySignUpSucess from "./components/AuthForms/MissionaryForms/MissionarySuccessPage";
 
 function App() {
 
@@ -71,6 +72,7 @@ function App() {
       <PageLayout loading={loading} authUser={authUser}>
         <Routes>
           <Route path="/adminMissionarySignUpSucess" element={ isAdmin ? <AdminMissionarySignUpSucess /> : <Navigate to={"/landingPage"} />} />
+          <Route path="/missionarySignUpSuccess" element={<MissionarySignUpSucess />} />
           <Route 
           path="/" 
           element= {isMissionary ? ( <Navigate to={`/${authUser.username}`} />) : isAdmin ? (
