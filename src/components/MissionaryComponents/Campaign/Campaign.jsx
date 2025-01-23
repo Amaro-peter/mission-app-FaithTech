@@ -1,6 +1,8 @@
-import { Flex, Box, Button, Text, Image, Container } from "@chakra-ui/react"
+import { Flex, Box, Button, Text, Image, Container } from "@chakra-ui/react";
+import { useAuth } from "../../../context/AuthContext";
 
 function Campaign() {
+  const authUser = useAuth();
   return (
     <Container
     maxW={"container.lg"}
@@ -32,22 +34,26 @@ function Campaign() {
             Campanha
           </Text>
 
-          <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          _hover={{ background: "gray.400", borderRadius: "50%" }}
-          width="50px"
-          height="50px"
-          >
-            <Image 
-              src='./pencil_editor.png' 
-              alt="Missionary" 
-              width="30px" 
-              height="30px" 
-              cursor={"pointer"} 
-              />
-          </Box>
+          {authUser && authUser.role === "missionary" ? (
+            <>
+              <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              _hover={{ background: "gray.400", borderRadius: "50%" }}
+              width="50px"
+              height="50px"
+              >
+                <Image 
+                  src='./pencil_editor.png' 
+                  alt="Missionary" 
+                  width="30px" 
+                  height="30px" 
+                  cursor={"pointer"} 
+                  />
+              </Box>
+            </>
+          ) : null}
         </Flex>
 
         <Flex

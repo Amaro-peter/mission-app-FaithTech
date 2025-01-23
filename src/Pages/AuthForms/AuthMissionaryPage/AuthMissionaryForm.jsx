@@ -1,11 +1,14 @@
-import { Box, Flex, VStack, Text, Image, Container } from '@chakra-ui/react'
+import { Box, Button, Flex, VStack, Text, Image, Container } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import Login from '../../../components/AuthForms/MissionaryForms/MissionaryLogin'
 import SignUp from '../../../components/AuthForms/MissionaryForms/MissionarySignUp'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 function AuthMissionaryForm() {
-  const [isLogin, setIsLogin] = useState(true)
+  const [isLogin, setIsLogin] = useState(true);
+
+  const navigate = useNavigate();
+
   return (
     <Flex minHeight={"100vh"} justifyContent={"center"} alignItems={"center"} px={4}>
       <Container maxW={"container.md"} padding={0}>
@@ -23,7 +26,7 @@ function AuthMissionaryForm() {
           </Box>
 
 
-          <VStack spacing={4} align={"stretch"}>
+          <VStack spacing={2} align={"stretch"}>
 
             <Box border={"1px solid black"} borderRadius={4} padding={2}>
               <VStack alignItems={"center"} justifyContent={"center"}>
@@ -46,7 +49,7 @@ function AuthMissionaryForm() {
                     ) : "Já tem uma conta?"}
                 </Box>
                 <Box onClick={() => setIsLogin(!isLogin)} fontSize={20} fontFamily={"Inter, sans-serif"} color={"orange.600"} cursor={"pointer"}>
-                  {isLogin ? "Cadastrar" : "Login"}
+                  {isLogin ? "Aplique-se hoje mesmo e faça a diferença!" : "Login"}
                 </Box>
               </VStack>            
             </Box>
@@ -79,14 +82,33 @@ function AuthMissionaryForm() {
                 w={"full"}
                 >
                   <Text textAlign={"center"} fontSize="2xl" fontWeight={"bold"} fontFamily={"Inter, sans-serif"}>
-                    Cadastro de missionário
+                    Formulário de aplicação
                   </Text>
                 </Box>
               )}
 
-              <VStack spacing={4}>
+              <VStack spacing={2}>
                   {isLogin ? <Login /> : <SignUp />}
               </VStack>
+
+              {isLogin ? (
+                <VStack mt={4} spacing={2}>
+                  <Button
+                    w={"full"}
+                    height={"50px"}
+                    borderRadius={10}
+                    background={"#FFA888"}
+                    color={"black"}
+                    size={"sm"}
+                    fontSize={"20"}
+                    fontFamily={"Inter, sans-serif"}
+                    _hover={{ background: "#FF8866" }}
+                    onClick={() => navigate('/resetForm')}
+                  >
+                    Não sabe a senha? Pimeiro acesso aqui!
+                  </Button>        
+                </VStack>
+              ) : null }
 
               {isLogin ? (
                 <Flex justifyContent={"center"} alignItems={"center"} gap={2} marginTop={7} w={"full"}>

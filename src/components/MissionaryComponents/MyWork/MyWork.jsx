@@ -1,7 +1,10 @@
-import { Flex, Text, Box, Image, Button, Container } from '@chakra-ui/react'
-import React from 'react'
+import { Flex, Text, Box, Image, Button, Container } from '@chakra-ui/react';
+import React from 'react';
+import { useAuth } from '../../../context/AuthContext';
 
 function MyWork() {
+    const authUser = useAuth();
+
   return (
     <Container
     maxW={"container.lg"}
@@ -35,22 +38,27 @@ function MyWork() {
                     Projeto de impacto
                 </Text>
 
-                <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                _hover={{ background: "gray.400", borderRadius: "50%" }}
-                width="50px"
-                height="50px"
-                >
-                <Image 
-                src='./pencil_editor.png' 
-                alt="Missionary" 
-                width="30px" 
-                height="30px" 
-                cursor={"pointer"} 
-                />
-            </Box>
+                {authUser && authUser.role === "missionary" ? (
+                    <>
+                        <Box
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        _hover={{ background: "gray.400", borderRadius: "50%" }}
+                        width="50px"
+                        height="50px"
+                        >
+                            <Image 
+                            src='./pencil_editor.png' 
+                            alt="Missionary" 
+                            width="30px" 
+                            height="30px" 
+                            cursor={"pointer"} 
+                            />
+                        </Box>
+                    </>
+                ) : null}
+
             </Flex>
             <Flex
             direction={"column"}

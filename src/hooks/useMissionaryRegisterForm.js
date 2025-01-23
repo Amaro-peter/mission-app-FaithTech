@@ -10,7 +10,7 @@ function useMissionaryRegisterForm() {
 
   const signUp = async (inputs) => {
     setLoading(true);
-    if (!inputs.emailForm || !inputs.password || !inputs.username || !inputs.fullName) {
+    if (!inputs.emailForm || !inputs.username || !inputs.fullName) {
       toast({
         title: "Erro",
         description: "Por favor, preencha todos os campos",
@@ -57,10 +57,15 @@ function useMissionaryRegisterForm() {
               type: 'text/plain',
               value: `Um novo missionário pediu para se cadastrar:
               Email: ${inputs.emailForm}
+              Telefone do aplicante: ${inputs.phoneNumber}
               Nome de usuário: ${inputs.username}
               Nome completo: ${inputs.fullName}
               Comunidade de fé: ${inputs.faithCommunity}
-              Agência missionária: ${inputs.missionaryAgency}`,
+              Nome do Pastor: ${inputs.pastorName}
+              Telefone do Pastor: ${inputs.pastorPhone}
+              Telefone da igreja: ${inputs.churchPhone}
+              Agência missionária: ${inputs.missionaryAgency}
+              Telefone da agência: ${inputs.agencyPhone}`,
             },
           ],
         };

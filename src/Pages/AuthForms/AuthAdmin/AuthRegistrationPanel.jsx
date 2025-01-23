@@ -58,7 +58,7 @@ function AuthRegistrationPanel({errorMessage, setErrorMessage}) {
                   </Text>
                 </Box>
 
-              <VStack spacing={4}>
+              <VStack spacing={2}>
                 <AdminRegistersMissionary />
               </VStack>
             </Box>

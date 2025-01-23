@@ -1,9 +1,11 @@
-import { Alert, AlertIcon, Button, Input, InputGroup, InputRightElement, useToast } from '@chakra-ui/react';
+import { Alert, AlertIcon, Box, Button, FormControl, FormLabel, Input, InputGroup, InputRightElement, useToast } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react'
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import useMissionaryRegisterForm from '../../../hooks/useMissionaryRegisterForm';
 import { useNavigate } from 'react-router-dom';
 import useMissionarySignUpWithEmailAndPassword from '../../../hooks/useMissionarySignUpWithEmailAndPassword';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
 function MissionarySignUp() {
   const [inputs, setInputs] = useState({
@@ -12,7 +14,11 @@ function MissionarySignUp() {
     emailForm:"",
     faithCommunity: "",
     missionaryAgency: "",
-    password:"",
+    agencyPhone: "",
+    phoneNumber: "",
+    pastorName: "",
+    pastorPhone: "",
+    churchPhone: ""
   });
 
   const[showPassword, setShowPassword] = useState(false);
@@ -22,7 +28,8 @@ function MissionarySignUp() {
 
 
   const handleSignUp = async () => {
-    if(!inputs.emailForm || !inputs.password || !inputs.username || !inputs.fullName) {
+    if(!inputs.emailForm || !inputs.phoneNumber || !inputs.username || !inputs.fullName || !inputs.agencyPhone ||
+      !inputs.pastorName || !inputs.pastorPhone || !inputs.missionaryAgency || !inputs.faithCommunity) {
       toast({
         title: "Erro",
         description: "Preencha todos os campos",
@@ -43,11 +50,49 @@ function MissionarySignUp() {
     }
   };
 
+  const handleInputChange = (e) => {
+    const {name, values} = e.target;
+    setInputs({
+      ...inputs,
+      [name]: values,
+    });
+  };
+
+
+
   const handleInputFocus = () => {
     if(errorMessage) {
       setErrorMessage(null);
     }
-  }
+  };
+
+  const handlePhoneNumberChange = (value) => {
+    setInputs({
+      ...inputs,
+      phoneNumber: value,
+    });
+  };
+
+  const handlePastorPhoneChange = (value) => {
+    setInputs({
+      ...inputs,
+      pastorPhone: value,
+    });
+  };
+
+  const handleAgencyPhoneChange = (value) => {
+    setInputs({
+      ...inputs,
+      agencyPhone: value,
+    });
+  };
+
+  const handleChurchPhoneNumberChange = (value) => {
+    setInputs({
+      ...inputs,
+      churchPhone: value,
+    });
+  };
 
   useEffect(() => {
     //
@@ -77,8 +122,22 @@ function MissionarySignUp() {
     onChange={(e) => setInputs({...inputs, emailForm: e.target.value})}
     onFocus={handleInputFocus}
     />
+    <Box>
+      <form>
+        <FormControl id='phone' isRequired >
+          <FormLabel>Seu telefone pessoal</FormLabel>
+          <PhoneInput 
+            country={"us"}
+            value={inputs.phoneNumber}
+            onChange={handlePhoneNumberChange}
+            inputStyle={{width: '100%'}}
+          />
+          
+        </FormControl>
+      </form>
+    </Box>
     <Input 
-    placeholder='Username'
+    placeholder='Nome de usuário'
     sx={{
       '::placeholder': {
         color: 'rgba(0, 0, 0, 0.5)', // Gray blended with black
@@ -99,7 +158,7 @@ function MissionarySignUp() {
     onFocus={handleInputFocus}
     />
     <Input 
-    placeholder='Full Name'
+    placeholder='Nome Completo'
     sx={{
       '::placeholder': {
         color: 'rgba(0, 0, 0, 0.5)', // Gray blended with black
@@ -141,6 +200,54 @@ function MissionarySignUp() {
       onFocus={handleInputFocus}
     />
     <Input 
+      placeholder="Nome do seu Pastor"
+      sx={{
+        "::placeholder": {
+          color: "rgba(0, 0, 0, 0.5)",
+        },
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+      }}
+      border={"1px solid #b0b0b0"}
+      width={"100%"}
+      height={"40px"}
+      borderRadius={"4px"}
+      _hover={{border: "1px solid black"}}
+      fontSize={20}
+      type="email"
+      value={inputs.pastorName}
+      size={"sm"}
+      color={"black"}
+      onChange={(e) => setInputs({...inputs, pastorName: e.target.value})}
+      onFocus={handleInputFocus}
+    />
+    <Box>
+      <form>
+        <FormControl id='phone' isRequired >
+          <FormLabel>Telefone do seu pastor</FormLabel>
+          <PhoneInput 
+            country={"us"}
+            value={inputs.pastorPhone}
+            onChange={handlePastorPhoneChange}
+            inputStyle={{width: '100%'}}
+          />
+        </FormControl>
+      </form>
+    </Box>
+
+    <Box>
+      <form>
+        <FormControl id='phone' >
+          <FormLabel>Telefone da sua igreja</FormLabel>
+          <PhoneInput 
+            country={"us"}
+            value={inputs.churchPhone}
+            onChange={handleChurchPhoneNumberChange}
+            inputStyle={{width: '100%'}}
+          />
+        </FormControl>
+      </form>
+    </Box>
+    <Input 
       placeholder="Agência missionária"
       sx={{
         "::placeholder": {
@@ -161,35 +268,20 @@ function MissionarySignUp() {
       onChange={(e) => setInputs({...inputs, missionaryAgency: e.target.value})}
       onFocus={handleInputFocus}
     />
-    <InputGroup>
-      <Input 
-      placeholder='Password'
-      sx={{
-        '::placeholder': {
-          color: 'rgba(0, 0, 0, 0.5)', // Gray blended with black
-        },
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Softer shadow
-      }}
-      border={"1px solid #b0b0b0"}
-      width="100%" // Responsive width
-      height= '40px' // Fixed height
-      borderRadius= '4px' // Rounded corners
-      _hover={{border: "1px solid black"}}
-      _focus={{border: "1px solid black", outline: "none"}}
-      fontSize={20}
-      type={showPassword ? "text" : "password"}
-      value={inputs.password}
-      size={"sm"}
-      onChange={(e) => setInputs({...inputs, password:e.target.value})}
-      onFocus={handleInputFocus}
-      />
 
-      <InputRightElement h="full">
-        <Button varian={"ghost"} size={"sm"} onClick={() => setShowPassword(!showPassword)}>
-          {showPassword ? <ViewIcon color={"black"} /> : <ViewOffIcon color={"black"} />}
-        </Button>
-      </InputRightElement>
-    </InputGroup>
+    <Box>
+      <form>
+        <FormControl id='phone' isRequired >
+          <FormLabel>Telefone de contato com a agência</FormLabel>
+          <PhoneInput 
+            country={"us"}
+            value={inputs.agencyPhone}
+            onChange={handleAgencyPhoneChange}
+            inputStyle={{width: '100%'}}
+          />
+        </FormControl>
+      </form>
+    </Box>
 
     <Button w="full" 
     background={"#FFA888"} 

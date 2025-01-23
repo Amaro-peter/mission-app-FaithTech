@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useToast, Box, Flex, VStack, Text, Input, Button, Container, Image } from '@chakra-ui/react';
+import { useToast, Box, Flex, VStack, Text, Input, InputGroup, InputRightElement, IconButton, Button, Container, Image } from '@chakra-ui/react';
+import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { confirmPasswordReset } from 'firebase/auth';
 import { auth } from '../../../utils/firebase';
@@ -8,9 +9,12 @@ function CustomPasswordReset() {
     const location = useLocation();
     const navigate = useNavigate();
     const toast = useToast();
+    const [showPassword, setShowPassword] = useState(false);
     const [oobCode, setOobCode] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+
+    const handlePasswordVisibility = () => setShowPassword(!showPassword);
 
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
@@ -36,7 +40,7 @@ function CustomPasswordReset() {
         if (newPassword !== confirmPassword) {
             toast({
                 title: "Error",
-                description: "Passwords do not match",
+                description: "Senhas não estão iguais",
                 status: "error",
                 duration: 8000,
                 isClosable: true,
@@ -49,7 +53,7 @@ function CustomPasswordReset() {
             await confirmPasswordReset(auth, oobCode, newPassword);
             toast({
                 title: "Success",
-                description: "Senha definida como sucesso!",
+                description: "Senha definida com sucesso!",
                 status: "success",
                 duration: 8000,
                 isClosable: true,
@@ -90,25 +94,43 @@ function CustomPasswordReset() {
                             Coloque sua senha
                         </Text>
                         <VStack spacing={4} mt={4}>
+                        <InputGroup>
                             <Input
                                 placeholder='Nova Senha'
-                                type='password'
+                                type={showPassword ? 'text' : 'password'}
                                 value={newPassword}
                                 onChange={(e) => setNewPassword(e.target.value)}
                             />
+                            <InputRightElement>
+                                <IconButton
+                                    icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
+                                    onClick={handlePasswordVisibility}
+                                    variant='ghost'
+                                />
+                            </InputRightElement>
+                        </InputGroup>
+                        <InputGroup>
                             <Input
                                 placeholder='Confirmar a Senha'
-                                type='password'
+                                type={showPassword ? 'text' : 'password'}
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                             />
+                            <InputRightElement>
+                                <IconButton
+                                    icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
+                                    onClick={handlePasswordVisibility}
+                                    variant='ghost'
+                                />
+                            </InputRightElement>
+                        </InputGroup>
                             <Button 
                             onClick={handlePasswordReset} 
                             background={"#FFA888"} 
                             _hover={{ background: "#FF8866" }}
                             border={"2px solid black"}
                             >
-                                Redefinir Senha
+                                Definir Senha
                             </Button>
                         </VStack>
                     </Box>

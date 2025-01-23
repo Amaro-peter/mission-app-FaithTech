@@ -13,7 +13,8 @@ function useAdminRegistrationWithEmailAndPassword() {
 
     const signUp = async (inputs) => {
         setLoading(true);
-        if(!inputs.email || !inputs.password || !inputs.username || !inputs.fullName) {
+        if(!inputs.emailForm || !inputs.password || !inputs.phoneNumber || !inputs.username || !inputs.fullName || !inputs.agencyPhone ||
+            !inputs.pastorName || !inputs.pastorPhone || !inputs.missionaryAgency || !inputs.faithCommunity) {
             toast({
                 title: "Erro",
                 description: "Por favor, preencha todos os campos",
@@ -26,6 +27,8 @@ function useAdminRegistrationWithEmailAndPassword() {
             setLoading(false);
             return { success: false, error };
         }
+
+
         const usersRef = collection(db, "users");
     
         // Create a query against the collection to verify if username is already in use
@@ -47,7 +50,7 @@ function useAdminRegistrationWithEmailAndPassword() {
         }
 
         // Create a query against the collection to verify if email is already in use
-        const emailQuery = query(usersRef, where("email", "==", inputs.email));
+        const emailQuery = query(usersRef, where("email", "==", inputs.emailForm));
         const emailSnapshot = await getDocs(emailQuery);
 
         if (!emailSnapshot.empty) {
@@ -65,7 +68,7 @@ function useAdminRegistrationWithEmailAndPassword() {
         }
 
         try{
-            const newUser = await createUserWithEmailAndPassword(auth, inputs.email, inputs.password);
+            const newUser = await createUserWithEmailAndPassword(auth, inputs.emailForm, inputs.password);
             if(!newUser) {
                 toast({
                     title: "Erro",
@@ -83,11 +86,16 @@ function useAdminRegistrationWithEmailAndPassword() {
                 const userDoc = {
                     uid: newUser.user.uid,
                     role: "missionary",
-                    email: inputs.email,
+                    email: inputs.emailForm,
+                    phoneNumber: inputs.phoneNumber || "", 
                     username: inputs.username,
                     fullName: inputs.fullName,
                     faithCommunity: inputs.faithCommunity,
+                    pastorName: inputs.pastorName,
+                    pastorPhone: inputs.pastorPhone || "",
+                    churchPhone: inputs.churchPhone || "",
                     missionaryAgency: inputs.missionaryAgency,
+                    agencyPhone: inputs.agencyPhone || "",
                     bio: "",
                     profilePicture: "",
                     createdAt: serverTimestamp(),
@@ -103,18 +111,35 @@ function useAdminRegistrationWithEmailAndPassword() {
                         await setDoc(doc(db, "following", newUser.user.uid), {});
                         await setDoc(doc(db, "posts", newUser.user.uid), {});
 
-                        const actionCodeSettings = {
-                            url: 'http://localhost:5173/resetPassword',
-                            handleCodeInApp: true,
+                        // Ensure pastor fields are not undefined
+                        const pastorData = {
+                            pastorName: inputs.pastorName || "",
+                            pastorPhone: inputs.pastorPhone || "",
+                            faithCommunity: inputs.faithCommunity || "",
+                            churchPhone: inputs.churchPhone || ""
                         };
+
+                        // Create a unique ID for the pastor
+                        const pastorDocRef = doc(collection(db, "pastors"));
+                        await setDoc(pastorDocRef, pastorData);
+
+                        // Ensure church fields are not undefined
+                        const churchData = {
+                            faithCommunity: inputs.faithCommunity || "",
+                            churchPhone: inputs.churchPhone || ""
+                        };
+
+                        // Create a unique ID for the church
+                        const churchDocRef = doc(collection(db, "churches"));
+                        await setDoc(churchDocRef, churchData);
 
                         const answer = await fetch('/api/generateResetLink', {
                             method: 'POST',
                             headers: {
                               'Content-Type': 'application/json',
                             },
-                            body: JSON.stringify({ email: inputs.email }),
-                          });
+                            body: JSON.stringify({ email: inputs.emailForm }),
+                        });
                         
                         if (!answer.ok) {
                             let errorData = { message: 'Unknown error' };
@@ -136,7 +161,7 @@ function useAdminRegistrationWithEmailAndPassword() {
                         const msg = {
                             personalizations: [
                               {
-                                to: [{ email: inputs.email }],
+                                to: [{ email: inputs.emailForm }],
                                 subject: "Mission App - Parabéns !",
                               },
                             ],

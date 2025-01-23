@@ -1,9 +1,12 @@
-import { Avatar, Box, Button, Flex, Text } from '@chakra-ui/react'
-import React from 'react'
-import { useState } from 'react'
+import { Avatar, Box, Button, Flex, Text } from '@chakra-ui/react';
+import React from 'react';
+import { useState } from 'react';
+import { useAuth } from '../../../../context/AuthContext';
 
 function PostHeader() {
-  const[isFollowing, setIsFollowing] = useState(false)
+  const[isFollowing, setIsFollowing] = useState(false);
+  const authUser = useAuth();
+
   return (
     <Flex
     justifyContent={"space-between"}
@@ -35,22 +38,24 @@ function PostHeader() {
                 </Box>
             </Flex>
         </Flex>
-        <Box
-        cursor={"pointer"}
-        >
-            <Button
-            size={"xs"}
-            bg={"transparent"}
-            fontSize={"16"}
-            color={"orange.500"}
-            fontWeight={"bold"}
-            _hover={{color: "orange.700"}}
-            transition={"0.2s in ease-in-out"}
-            onClick={() => setIsFollowing(!isFollowing)}
+        {authUser && authUser.role !== "missionary" ? (
+            <Box
+            cursor={"pointer"}
             >
-                {isFollowing ? "Seguindo" : "Seguir"}
-            </Button>
-        </Box>
+                <Button
+                size={"xs"}
+                bg={"transparent"}
+                fontSize={"16"}
+                color={"orange.500"}
+                fontWeight={"bold"}
+                _hover={{color: "orange.700"}}
+                transition={"0.2s in ease-in-out"}
+                onClick={() => setIsFollowing(!isFollowing)}
+                >
+                    {isFollowing ? "Seguindo" : "Seguir"}
+                </Button>
+            </Box>
+        ) : null}
     </Flex>
   )
 }

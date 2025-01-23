@@ -18,7 +18,7 @@ function useResetPassword() {
             });
             toast({
                 title: "Success",
-                description: "Senha de redefinição enviada com sucesso",
+                description: "Senha enviada com sucesso",
                 status: "success",
                 duration: 8000,
                 isClosable: true,

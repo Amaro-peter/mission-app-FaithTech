@@ -9,6 +9,7 @@ import ProfilePosts from '../../../components/MissionaryComponents/Posts/Profile
 import SelectPostType from '../../../components/MissionaryComponents/Posts/SelectPostType/SelectPostType';
 import FeedPosts from '../../../components/MissionaryComponents/Posts/FeedPosts/FeedPosts';
 import { useParams } from 'react-router-dom';
+import { useAuth } from '../../../context/AuthContext';
 
 function HomePage({errorMessage, setErrorMessage}) {
   const {username} = useParams();
@@ -16,6 +17,7 @@ function HomePage({errorMessage, setErrorMessage}) {
   const[myPosts, setMyPosts] = useState('Meu feed')
   const toast = useToast();
   const toastId = 'error-toast';
+  const authUser = useAuth();  
 
   const handleSelectionPostTabClick = (tab) => {
     setMyPosts(tab);
@@ -67,7 +69,7 @@ function HomePage({errorMessage, setErrorMessage}) {
             <Box flex={2} mt={10}>
               <MissionaryHeader activeTab={activeTab} handleTabClick={handleTabClick} />
             </Box>
-            { activeTab === 'Postagens' ? (
+            { activeTab === 'Postagens' && authUser.role === "missionary" ? (
               <Box>
                 <SelectPostType myPosts={myPosts} handleSelectionPostTabClick={handleSelectionPostTabClick} />
               </Box>
@@ -76,9 +78,9 @@ function HomePage({errorMessage, setErrorMessage}) {
             <Box>
               {activeTab === 'Meu projeto' && <MyWork />}
               {activeTab === 'Campanha' && <Campaign />}
-              {activeTab === 'Postagens' && <NewPost />}
+              {activeTab === 'Postagens' && authUser.role === "missionary" && <NewPost />}
             </Box>
-            {activeTab === 'Postagens' ? (
+            {activeTab === 'Postagens' && authUser.role === "missionary" ? (
               <>
               {myPosts === 'Meu feed' && 
               
@@ -94,7 +96,11 @@ function HomePage({errorMessage, setErrorMessage}) {
 
               </>
               
-            ) : (null)}
+            ) : (
+              <>
+                {activeTab === 'Postagens' && <ProfilePosts />}
+              </>
+            )}
           </VStack>
         </Container>
         <Divider w={"full"} h={"2px"} bg={"gray"} mt={10} />

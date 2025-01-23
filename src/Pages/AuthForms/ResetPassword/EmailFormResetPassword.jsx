@@ -40,7 +40,7 @@ function ResetPassword() {
                         >
                             <Box justifyContent={"center"} alignItems={"center"} gap={2} my={2} w={"full"}>
                                 <Text textAlign={"center"} fontSize="2xl" fontWeight={"bold"} fontFamily={"Inter, sans-serif"}>
-                                    Redefina sua senha
+                                    Defina sua nova senha
                                 </Text>
                             </Box>
 
@@ -55,7 +55,7 @@ function ResetPassword() {
                             flexDirection="column"
                             >
                                 <Text justifyContent={"center"} textAlign={"center"} fontSize="17px" fontFamily={"Inter, sans-serif"}>
-                                    Coloque seu email para receber um link de redefinição de senha
+                                    Coloque seu email para receber um link de definição de senha.
                                 </Text>
                             </Box>
 
@@ -93,7 +93,7 @@ function ResetPassword() {
                                 isLoading={loading}
                                 onClick={handleSubmit}
                                 >
-                                    Enviar link de redefinição
+                                    Enviar link de definição
                                 </Button>
                             </VStack>
                         </Box>

@@ -1,15 +1,18 @@
 import { Box, Button, Flex, VStack, Text, Spacer, Image, Avatar, AvatarGroup, Divider, Container, useMediaQuery } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
+import { useAuth } from '../../../context/AuthContext';
 
 function MissionaryHeader({activeTab, handleTabClick}) {
   const[fontSize, setFontSize] = useState("16px");
   const [isLargerThan360] = useMediaQuery("(min-width: 371px)");
+  const authUser = useAuth();
+
 
   useEffect(() => {
     const handleResize = () => {
-      const zoomLevel = 1
-      const width = window.innerWidth
-      let newFontSize
+      const zoomLevel = 1;
+      const width = window.innerWidth;
+      let newFontSize;
 
       if(width <= 320){
         newFontSize = 10 * zoomLevel + 'px' 
@@ -26,12 +29,12 @@ function MissionaryHeader({activeTab, handleTabClick}) {
       setFontSize(newFontSize)
     }
 
-    window.addEventListener('resize', handleResize)
+    window.addEventListener('resize', handleResize);
     handleResize()
     return () => {
-      window.removeEventListener('resize', handleResize)
+      window.removeEventListener('resize', handleResize);
     }
-  }, [])
+  }, []);
 
   return (
     <Container
@@ -58,50 +61,74 @@ function MissionaryHeader({activeTab, handleTabClick}) {
           gap={{base: 4, sm: 7}}
         >
           <Avatar src='' alt="Missionary" size={{base: "md", md: "lg"}} />
+
           <Flex 
           gap={4}
           >
-            <Button
-            width={"auto"}
-            height={["30px", "35px", "35px", "35px", "35px"]}
-            border={"2px solid black"}
-            borderRadius={50}
-            backgroundColor={"#FFEFE7"}
-            _hover={{background: "#FFB999"}}
-            >
-              <Text fontSize={fontSize}>
-                Seguir
-              </Text>
-            </Button>
-            <Button
-            width={"auto"}
-            height={["30px", "35px", "35px", "35px", "35px"]}
-            border={"2px solid black"}
-            borderRadius={50}
-            backgroundColor={"#FFEFE7"}
-            _hover={{background: "#FFB999"}}
-            >
-              <Text fontSize={fontSize}>
-                Apoiar
-              </Text>
-            </Button>
+            { authUser && authUser.role === "missionary" ? (
+              <>
+                <Button
+              width={"auto"}
+              height={["30px", "35px", "35px", "35px", "35px"]}
+              border={"2px solid black"}
+              borderRadius={50}
+              backgroundColor={"#FFEFE7"}
+              _hover={{background: "#FFB999"}}
+              >
+                <Text fontSize={fontSize}>
+                  Seguidores
+                </Text>
+              </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                width={"auto"}
+                height={["30px", "35px", "35px", "35px", "35px"]}
+                border={"2px solid black"}
+                borderRadius={50}
+                backgroundColor={"#FFEFE7"}
+                _hover={{background: "#FFB999"}}
+                >
+                  <Text fontSize={fontSize}>
+                    Seguir
+                  </Text>
+                </Button>
+                <Button
+                width={"auto"}
+                height={["30px", "35px", "35px", "35px", "35px"]}
+                border={"2px solid black"}
+                borderRadius={50}
+                backgroundColor={"#FFEFE7"}
+                _hover={{background: "#FFB999"}}
+                >
+                  <Text fontSize={fontSize}>
+                    Doar
+                  </Text>
+                </Button>
+              </>
+            )}
 
-            <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            _hover={{ background: "gray.400", borderRadius: "50%" }}
-            width="50px"
-            height="50px"
-            >
-              <Image 
-              src='./pencil_editor.png' 
-              alt="Missionary" 
-              width="30px" 
-              height="30px" 
-              cursor={"pointer"} 
-              />
-            </Box>
+            {authUser && authUser.role === "missionary" ? (
+              <>
+                <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                _hover={{ background: "gray.400", borderRadius: "50%" }}
+                width="50px"
+                height="50px"
+                >
+                  <Image 
+                  src='./pencil_editor.png' 
+                  alt="Missionary" 
+                  width="30px" 
+                  height="30px" 
+                  cursor={"pointer"} 
+                  />
+                </Box>
+              </>
+            ) : null}
           </Flex>
         </Flex>
         <Flex direction={"column"}
@@ -150,10 +177,10 @@ function MissionaryHeader({activeTab, handleTabClick}) {
             textOverflow={"ellipsis"}
             whiteSpace={"nowrap"}
             >
-              <Text fontSize={fontSize}>
-                Compartilhar
-              </Text>
-            </Button>
+            <Text fontSize={fontSize}>
+              Compartilhar
+            </Text>
+          </Button>
             <Button
             width={"auto"}
             height={["30px", "35px", "35px", "35px", "35px"]}
@@ -170,21 +197,26 @@ function MissionaryHeader({activeTab, handleTabClick}) {
               </Text>
             </Button>
 
-            <Button
-            width={"auto"}
-            height={["30px", "35px", "35px", "35px", "35px"]}
-            border={"2px solid black"}
-            borderRadius={50}
-            backgroundColor={"#FFEFE7"}
-            _hover={{background: "#FFB999"}}
-            overflow={"hidden"}
-            textOverflow={"ellipsis"}
-            whiteSpace={"nowrap"}
-            >
-              <Text fontSize={fontSize}>
-                Área de doações
-              </Text>
-            </Button>
+            {authUser && authUser.role === "missionary" ? (
+              <>
+                <Button
+                width={"auto"}
+                height={["30px", "35px", "35px", "35px", "35px"]}
+                border={"2px solid black"}
+                borderRadius={50}
+                backgroundColor={"#FFEFE7"}
+                _hover={{background: "#FFB999"}}
+                overflow={"hidden"}
+                textOverflow={"ellipsis"}
+                whiteSpace={"nowrap"}
+                >
+                  <Text fontSize={fontSize}>
+                    Área de doações
+                  </Text>
+                </Button>
+              </>
+            ) : null}
+
         </Flex>
         <Divider my={3} mx={-4} width={"calc(100% + 32px)"} h={"1px"} bg={"black"} />
         <Flex

@@ -1,23 +1,29 @@
-import { Alert, AlertIcon, Button, Input, InputGroup, InputRightElement } from '@chakra-ui/react';
+import { Alert, AlertIcon, Button, Box, FormControl, FormLabel, Input, InputGroup, InputRightElement } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react'
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import useAdminRegistrationWithEmailAndPassword from '../../../hooks/useAdminRegistrationWithEmailAndPassword';
 import { useNavigate } from 'react-router-dom';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
 function AdminRegistersMissionary() {
   const [inputs, setInputs] = useState({
     fullName: "",
     username: "",
-    email:"",
+    emailForm:"",
     faithCommunity: "",
     missionaryAgency: "",
-    password:"",
+    agencyPhone: "",
+    phoneNumber: "",
+    pastorName: "",
+    pastorPhone: "",
+    churchPhone: "",
+    password: "",
   });
 
   const[showPassword, setShowPassword] = useState(false);
   const {signUp, errorMessage, setErrorMessage, loading} = useAdminRegistrationWithEmailAndPassword();
 
-  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -28,7 +34,35 @@ function AdminRegistersMissionary() {
     if(errorMessage) {
       setErrorMessage(null);
     }
-  }
+  };
+
+  const handlePhoneNumberChange = (value) => {
+    setInputs({
+      ...inputs,
+      phoneNumber: value,
+    });
+  };
+
+  const handlePastorPhoneChange = (value) => {
+    setInputs({
+      ...inputs,
+      pastorPhone: value,
+    });
+  };
+
+  const handleAgencyPhoneChange = (value) => {
+    setInputs({
+      ...inputs,
+      agencyPhone: value,
+    });
+  };
+
+  const handleChurchPhoneNumberChange = (value) => {
+    setInputs({
+      ...inputs,
+      churchPhone: value,
+    });
+  };
 
   useEffect(() => {
     //
@@ -53,13 +87,34 @@ function AdminRegistersMissionary() {
     _focus={{border: "1px solid black", outline: "none"}}
     fontSize={20}
     type='email'
-    value={inputs.email}
+    value={inputs.emailForm}
     size={"sm"}
-    onChange={(e) => setInputs({...inputs, email: e.target.value})}
+    onChange={(e) => setInputs({...inputs, emailForm: e.target.value})}
     onFocus={handleInputFocus}
     />
     <Input 
-    placeholder='Username'
+    placeholder='Telefone do missionário'
+    sx={{
+      '::placeholder': {
+        color: 'rgba(0, 0, 0, 0.5)', // Gray blended with black
+      },
+      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Softer shadow
+    }}
+    border={"1px solid #b0b0b0"}
+    width="100%" // Responsive width
+    height= '40px' // Fixed height
+    borderRadius= '4px' // Rounded corners
+    _hover={{border: "1px solid black"}}
+    _focus={{border: "1px solid black", outline: "none"}}
+    fontSize={20}
+    type='email'
+    value={inputs.phoneNumber}
+    size={"sm"}
+    onChange={(e) => setInputs({...inputs, phoneNumber: e.target.value})}
+    onFocus={handleInputFocus}
+    />
+    <Input 
+    placeholder='Nome de usuário'
     sx={{
       '::placeholder': {
         color: 'rgba(0, 0, 0, 0.5)', // Gray blended with black
@@ -80,7 +135,7 @@ function AdminRegistersMissionary() {
     onFocus={handleInputFocus}
     />
     <Input 
-    placeholder='Full Name'
+    placeholder='Nome Completo'
     sx={{
       '::placeholder': {
         color: 'rgba(0, 0, 0, 0.5)', // Gray blended with black
@@ -115,11 +170,74 @@ function AdminRegistersMissionary() {
       _hover={{border: "1px solid black"}}
       fontSize={20}
       type="email"
-      value={inputs.missionaryAgency}
+      value={inputs.faithCommunity}
       size={"sm"}
       color={"black"}
-      onChange={(e) => setInputs({...inputs, missionaryAgency: e.target.value})}
+      onChange={(e) => setInputs({...inputs, faithCommunity: e.target.value})}
       onFocus={handleInputFocus}
+    />
+    <Input 
+      placeholder="Nome do Pastor"
+      sx={{
+        "::placeholder": {
+          color: "rgba(0, 0, 0, 0.5)",
+        },
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+      }}
+      border={"1px solid #b0b0b0"}
+      width={"100%"}
+      height={"40px"}
+      borderRadius={"4px"}
+      _hover={{border: "1px solid black"}}
+      fontSize={20}
+      type="email"
+      value={inputs.pastorName}
+      size={"sm"}
+      color={"black"}
+      onChange={(e) => setInputs({...inputs, pastorName: e.target.value})}
+      onFocus={handleInputFocus}
+    />
+    <Input 
+    placeholder='Telefone do pastor'
+    sx={{
+      '::placeholder': {
+        color: 'rgba(0, 0, 0, 0.5)', // Gray blended with black
+      },
+      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Softer shadow
+    }}
+    border={"1px solid #b0b0b0"}
+    width="100%" // Responsive width
+    height= '40px' // Fixed height
+    borderRadius= '4px' // Rounded corners
+    _hover={{border: "1px solid black"}}
+    _focus={{border: "1px solid black", outline: "none"}}
+    fontSize={20}
+    type='email'
+    value={inputs.pastorPhone}
+    size={"sm"}
+    onChange={(e) => setInputs({...inputs, pastorPhone: e.target.value})}
+    onFocus={handleInputFocus}
+    />
+    <Input 
+    placeholder='Telefone da igreja'
+    sx={{
+      '::placeholder': {
+        color: 'rgba(0, 0, 0, 0.5)', // Gray blended with black
+      },
+      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Softer shadow
+    }}
+    border={"1px solid #b0b0b0"}
+    width="100%" // Responsive width
+    height= '40px' // Fixed height
+    borderRadius= '4px' // Rounded corners
+    _hover={{border: "1px solid black"}}
+    _focus={{border: "1px solid black", outline: "none"}}
+    fontSize={20}
+    type='email'
+    value={inputs.churchPhone}
+    size={"sm"}
+    onChange={(e) => setInputs({...inputs, churchPhone: e.target.value})}
+    onFocus={handleInputFocus}
     />
     <Input 
       placeholder="Agência missionária"
@@ -136,11 +254,33 @@ function AdminRegistersMissionary() {
       _hover={{border: "1px solid black"}}
       fontSize={20}
       type="email"
-      value={inputs.faithCommunity}
+      value={inputs.missionaryAgency}
       size={"sm"}
       color={"black"}
-      onChange={(e) => setInputs({...inputs, faithCommunity: e.target.value})}
+      onChange={(e) => setInputs({...inputs, missionaryAgency: e.target.value})}
       onFocus={handleInputFocus}
+    />
+
+<Input 
+    placeholder='Telefone da agência'
+    sx={{
+      '::placeholder': {
+        color: 'rgba(0, 0, 0, 0.5)', // Gray blended with black
+      },
+      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Softer shadow
+    }}
+    border={"1px solid #b0b0b0"}
+    width="100%" // Responsive width
+    height= '40px' // Fixed height
+    borderRadius= '4px' // Rounded corners
+    _hover={{border: "1px solid black"}}
+    _focus={{border: "1px solid black", outline: "none"}}
+    fontSize={20}
+    type='email'
+    value={inputs.agencyPhone}
+    size={"sm"}
+    onChange={(e) => setInputs({...inputs, agencyPhone: e.target.value})}
+    onFocus={handleInputFocus}
     />
     <InputGroup>
       <Input 
@@ -194,7 +334,7 @@ function AdminRegistersMissionary() {
         {errorMessage}
       </Alert>
     )}
-    </>
+    </> 
   )
 }
 
