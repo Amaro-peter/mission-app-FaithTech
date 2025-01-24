@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import Login from '../../../components/AuthForms/MissionaryForms/MissionaryLogin'
 import SignUp from '../../../components/AuthForms/MissionaryForms/MissionarySignUp'
 import { Link } from 'react-router-dom'
+import DonorSignUp from '../../../components/AuthForms/DonorForms/DonorSignUp'
 
 function AuthDonorForm() {
   const [isLogin, setIsLogin] = useState(true)
@@ -42,42 +43,8 @@ function AuthDonorForm() {
                         )}
 
                         <VStack spacing={4}>
-                            {isLogin ? <Login /> : <SignUp />}
+                            {isLogin ? <Login /> : <DonorSignUp />}
                         </VStack>
-
-                        {/* OR text */ }
-                        <Flex 
-                        alignItems={"center"} 
-                        justifyContent={"center"}
-                        my={4}
-                        gap={1}
-                        w={"full"}
-                        >
-                            <Box flex={2} h={"1px"} bg={"black"} />
-                            <Text mx={1} color={"black"}
-                            fontFamily={"Inter, sans-serif"}
-                            fontWeight={"bold"}
-                            >
-                                OU
-                            </Text>
-                            <Box flex={2} h={"1px"} bg={"black"} />
-                        </Flex>
-                        <Flex 
-                        justifyContent={"center"}
-                        alignItems={"center"}
-                        gap={2}
-                        my={1}
-                        w={"full"}
-                        >
-                            <Image src={"./googleLogo.png"} h={"6"} alt={"Google"} cursor={"pointer"} />
-                            <Text color={"blue.600"}
-                            fontSize="20px"
-                            fontFamily={"Inter, sans-serif"}
-                            cursor={"pointer"}
-                            >
-                                Sign in with Google
-                            </Text>
-                        </Flex>
 
                         {isLogin ? (
                             <Flex justifyContent={"center"} alignItems={"center"} gap={2} marginTop={7} w={"full"}>
@@ -97,7 +64,7 @@ function AuthDonorForm() {
                                 "Não tem conta?" : "Já tem uma conta?"}
                             </Box>
                             <Box onClick={() => setIsLogin(!isLogin)} fontSize={20} fontFamily={"Inter, sans-serif"} color={"orange.600"} cursor={"pointer"}>
-                                {isLogin ? "Sign up" : "Log in"}
+                                {isLogin ? "Cadastre-se" : "Log in"}
                             </Box>
                         </Flex>
                         

@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Input, InputGroup, InputRightElement, Text } from "@chakra-ui/react"
+import { Box, Button, Flex, Textarea, Input, InputGroup, InputRightElement, Text } from "@chakra-ui/react"
 import { useState } from "react"
 import { CommentLogo, NotificationsLogo, UnlikeLogo } from "../../../../assets/constants"
 
@@ -45,30 +45,30 @@ function PostFooter() {
             Veja todos os 10 comentários
         </Text>
         <Flex
-        alignItems={"center"}
+        direction={"column"}
+        alignItems={"start"}
         gap={2}
         justifyContent={"space-between"}
         w={"full"}
         >
             <InputGroup>
-                <Input 
+                <Textarea
                 variant={"flushed"}
                 placeholder={"Escreva um comentário..."}
                 fontSize={"14"}
+                resize={"vertical"}
                 />
-                <InputRightElement>
-                    <Button
-                    fontSize={"14"}
-                    color={"orange.500"}
-                    fontWeight={"600"}
-                    cursor={"pointer"}
-                    _hover={{color: "orange.800"}}
-                    bg={"transparent"}
-                    >
-                        Postar
-                    </Button>
-                </InputRightElement>
             </InputGroup>
+            <Button
+            fontSize={"14"}
+            color={"orange.500"}
+            fontWeight={"600"}
+            cursor={"pointer"}
+            _hover={{color: "orange.800"}}
+            bg={"transparent"}
+            >
+                Postar
+            </Button>
         </Flex>
     </Box>
   )

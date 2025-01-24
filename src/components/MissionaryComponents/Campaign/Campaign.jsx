@@ -162,4 +162,4 @@ function Campaign() {
   )
 }
 
-export default Campaign
+export default Campaign;
