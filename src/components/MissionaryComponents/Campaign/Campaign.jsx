@@ -1,9 +1,14 @@
 import { Flex, Box, Button, Text, Image, Container } from "@chakra-ui/react";
 import { useAuth } from "../../../context/AuthContext";
 import useAuthStore from "../../../store/authStore";
+import useUserProfileStore from "../../../store/useProfileStore";
 
 function Campaign() {
-  const authUser = useAuthStore(state => state.user);
+  const authUser = useAuth();
+  const {userProfile} = useUserProfileStore();
+
+  const visitingOwnProfileAndAuth = authUser && authUser.username === userProfile.username;
+
   return (
     <Container
     maxW={"container.lg"}
@@ -35,24 +40,20 @@ function Campaign() {
             Campanha
           </Text>
 
-          {authUser && authUser.role === "missionary" ? (
+          {visitingOwnProfileAndAuth ? (
             <>
-              <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              _hover={{ background: "gray.400", borderRadius: "50%" }}
-              width="50px"
-              height="50px"
-              >
-                <Image 
-                  src='./pencil_editor.png' 
-                  alt="Missionary" 
-                  width="30px" 
-                  height="30px" 
-                  cursor={"pointer"} 
-                  />
-              </Box>
+              <Button
+                width={"auto"}
+                height={["30px", "35px", "35px", "35px", "35px"]}
+                border={"2px solid black"}
+                borderRadius={50}
+                backgroundColor={"#FFEFE7"}
+                _hover={{background: "#FFB999"}}
+                >
+                  <Text fontSize={"auto"}>
+                    Editar
+                  </Text>
+                </Button>
             </>
           ) : null}
         </Flex>

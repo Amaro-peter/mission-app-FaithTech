@@ -3,12 +3,17 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { base } from 'framer-motion/client';
 import useAuthStore from '../../../store/authStore';
+import useGetUserProfileByUsername from '../../../hooks/useGetUserProfileByUsername';
+import { useParams } from 'react-router-dom';
 
 function MissionaryHeader({activeTab, handleTabClick}) {
   const[fontSize, setFontSize] = useState("16px");
   const [isLargerThan360] = useMediaQuery("(min-width: 371px)");
-  const authUser = useAuthStore(state => state.user);
+  const authUser = useAuth();
+  const {username} = useParams();
+  const {isLoading, userProfile} = useGetUserProfileByUsername(username);
 
+  const visitingMyOwnProfileAndAuth = authUser && authUser.username === userProfile?.username;
 
   useEffect(() => {
     const handleResize = () => {
@@ -17,7 +22,7 @@ function MissionaryHeader({activeTab, handleTabClick}) {
       let newFontSize;
 
       if(width <= 320){
-        newFontSize = 10 * zoomLevel + 'px' 
+        newFontSize = 10 * zoomLevel + 'px'; 
       } else if (width < 480) {
         newFontSize = 12 * zoomLevel + 'px';
       } else if (width < 768) {
@@ -74,15 +79,32 @@ function MissionaryHeader({activeTab, handleTabClick}) {
             direction={"column"}
             alignItems={"start"}
             >
-                <Text
-                fontFamily={"Inter, sans-serif"}
-                fontWeight={"bold"}
-                fontSize={["20px", "25px", "30px"]}
-                whiteSpace="normal" // Allow text to wrap
-                textAlign="justify" // Justify text
-                >
-                    Samuel Mendonça
-                </Text>
+                {userProfile.role === "user" ? (
+                  <Flex
+                  alignItems={"center"}
+                  gap={2}
+                  >
+                    <Text
+                    fontFamily={"Inter, sans-serif"}
+                    fontWeight={"bold"}
+                    fontSize={["20px", "25px", "30px"]}
+                    whiteSpace="normal" // Allow text to wrap
+                    textAlign="justify" // Justify text
+                    >
+                      Samuel Mendonça
+                    </Text>
+                    <Text
+                    fontFamily={"Inter, sans-serif"}
+                    fontWeight={"bold"}
+                    fontSize={"auto"}
+                    whiteSpace="normal" // Allow text to wrap
+                    textAlign="justify" // Justify text
+                    >
+                      (usuário)
+                    </Text>
+                  </Flex>
+
+                ) : null}
 
                 <Text
                 fontFamily={"Inter, sans-serif"}
@@ -96,35 +118,10 @@ function MissionaryHeader({activeTab, handleTabClick}) {
             </Flex>
 
           </Flex>
-
-          <Flex 
-          gap={2}
-          >
-
-            {authUser && authUser.role === "user" ? (
-              <>
-                <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                _hover={{ background: "gray.400", borderRadius: "50%" }}
-                width="50px"
-                height="50px"
-                >
-                  <Image 
-                  src='./pencil_editor.png' 
-                  alt="Missionary" 
-                  width="30px" 
-                  height="30px" 
-                  cursor={"pointer"} 
-                  />
-                </Box>
-              </>
-            ) : null}
-          </Flex>
         </Flex>
 
-        <Flex direction={"column"}
+        <Flex 
+        direction={"column"}
         gap={2}
         >
          
@@ -145,47 +142,68 @@ function MissionaryHeader({activeTab, handleTabClick}) {
           >
             Vivendo para o Reino. Missionário na África do Sul.
           </Text>
+
+          {visitingMyOwnProfileAndAuth ? (
+              <>
+                <Button
+                width={"auto"}
+                maxWidth={"30%"}
+                height={"auto"}
+                paddingY={2} // Add vertical padding
+                paddingX={4} // Add horizontal padding
+                border={"2px solid black"}
+                borderRadius={50}
+                backgroundColor={"#FFEFE7"}
+                _hover={{background: "#FFB999"}}
+                >
+                  <Text fontSize={"auto"}>
+                    Editar
+                  </Text>
+                </Button>
+              </>
+            ) : null}
         </Flex>
 
         <Divider my={3} mx={-4} width={"calc(100% + 32px)"} h={"1px"} bg={"black"} />
         
-        <Flex
-        direction={isLargerThan360 ? "row" : "column"}
-        width={"full"}
-        justifyContent={{ base: "center", md: "space-between" }}
-        alignItems={"center"}
-        gap={{ base: 4, md: 2 }}
-        >
-          {['Feed', 'Explore novos projetos'].map((tab) => (
-            <VStack
-              align={"stretch"}
-              key={tab}
-              width={{ base: "full", md: "auto" }}
-            >
-              <Button
-                onClick={() => handleTabClick(tab)}
-                cursor="pointer"
-                background={"transparent"}
+        {visitingMyOwnProfileAndAuth ? 
+          <Flex
+          direction={isLargerThan360 ? "row" : "column"}
+          width={"full"}
+          justifyContent={{ base: "center", md: "space-between" }}
+          alignItems={"center"}
+          gap={{ base: 4, md: 2 }}
+          >
+            {['Feed', 'Explore novos projetos'].map((tab) => (
+              <VStack
+                align={"stretch"}
+                key={tab}
                 width={{ base: "full", md: "auto" }}
               >
-                <Text
-                  fontSize={{ base: "sm", md: "md" }}
-                  fontWeight={activeTab === tab ? "bold" : "normal"}
+                <Button
+                  onClick={() => handleTabClick(tab)}
+                  cursor="pointer"
+                  background={"transparent"}
+                  width={{ base: "full", md: "auto" }}
                 >
-                  {tab}
-                </Text>
-              </Button>
-              {activeTab === tab && (
-                <Box
-                  height={"2px"}
-                  bg={"#E89871"}
-                  width="100%"
-                  mt={1}
-                />
-              )}
-            </VStack>
-          ))}
-        </Flex>
+                  <Text
+                    fontSize={{ base: "sm", md: "md" }}
+                    fontWeight={activeTab === tab ? "bold" : "normal"}
+                  >
+                    {tab}
+                  </Text>
+                </Button>
+                {activeTab === tab && (
+                  <Box
+                    height={"2px"}
+                    bg={"#E89871"}
+                    width="100%"
+                    mt={1}
+                  />
+                )}
+              </VStack>
+            ))}
+          </Flex> : null}
       </Flex>
     </Container>
   )

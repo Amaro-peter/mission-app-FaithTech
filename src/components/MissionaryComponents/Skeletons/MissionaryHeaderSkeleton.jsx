@@ -6,7 +6,7 @@ import useAuthStore from '../../../store/authStore';
 function MissionaryHeaderSkeleton() {
   const[fontSize, setFontSize] = useState("16px");
   const [isLargerThan360] = useMediaQuery("(min-width: 371px)");
-  const authUser = useAuthStore(state => state.user);
+  const authUser = useAuth();
 
 
   useEffect(() => {

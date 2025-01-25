@@ -7,13 +7,15 @@ import HomePageFooter from '../../../components/HomePageFooter/HomePageFooter';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import useAuthStore from '../../../store/authStore.js';
+import useGetUserProfileByUsername from '../../../hooks/useGetUserProfileByUsername';
 
 function HomePage({errorMessage, setErrorMessage}) {
   const {username} = useParams();
   const[activeTab, setActiveTab] = useState('Feed');
   const toast = useToast();
   const toastId = 'error-toast';
-  const authUser = useAuthStore(state => state.user);  
+  const authUser = useAuth(); 
+
 
   const handleSelectionPostTabClick = (tab) => {
     setMyPosts(tab);

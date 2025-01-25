@@ -3,10 +3,15 @@ import React from 'react';
 import { useState } from 'react';
 import { useAuth } from '../../../../context/AuthContext';
 import useAuthStore from '../../../../store/authStore';
+import useUserProfileStore from '../../../../store/useProfileStore';
 
 function PostHeader() {
   const[isFollowing, setIsFollowing] = useState(false);
-  const authUser = useAuthStore(state => state.user);
+  const authUser = useAuth();
+
+  const{userProfile} = useUserProfileStore();
+
+  const visitingAnotherProfileAndAuth = authUser && authUser.username !== userProfile.username;
 
   return (
     <Flex
@@ -39,7 +44,7 @@ function PostHeader() {
                 </Box>
             </Flex>
         </Flex>
-        {authUser && authUser.role !== "missionary" ? (
+        {visitingAnotherProfileAndAuth ? (
             <Box
             cursor={"pointer"}
             >

@@ -20,7 +20,7 @@ function HomePage({username, errorMessage, setErrorMessage}) {
   const[myPosts, setMyPosts] = useState('Meu feed');
   const toast = useToast();
   const toastId = 'error-toast';
-  const authUser = useAuthStore(state => state.user);
+  const authUser = useAuth();
   const userNotFound = !isLoading && !userProfile;
 
   if(userNotFound) {

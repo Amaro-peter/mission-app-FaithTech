@@ -244,8 +244,10 @@ function UsernameRoute({ isMissionary, authUser }) {
 
   if(isMissionary && authUser.username === username) {
     return <MissionaryHomePage username={username} errorMessage={errorMessage} setErrorMessage={setErrorMessage} />;
-  } else if(isMissionary && authUser.username !== username) {
-    return <Navigate to={`/${userProfile.username}`} />;
+  } else if(isMissionary && authUser.username !== username && userProfile.role === "missionary") {
+    return <MissionaryHomePage username={username} errorMessage={errorMessage} setErrorMessage={setErrorMessage} />;
+  } else if(isMissionary && authUser.username !== username && userProfile.role === "user") {
+    return <DonorHomePage username={username} errorMessage={errorMessage} setErrorMessage={setErrorMessage} />;
   } else {
     return <Navigate to="/landingPage" />;
   }
@@ -289,8 +291,10 @@ function UserDonorRoute({ isUser, authUser }) {
 
   if(isUser && authUser.username === username) {
     return <DonorHomePage username={username} errorMessage={errorMessage} setErrorMessage={setErrorMessage} />;
-  } else if(isUser && authUser.username !== username) {
+  } else if(isUser && authUser.username !== username && userProfile.role === "missionary") {
     return <MissionaryHomePage username={username} errorMessage={errorMessage} setErrorMessage={setErrorMessage} />;
+  } else if(isUser && authUser.username !== username && userProfile.role === "user") {
+    return <DonorHomePage username={username} errorMessage={errorMessage} setErrorMessage={setErrorMessage} />;
   } else {
     return <Navigate to="/landingPage" />;
   }

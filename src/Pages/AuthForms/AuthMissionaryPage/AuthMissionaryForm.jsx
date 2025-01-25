@@ -49,7 +49,7 @@ function AuthMissionaryForm() {
                     ) : "Já tem uma conta?"}
                 </Box>
                 <Box onClick={() => setIsLogin(!isLogin)} fontSize={20} fontFamily={"Inter, sans-serif"} color={"orange.600"} cursor={"pointer"}>
-                  {isLogin ? "Aplique-se hoje mesmo e faça a diferença!" : "Login"}
+                  {isLogin ? "Aplique-se!" : "Login"}
                 </Box>
               </VStack>            
             </Box>
@@ -105,7 +105,7 @@ function AuthMissionaryForm() {
                     _hover={{ background: "#FF8866" }}
                     onClick={() => navigate('/resetForm')}
                   >
-                    Não sabe a senha? Pimeiro acesso aqui!
+                    Pimeiro acesso aqui
                   </Button>        
                 </VStack>
               ) : null }

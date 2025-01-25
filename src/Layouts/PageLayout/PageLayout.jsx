@@ -78,6 +78,7 @@ function PageLayout({children, loading, authUser}) {
   }, [])
 
   return (
+    <AuthProvider authUser={authUser}>
       <VStack minH={"100vh"} spacing={0}>
         {canRenderNavBar && showNavBar && (
           <Box w={"full"} justifyContent={"center"} alignItems={"center"}
@@ -128,6 +129,7 @@ function PageLayout({children, loading, authUser}) {
           <BottomBar />
         )}        
       </VStack>
+    </AuthProvider>
   )
 }
 

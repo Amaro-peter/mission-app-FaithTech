@@ -2,9 +2,13 @@ import { Flex, Text, Box, Image, Button, Container } from '@chakra-ui/react';
 import React from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import useAuthStore from '../../../store/authStore';
+import useUserProfileStore from '../../../store/useProfileStore';
 
 function MyWork() {
-    const authUser = useAuthStore(state => state.user);
+    const authUser = useAuth();
+    const {userProfile} = useUserProfileStore();
+
+    const visitingOwnProfileAndAuth = authUser && authUser.username === userProfile.username;
 
   return (
     <Container
@@ -39,24 +43,20 @@ function MyWork() {
                     Projeto de impacto
                 </Text>
 
-                {authUser && authUser.role === "missionary" ? (
+                {visitingOwnProfileAndAuth ? (
                     <>
-                        <Box
-                        display="flex"
-                        justifyContent="center"
-                        alignItems="center"
-                        _hover={{ background: "gray.400", borderRadius: "50%" }}
-                        width="50px"
-                        height="50px"
+                        <Button
+                        width={"auto"}
+                        height={["30px", "35px", "35px", "35px", "35px"]}
+                        border={"2px solid black"}
+                        borderRadius={50}
+                        backgroundColor={"#FFEFE7"}
+                        _hover={{background: "#FFB999"}}
                         >
-                            <Image 
-                            src='./pencil_editor.png' 
-                            alt="Missionary" 
-                            width="30px" 
-                            height="30px" 
-                            cursor={"pointer"} 
-                            />
-                        </Box>
+                            <Text fontSize={"auto"}>
+                                Editar
+                            </Text>
+                        </Button>
                     </>
                 ) : null}
 
@@ -73,7 +73,7 @@ function MyWork() {
                     Missões na África do Sul
                 </Text>
                 <Text
-                fontSize={"md"}
+                fontSize={"auto"}
                 fontFamily={"Inter, sans-serif"}
                 whiteSpace="normal" // Allow text to wrap
                 textAlign="justfied" // Justify text
