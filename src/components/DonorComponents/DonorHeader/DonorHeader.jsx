@@ -2,11 +2,12 @@ import { Box, Button, Flex, VStack, Text, Spacer, Image, Avatar, AvatarGroup, Di
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { base } from 'framer-motion/client';
+import useAuthStore from '../../../store/authStore';
 
 function MissionaryHeader({activeTab, handleTabClick}) {
   const[fontSize, setFontSize] = useState("16px");
   const [isLargerThan360] = useMediaQuery("(min-width: 371px)");
-  const authUser = useAuth();
+  const authUser = useAuthStore(state => state.user);
 
 
   useEffect(() => {

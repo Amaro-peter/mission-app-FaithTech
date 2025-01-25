@@ -2,10 +2,11 @@ import { Avatar, Box, Button, Flex, Text } from '@chakra-ui/react';
 import React from 'react';
 import { useState } from 'react';
 import { useAuth } from '../../../../context/AuthContext';
+import useAuthStore from '../../../../store/authStore';
 
 function PostHeader() {
   const[isFollowing, setIsFollowing] = useState(false);
-  const authUser = useAuth();
+  const authUser = useAuthStore(state => state.user);
 
   return (
     <Flex

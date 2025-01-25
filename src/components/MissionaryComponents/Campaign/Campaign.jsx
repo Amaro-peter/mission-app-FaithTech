@@ -1,8 +1,9 @@
 import { Flex, Box, Button, Text, Image, Container } from "@chakra-ui/react";
 import { useAuth } from "../../../context/AuthContext";
+import useAuthStore from "../../../store/authStore";
 
 function Campaign() {
-  const authUser = useAuth();
+  const authUser = useAuthStore(state => state.user);
   return (
     <Container
     maxW={"container.lg"}

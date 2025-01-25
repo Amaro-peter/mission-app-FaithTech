@@ -96,6 +96,7 @@ function useAdminRegistrationWithEmailAndPassword() {
                     churchPhone: inputs.churchPhone || "",
                     missionaryAgency: inputs.missionaryAgency,
                     agencyPhone: inputs.agencyPhone || "",
+                    myContact: "",
                     bio: "",
                     profilePicture: "",
                     createdAt: serverTimestamp(),
@@ -109,7 +110,6 @@ function useAdminRegistrationWithEmailAndPassword() {
                         //Cria as subcoleções de seguidores, seguindo e posts
                         await setDoc(doc(db, "followers", newUser.user.uid), {});
                         await setDoc(doc(db, "following", newUser.user.uid), {});
-                        await setDoc(doc(db, "posts", newUser.user.uid), {});
 
                         // Ensure pastor fields are not undefined
                         const pastorData = {

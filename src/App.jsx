@@ -15,10 +15,10 @@ import CustomPasswordReset from "./Pages/AuthForms/ResetPassword/CustomPasswordR
 import AuthAdmin from "./Pages/AuthForms/AuthAdmin/AuthAdmin";
 import AuthRegistrationPanel from "./Pages/AuthForms/AuthAdmin/AuthRegistrationPanel";
 import AdminMissionarySignUpSucess from "./components/AuthForms/AdminForms/AdminSuccessPage";
-import useAuthStore from "./store/authStore";
 import useAuthAdminStore from "./store/authAdminStore";
 import MissionarySignUpSucess from "./components/AuthForms/MissionaryForms/MissionarySuccessPage";
 import DonorHomePage from "./Pages/HomePagesFolder/DonorHomePage/DonorHomePage";
+import useGetUserProfileByUsername from "./hooks/useGetUserProfileByUsername";
 
 function App() {
 
@@ -208,6 +208,7 @@ function App() {
 
 function UsernameRoute({ isMissionary, authUser }) {
   const { username } = useParams();
+  const {isLoading, userProfile} = useGetUserProfileByUsername(username);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -241,11 +242,18 @@ function UsernameRoute({ isMissionary, authUser }) {
     return <PageLayoutSpinner />
   }
 
-  return isMissionary ? <MissionaryHomePage errorMessage={errorMessage} setErrorMessage={setErrorMessage} /> : <Navigate to="/landingPage" />;
+  if(isMissionary && authUser.username === username) {
+    return <MissionaryHomePage username={username} errorMessage={errorMessage} setErrorMessage={setErrorMessage} />;
+  } else if(isMissionary && authUser.username !== username) {
+    return <Navigate to={`/${userProfile.username}`} />;
+  } else {
+    return <Navigate to="/landingPage" />;
+  }
 }
 
 function UserDonorRoute({ isUser, authUser }) {
   const { username } = useParams();
+  const {isLoading, userProfile} = useGetUserProfileByUsername(username);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -279,7 +287,13 @@ function UserDonorRoute({ isUser, authUser }) {
     return <PageLayoutSpinner />
   }
 
-  return isUser ? <DonorHomePage errorMessage={errorMessage} setErrorMessage={setErrorMessage} /> : <Navigate to="/landingPage" />;
+  if(isUser && authUser.username === username) {
+    return <DonorHomePage username={username} errorMessage={errorMessage} setErrorMessage={setErrorMessage} />;
+  } else if(isUser && authUser.username !== username) {
+    return <MissionaryHomePage username={username} errorMessage={errorMessage} setErrorMessage={setErrorMessage} />;
+  } else {
+    return <Navigate to="/landingPage" />;
+  }
 }
 
 function AdminRoute({ isAdmin, authUser }) {

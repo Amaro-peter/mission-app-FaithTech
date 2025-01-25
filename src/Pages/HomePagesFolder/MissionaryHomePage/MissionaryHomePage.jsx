@@ -1,4 +1,4 @@
-import { Box, Container, Divider, Flex, Select, useToast, VStack } from '@chakra-ui/react';
+import { Box, Container, Divider, Flex, Skeleton, SkeletonCircle, useToast, VStack } from '@chakra-ui/react';
 import MissionaryHeader from '../../../components/MissionaryComponents/MissionaryHeader/MissionaryHeader';
 import { useState } from 'react';
 import NewPost from '../../../components/MissionaryComponents/Posts/NewPost/NewPost';
@@ -10,14 +10,22 @@ import SelectPostType from '../../../components/MissionaryComponents/Posts/Selec
 import FeedPosts from '../../../components/MissionaryComponents/Posts/FeedPosts/FeedPosts';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
+import useGetUserProfileByUsername from '../../../hooks/useGetUserProfileByUsername';
+import MissionaryHeaderSkeleton from '../../../components/MissionaryComponents/Skeletons/MissionaryHeaderSkeleton';
+import useAuthStore from '../../../store/authStore';
 
-function HomePage({errorMessage, setErrorMessage}) {
-  const {username} = useParams();
-  const[activeTab, setActiveTab] = useState('Meu projeto')
-  const[myPosts, setMyPosts] = useState('Meu feed')
+function HomePage({username, errorMessage, setErrorMessage}) {
+  const {isLoading, userProfile} = useGetUserProfileByUsername(username);
+  const[activeTab, setActiveTab] = useState('Meu projeto');
+  const[myPosts, setMyPosts] = useState('Meu feed');
   const toast = useToast();
   const toastId = 'error-toast';
-  const authUser = useAuth();  
+  const authUser = useAuthStore(state => state.user);
+  const userNotFound = !isLoading && !userProfile;
+
+  if(userNotFound) {
+    return <UserNotFound />
+  }
 
   const handleSelectionPostTabClick = (tab) => {
     setMyPosts(tab);
@@ -38,7 +46,6 @@ function HomePage({errorMessage, setErrorMessage}) {
         isClosable: true,
         position: "top"
       })
-      setErrorMessage(null);
     }
   }
 
@@ -67,7 +74,8 @@ function HomePage({errorMessage, setErrorMessage}) {
         >
           <VStack gap={5} width="100%" align={"strecht"} >
             <Box flex={2} mt={10}>
-              <MissionaryHeader activeTab={activeTab} handleTabClick={handleTabClick} />
+              {!isLoading && userProfile && <MissionaryHeader activeTab={activeTab} handleTabClick={handleTabClick} />}
+              {isLoading && <MissionaryHeaderSkeleton />}
             </Box>
             { activeTab === 'Postagens' && authUser.role === "missionary" ? (
               <Box>
@@ -111,4 +119,17 @@ function HomePage({errorMessage, setErrorMessage}) {
 }
 
 export default HomePage;
+
+const UserNotFound = () => {
+  return (
+    <Flex flexDir={"column"} textAlign={"center"} mx={"auto"}>
+      <Text fontSize={"2x1"}>
+        User Not Found
+      </Text>
+      <Link as={RouterLink} to={`${authUser.username}`} color={"blue.500"}>
+        Go back to Home
+      </Link>
+    </Flex>
+  );
+}
 

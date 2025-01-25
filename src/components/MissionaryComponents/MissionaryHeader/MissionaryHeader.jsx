@@ -1,11 +1,19 @@
-import { Box, Button, Flex, VStack, Text, Spacer, Image, Avatar, AvatarGroup, Divider, Container, useMediaQuery } from '@chakra-ui/react';
+import { Box, Button, Flex, VStack, Text, Spacer, Image, Avatar, AvatarGroup, Divider, Container, useMediaQuery, useDisclosure } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { useAuth } from '../../../context/AuthContext';
+import useAuthStore from '../../../store/authStore';
+import useUserProfileStore from '../../../store/useProfileStore';
+import LogOut from '../../NavBarItems/LogOut';
 
 function MissionaryHeader({activeTab, handleTabClick}) {
   const[fontSize, setFontSize] = useState("16px");
   const [isLargerThan360] = useMediaQuery("(min-width: 371px)");
-  const authUser = useAuth();
+  const authUser = useAuthStore(state => state.user);
+
+  const {userProfile} = useUserProfileStore();
+  const{isOpen, onOpen, onClose} = useDisclosure();
+
+  const visitingOwnProfileAndAuth = authUser && authUser.username === userProfile.username;
+  const visitingAnotherProfileAndAuth = authUser && authUser.username !== userProfile.username;
 
 
   useEffect(() => {
@@ -65,7 +73,7 @@ function MissionaryHeader({activeTab, handleTabClick}) {
           <Flex 
           gap={4}
           >
-            { authUser && authUser.role === "missionary" ? (
+            { visitingOwnProfileAndAuth ? (
               <>
                 <Button
               width={"auto"}
@@ -108,27 +116,6 @@ function MissionaryHeader({activeTab, handleTabClick}) {
                 </Button>
               </>
             )}
-
-            {authUser && authUser.role === "missionary" ? (
-              <>
-                <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                _hover={{ background: "gray.400", borderRadius: "50%" }}
-                width="50px"
-                height="50px"
-                >
-                  <Image 
-                  src='./pencil_editor.png' 
-                  alt="Missionary" 
-                  width="30px" 
-                  height="30px" 
-                  cursor={"pointer"} 
-                  />
-                </Box>
-              </>
-            ) : null}
           </Flex>
         </Flex>
         <Flex direction={"column"}
@@ -164,7 +151,7 @@ function MissionaryHeader({activeTab, handleTabClick}) {
         </Flex>
         <Flex mt={2} gap={2}
         justifyContent={"flex-start"}
-        alignItems={"center"}
+        alignIte ms={"center"}
         >
           <Button
             width={"auto"} 
@@ -178,7 +165,7 @@ function MissionaryHeader({activeTab, handleTabClick}) {
             whiteSpace={"nowrap"}
             >
             <Text fontSize={fontSize}>
-              Compartilhar
+              Editar Perfil
             </Text>
           </Button>
             <Button

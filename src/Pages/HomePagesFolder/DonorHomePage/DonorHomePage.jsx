@@ -6,13 +6,14 @@ import DonorFeedPosts from '../../../components/DonorComponents/DonorFeedPosts/D
 import HomePageFooter from '../../../components/HomePageFooter/HomePageFooter';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
+import useAuthStore from '../../../store/authStore.js';
 
 function HomePage({errorMessage, setErrorMessage}) {
   const {username} = useParams();
   const[activeTab, setActiveTab] = useState('Feed');
   const toast = useToast();
   const toastId = 'error-toast';
-  const authUser = useAuth();  
+  const authUser = useAuthStore(state => state.user);  
 
   const handleSelectionPostTabClick = (tab) => {
     setMyPosts(tab);

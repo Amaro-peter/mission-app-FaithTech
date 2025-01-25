@@ -1,9 +1,10 @@
 import { Flex, Text, Box, Image, Button, Container } from '@chakra-ui/react';
 import React from 'react';
 import { useAuth } from '../../../context/AuthContext';
+import useAuthStore from '../../../store/authStore';
 
 function MyWork() {
-    const authUser = useAuth();
+    const authUser = useAuthStore(state => state.user);
 
   return (
     <Container
