@@ -3,11 +3,12 @@ import { auth } from '../utils/firebase';
 import { useToast } from '@chakra-ui/react';
 import { useState } from "react";
 import useAuthStore from '../store/authStore';
+import { useNavigate } from 'react-router-dom';
 
 function useLogout() {
     const toast = useToast();
     const [isLoggingOut, setIsLoggingOut] = useState(false);
-    const logoutUser = useAuthStore((state) => state.logout)
+    const logoutUser = useAuthStore((state) => state.logout);
 
     const handleLogout = async () => {
         setIsLoggingOut(true);
@@ -15,6 +16,7 @@ function useLogout() {
             await signOut(auth);
             localStorage.removeItem("user-info")
             logoutUser();
+            
         } catch (error) {
             toast({
                 title: "Error",

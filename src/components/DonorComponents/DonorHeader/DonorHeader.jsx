@@ -5,15 +5,15 @@ import { base } from 'framer-motion/client';
 import useAuthStore from '../../../store/authStore';
 import useGetUserProfileByUsername from '../../../hooks/useGetUserProfileByUsername';
 import { useParams } from 'react-router-dom';
+import useUserProfileStore from '../../../store/useProfileStore';
 
 function MissionaryHeader({activeTab, handleTabClick}) {
   const[fontSize, setFontSize] = useState("16px");
   const [isLargerThan360] = useMediaQuery("(min-width: 371px)");
   const authUser = useAuth();
-  const {username} = useParams();
-  const {isLoading, userProfile} = useGetUserProfileByUsername(username);
+  const {userProfile} = useUserProfileStore();
 
-  const visitingMyOwnProfileAndAuth = authUser && authUser.username === userProfile?.username;
+  const visitingMyOwnProfileAndAuth = authUser && authUser.username === userProfile.username;
 
   useEffect(() => {
     const handleResize = () => {
@@ -100,7 +100,7 @@ function MissionaryHeader({activeTab, handleTabClick}) {
                     whiteSpace="normal" // Allow text to wrap
                     textAlign="justify" // Justify text
                     >
-                      (usuário)
+                      (apoiador)
                     </Text>
                   </Flex>
 
@@ -161,7 +161,12 @@ function MissionaryHeader({activeTab, handleTabClick}) {
                   </Text>
                 </Button>
               </>
-            ) : null}
+            ) : 
+            <>
+              <Text color={"#D2691E"} fontSize={"auto"}>
+                Veja quem este perfil segue
+              </Text>
+            </>}
         </Flex>
 
         <Divider my={3} mx={-4} width={"calc(100% + 32px)"} h={"1px"} bg={"black"} />

@@ -22,26 +22,29 @@ function PostHeader() {
         <Flex
         justifyContent={"space-between"}
         alignItems={"center"}
-        gap={2}
+        gap={1}
         >
-            <Avatar src='' alt="user profile pic" size={"sm"} />
+            <Avatar src='' alt="user profile pic" size={"md"} />
 
             <Flex
-            fontSize={12}
-            fontWeight={"bold"}
-            gap={2}
+            direction={"column"}
+            gap={1}
             >
                 <Text
                 fontFamily={"Inter, sans-serif"}
                 fontWeight={"bold"}
-                fontSize={"md"}
+                fontSize={"auto"}
                 >
                     Samuel Mendonça
                 </Text>
 
-                <Box color={"gray.500"}>
-                    • 5h
-                </Box>
+                <Text
+                fontFamily={"Inter, sans-serif"}
+                fontWeight={"bold"}
+                fontSize={"auto"}
+                >
+                    (missionário)
+                </Text>
             </Flex>
         </Flex>
         {visitingAnotherProfileAndAuth ? (

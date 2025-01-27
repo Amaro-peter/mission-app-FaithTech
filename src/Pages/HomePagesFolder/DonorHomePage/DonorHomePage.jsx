@@ -14,7 +14,8 @@ function HomePage({errorMessage, setErrorMessage}) {
   const[activeTab, setActiveTab] = useState('Feed');
   const toast = useToast();
   const toastId = 'error-toast';
-  const authUser = useAuth(); 
+  const authUser = useAuth();
+  const {isLoading, userProfile} = useGetUserProfileByUsername(username); 
 
 
   const handleSelectionPostTabClick = (tab) => {

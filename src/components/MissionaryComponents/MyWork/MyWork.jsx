@@ -145,4 +145,4 @@ function MyWork() {
   )
 }
 
-export default MyWork
+export default MyWork;

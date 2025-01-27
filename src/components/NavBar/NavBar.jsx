@@ -68,7 +68,7 @@ function NavBar( { isLargerThanBase } ) {
           
           >
             <Image
-            src={"./Mission.png"}  // Image source
+            src={"/Mission.png"}  // Image source
             alt="Mission Logo"
             width={{ base: "50%", md: "20%", lg: "10%" }}  // Responsive width
             maxWidth="200px"  // Max width to ensure proper scaling
@@ -92,7 +92,7 @@ function NavBar( { isLargerThanBase } ) {
             
             >
               <Image
-              src={"./Mission.png"}  // Image source
+              src={"/Mission.png"}  // Image source
               alt="Mission Logo"
               width={{ base: "50%", md: "20%", lg: "10%" }}  // Responsive width
               maxWidth="200px"  // Max width to ensure proper scaling

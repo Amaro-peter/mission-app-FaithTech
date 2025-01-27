@@ -19,6 +19,9 @@ import useAuthAdminStore from "./store/authAdminStore";
 import MissionarySignUpSucess from "./components/AuthForms/MissionaryForms/MissionarySuccessPage";
 import DonorHomePage from "./Pages/HomePagesFolder/DonorHomePage/DonorHomePage";
 import useGetUserProfileByUsername from "./hooks/useGetUserProfileByUsername";
+import EditHeader from "./components/EditPages/MissionaryEditPages/EditHeader";
+import { Button, Flex, VStack } from "@chakra-ui/react";
+
 
 function App() {
 
@@ -74,6 +77,7 @@ function App() {
     <>
       <PageLayout loading={loading} authUser={authUser}>
         <Routes>
+          <Route path="*" element={<PageNotFound />} />
           <Route path="/adminMissionarySignUpSucess" element={ isAdmin ? <AdminMissionarySignUpSucess /> : isMissionary ? (
             <Navigate to={`/${authUser.username}`} />
           ) : isUser ? (
@@ -82,6 +86,15 @@ function App() {
           />
 
           <Route path="/missionarySignUpSuccess" element={isMissionary ? <MissionarySignUpSucess /> : isAdmin ? (
+            <Navigate to={"/adminRegistrationPanel"} />
+          ) : isUser ? (
+            <Navigate to={`/${authUser.username}`} />
+          ) : (<Navigate to={"/landingPage"} />) } 
+          />
+
+          <Route path="/:username/EditHeader" element={
+            isMissionary ? <MissionaryEditHeaderRoute authUser={authUser} isMissionary={isMissionary} isUser={isUser} /> : 
+            isAdmin ? (
             <Navigate to={"/adminRegistrationPanel"} />
           ) : isUser ? (
             <Navigate to={`/${authUser.username}`} />
@@ -253,6 +266,70 @@ function UsernameRoute({ isMissionary, authUser }) {
   }
 }
 
+function MissionaryEditHeaderRoute({authUser, isMissionary, isUser}) {
+  const { username } = useParams();
+  const { isLoading, userProfile } = useGetUserProfileByUsername(username);
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState(null);
+
+
+  useEffect(() => {
+    const checkUserExists = async () => {
+      if(username) {
+        try{
+          const usersRef = collection(db, "users");
+          const q = query(usersRef, where("username", "==", username));
+          const querySnapshot = await getDocs(q);
+          if(querySnapshot.empty) {
+            setErrorMessage("Usuário não encontrado");
+            navigate(isMissionary ? `/${authUser.username}` : "/landingPage");
+            
+          } else {
+            setLoading(false);
+          }
+        } catch (error) {
+          navigate(isMissionary ? `/${authUser.username}` : "/landingPage");
+        }
+      } else {
+        navigate(isMissionary ? `/${authUser.username}` : "/landingPage");
+      }
+    };
+
+    checkUserExists();
+  }, [username, isMissionary, authUser, navigate]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (isMissionary && authUser.username === username) {
+        // Do nothing, let the component render EditHeader
+      } else if (isMissionary && authUser.username !== username) {
+        setErrorMessage("Acesso negado");
+      } else if (isUser && authUser.username !== username && userProfile?.role === "user") {
+        setErrorMessage("Acesso negado");
+      } else {
+        navigate("/landingPage");
+      }
+    }
+  }, [isLoading, isMissionary, isUser, authUser, username, userProfile, setErrorMessage, navigate]);
+
+
+  if(loading || isLoading) {
+    return <PageLayoutSpinner />
+  }
+
+  if(isMissionary && authUser.username === username) {
+      return <EditHeader />;
+  } else if(isMissionary && authUser.username !== username && userProfile.role === "missionary") {
+    return navigate(`/${authUser.username}`);
+  } else if(isMissionary && authUser.username !== username && userProfile.role === "user") {
+    return navigate(`/${authUser.username}`);
+  } else {
+    return <Navigate to="/landingPage" />;
+  }
+}
+
+
 function UserDonorRoute({ isUser, authUser }) {
   const { username } = useParams();
   const {isLoading, userProfile} = useGetUserProfileByUsername(username);
@@ -323,6 +400,20 @@ function AdminRoute({ isAdmin, authUser }) {
   }
 
   return isAdmin ? <AuthRegistrationPanel errorMessage={errorMessage} setErrorMessage={setErrorMessage} /> : <Navigate to="/landingPage" />;
+}
+
+function PageNotFound() {
+  const navigate = useNavigate();
+
+  return (
+    <VStack alignItems="center" gap={1} textAlign="center" marginTop="50px">
+        <h1>Página não encontrada</h1>
+        <p>A página que você procura não existe.</p>
+        <Flex direction={"column"} gap={1}>
+        <Button onClick={() => navigate("/")}>Voltar para página inicial</Button>
+        </Flex>
+    </VStack>
+  );
 }
 
 

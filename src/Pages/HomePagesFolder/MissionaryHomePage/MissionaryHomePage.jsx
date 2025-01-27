@@ -16,12 +16,14 @@ import useAuthStore from '../../../store/authStore';
 
 function HomePage({username, errorMessage, setErrorMessage}) {
   const {isLoading, userProfile} = useGetUserProfileByUsername(username);
-  const[activeTab, setActiveTab] = useState('Meu projeto');
+  const[activeTab, setActiveTab] = useState('Projeto');
   const[myPosts, setMyPosts] = useState('Meu feed');
   const toast = useToast();
   const toastId = 'error-toast';
   const authUser = useAuth();
   const userNotFound = !isLoading && !userProfile;
+
+  const visitingOwnProfileAndAuth = authUser && authUser.username === userProfile.username;
 
   if(userNotFound) {
     return <UserNotFound />
@@ -77,18 +79,18 @@ function HomePage({username, errorMessage, setErrorMessage}) {
               {!isLoading && userProfile && <MissionaryHeader activeTab={activeTab} handleTabClick={handleTabClick} />}
               {isLoading && <MissionaryHeaderSkeleton />}
             </Box>
-            { activeTab === 'Postagens' && authUser.role === "missionary" ? (
+            { activeTab === 'Postagens' && visitingOwnProfileAndAuth ? (
               <Box>
                 <SelectPostType myPosts={myPosts} handleSelectionPostTabClick={handleSelectionPostTabClick} />
               </Box>
             ) : (null)
             }
             <Box>
-              {activeTab === 'Meu projeto' && <MyWork />}
+              {activeTab === 'Projeto' && <MyWork />}
               {activeTab === 'Campanha' && <Campaign />}
-              {activeTab === 'Postagens' && authUser.role === "missionary" && <NewPost />}
+              {activeTab === 'Postagens' && visitingOwnProfileAndAuth && <NewPost />}
             </Box>
-            {activeTab === 'Postagens' && authUser.role === "missionary" ? (
+            {activeTab === 'Postagens' && visitingOwnProfileAndAuth ? (
               <>
               {myPosts === 'Meu feed' && 
               

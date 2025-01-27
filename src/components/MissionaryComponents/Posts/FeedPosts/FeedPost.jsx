@@ -62,4 +62,4 @@ function FeedPost({source}) {
   )
 }
 
-export default FeedPost
+export default FeedPost; 

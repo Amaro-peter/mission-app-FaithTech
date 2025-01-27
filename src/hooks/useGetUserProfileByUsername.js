@@ -1,13 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import useUserProfileStore from "../store/useProfileStore";
 import { useToast } from "@chakra-ui/react";
-import { useEffect } from "react";
 import { db } from "../utils/firebase";
 import { collection, query, where, getDocs } from "firebase/firestore";
+import { useRouteError } from "react-router-dom";
 
 function useGetUserProfileByUsername(username) {
     const [isLoading, setIsLoading] = useState(true);
-    const {userProfile, setUserProfile} = useUserProfileStore();
+    const { userProfile, setUserProfile } = useUserProfileStore();
     const toast = useToast();
 
     useEffect(() => {
@@ -16,16 +16,18 @@ function useGetUserProfileByUsername(username) {
             try {
                 const q = query(collection(db, "users"), where("username", "==", username));
                 const querySnapshot = await getDocs(q);
-                if(querySnapshot.empty) {
-                    return setUserProfile(null);
+                if (querySnapshot.empty) {
+                    setUserProfile(null);
+                    return;
                 }
+                
                 let userDoc;
                 querySnapshot.forEach((doc) => {
                     userDoc = doc.data();
                 });
 
                 setUserProfile(userDoc);
-            } catch(error) {
+            } catch (error) {
                 toast({
                     title: "Error",
                     description: error.message,
@@ -36,12 +38,14 @@ function useGetUserProfileByUsername(username) {
             } finally {
                 setIsLoading(false);
             }
-        }
+        };
 
-        getUserProfile();
+        if (username) {
+            getUserProfile();
+        }
     }, [setUserProfile, username, toast]);
 
-    return {isLoading, userProfile};
+    return { isLoading, userProfile };
 }
 
 export default useGetUserProfileByUsername;

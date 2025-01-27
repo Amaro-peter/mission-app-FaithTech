@@ -4,6 +4,7 @@ import useAuthStore from '../../../store/authStore';
 import useUserProfileStore from '../../../store/useProfileStore';
 import LogOut from '../../NavBarItems/LogOut';
 import { useAuth } from '../../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 function MissionaryHeader({activeTab, handleTabClick}) {
   const[fontSize, setFontSize] = useState("16px");
@@ -16,6 +17,12 @@ function MissionaryHeader({activeTab, handleTabClick}) {
 
   const visitingOwnProfileAndAuth = authUser && authUser.username === userProfile.username;
   const visitingAnotherProfileAndAuth = authUser && authUser.username !== userProfile.username;
+
+  const navigate = useNavigate();
+
+  const handleEditClick = () => {
+    navigate(`/${authUser.username}/EditHeader`);
+  };
 
 
   useEffect(() => {
@@ -97,6 +104,7 @@ function MissionaryHeader({activeTab, handleTabClick}) {
                 borderRadius={50}
                 backgroundColor={"#FFEFE7"}
                 _hover={{background: "#FFB999"}}
+                onClick={handleEditClick}
                 >
                   <Text fontSize={fontSize}>
                     Editar
@@ -145,6 +153,16 @@ function MissionaryHeader({activeTab, handleTabClick}) {
           textAlign="justify" // Justify text
           >
             Samuel Mendonça
+          </Text>
+
+          <Text
+          fontFamily={"Inter, sans-serif"}
+          fontWeight={"bold"}
+          fontSize={"auto"}
+          whiteSpace="normal" // Allow text to wrap
+          textAlign="justify" // Justify text
+          >
+            (missionário)
           </Text>
 
           <Text
@@ -229,7 +247,7 @@ function MissionaryHeader({activeTab, handleTabClick}) {
         alignItems={"center"}
         gap={{ base: 4, md: 2 }}
         >
-          {['Meu projeto', 'Campanha', 'Postagens'].map((tab) => (
+          {['Projeto', 'Campanha', 'Postagens'].map((tab) => (
             <VStack
               align={"stretch"}
               key={tab}
