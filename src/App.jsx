@@ -283,16 +283,16 @@ function MissionaryEditHeaderRoute({authUser, isMissionary, isUser}) {
           const querySnapshot = await getDocs(q);
           if(querySnapshot.empty) {
             setErrorMessage("Usuário não encontrado");
-            navigate(isMissionary ? `/${authUser.username}` : "/landingPage");
+            navigate(isMissionary ? `/${authUser.username}` : isUser ? `${authUser.username}` : "/landingPage");
             
           } else {
             setLoading(false);
           }
         } catch (error) {
-          navigate(isMissionary ? `/${authUser.username}` : "/landingPage");
+          navigate(isMissionary ? `/${authUser.username}` : isUser ? `${authUser.username}` : "/landingPage");
         }
       } else {
-        navigate(isMissionary ? `/${authUser.username}` : "/landingPage");
+        navigate(isMissionary ? `/${authUser.username}` : isUser ? `${authUser.username}` : "/landingPage");
       }
     };
 
