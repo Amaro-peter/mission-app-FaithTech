@@ -17,8 +17,8 @@ function useResetPassword() {
                 url: 'http://localhost:5173/resetPassword'
             });
             toast({
-                title: "Success",
-                description: "Senha enviada com sucesso",
+                title: "Link para o email",
+                description: "Link de definição de senha enviado para o email",
                 status: "success",
                 duration: 8000,
                 isClosable: true,
