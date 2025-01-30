@@ -21,7 +21,6 @@ function CustomPasswordReset() {
         const code = queryParams.get('oobCode');
         if (code) {
             setOobCode(code);
-            console.log(code);
         } else {
             toast({
                 title: "Error",

@@ -23,7 +23,8 @@ function HomePage({username, errorMessage, setErrorMessage}) {
   const authUser = useAuth();
   const userNotFound = !isLoading && !userProfile;
 
-  const visitingOwnProfileAndAuth = authUser && authUser.username === userProfile.username;
+  const visitingOwnProfileAndAuth = authUser && authUser.uid === userProfile.uid;
+
 
   if(userNotFound) {
     return <UserNotFound />

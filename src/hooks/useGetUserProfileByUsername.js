@@ -17,7 +17,6 @@ function useGetUserProfileByUsername(username) {
                 const q = query(collection(db, "users"), where("username", "==", username));
                 const querySnapshot = await getDocs(q);
                 if (querySnapshot.empty) {
-                    setUserProfile(null);
                     return;
                 }
                 
@@ -25,7 +24,7 @@ function useGetUserProfileByUsername(username) {
                 querySnapshot.forEach((doc) => {
                     userDoc = doc.data();
                 });
-
+                
                 setUserProfile(userDoc);
             } catch (error) {
                 toast({

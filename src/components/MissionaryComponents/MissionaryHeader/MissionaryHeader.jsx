@@ -1,4 +1,6 @@
-import { Box, Button, Flex, VStack, Text, Spacer, Image, Avatar, AvatarGroup, Divider, Container, useMediaQuery, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, Flex, VStack, Text, Avatar, Divider, Container, useMediaQuery, useDisclosure,
+  useClipboard, Modal, ModalBody, ModalCloseButton, ModalContent, Input, ModalHeader, 
+  ModalOverlay, Stack, Heading} from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import useAuthStore from '../../../store/authStore';
 import useUserProfileStore from '../../../store/useProfileStore';
@@ -6,23 +8,41 @@ import LogOut from '../../NavBarItems/LogOut';
 import { useAuth } from '../../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
-function MissionaryHeader({activeTab, handleTabClick}) {
+function  MissionaryHeader({activeTab, handleTabClick}) {
   const[fontSize, setFontSize] = useState("16px");
   const [isLargerThan360] = useMediaQuery("(min-width: 371px)");
   const authUser = useAuth();
 
   const {userProfile} = useUserProfileStore();
-  
-  const{isOpen, onOpen, onClose} = useDisclosure();
 
   const visitingOwnProfileAndAuth = authUser && authUser.username === userProfile.username;
   const visitingAnotherProfileAndAuth = authUser && authUser.username !== userProfile.username;
+  
+  const {isOpen, onOpen, onClose} = useDisclosure();
+
+  const [value, setValue] = useState(userProfile.publicEmail);
+  const [phoneValue, setPhoneValue] = useState(userProfile.publicPhone);
+
+  const {hasCopied: hasCopiedEmail, onCopy: onCopyEmail} = useClipboard(value);
+  const {hasCopied: hasCopiedPhone, onCopy: onCopyPhone} = useClipboard(phoneValue);
 
   const navigate = useNavigate();
 
   const handleEditClick = () => {
     navigate(`/${authUser.username}/EditHeader`);
   };
+
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+  };
+
+  useEffect(() => {
+    const img = new Image();
+    img.src = userProfile?.profilePicture;
+    img.onload = handleImageLoad;
+  }, [userProfile?.profilePicture]);
 
 
   useEffect(() => {
@@ -77,7 +97,35 @@ function MissionaryHeader({activeTab, handleTabClick}) {
           height="100%"
           gap={{base: 4, sm: 7}}
         >
-          <Avatar src='' alt="Missionary" size={{base: "md", md: "lg"}} />
+          
+          <Avatar 
+          src={userProfile?.profilePicture} 
+          alt="Missionary" 
+          size={{base: "md", md: "lg"}}
+          style={{
+            backgroundColor: imageLoaded ? 'transparent' : 'rgb(250, 192, 121)',
+            animation: imageLoaded || !userProfile?.profilePicture ? 'none' : 'spin 1s linear infinite',
+          }}
+          />
+          <style>
+          {`
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          `}
+          </style>
+          
+          {/*<Avatar 
+            src={userProfile?.profilePicture} 
+            alt="Missionary" 
+            size={{base: "md", md: "lg"}} 
+            style={{
+              filter: imageLoaded ? 'blur(0px)' : 'blur(20px)',
+              transition: 'filter 0.5s ease-out',
+              backgroundColor: imageLoaded ? 'transparent' : 'rgb(247, 200, 112)',
+            }}
+          />*/}
 
           <Flex 
           gap={4}
@@ -152,7 +200,7 @@ function MissionaryHeader({activeTab, handleTabClick}) {
           whiteSpace="normal" // Allow text to wrap
           textAlign="justify" // Justify text
           >
-            Samuel Mendonça
+            {userProfile.fullName}
           </Text>
 
           <Text
@@ -172,7 +220,7 @@ function MissionaryHeader({activeTab, handleTabClick}) {
           whiteSpace="normal" // Allow text to wrap
           textAlign="justify" // Justify text
           >
-            @_SamiMendonça
+            {userProfile.username}
           </Text>
           <Text
           fontSize={"sm"}
@@ -180,7 +228,7 @@ function MissionaryHeader({activeTab, handleTabClick}) {
           whiteSpace="normal" // Allow text to wrap
           textAlign="justify" // Justify text
           >
-            Vivendo para o Reino. Missionário na África do Sul.
+            {userProfile.bio}
           </Text>
         </Flex>
         <Flex mt={2} gap={2}
@@ -205,13 +253,14 @@ function MissionaryHeader({activeTab, handleTabClick}) {
             <Button
             width={"auto"}
             height={["30px", "35px", "35px", "35px", "35px"]}
-            border={"2px solid black"}
+            border={"2px solid black"} 
             borderRadius={50}
             backgroundColor={"#FFEFE7"}
             _hover={{background: "#FFB999"}}
             overflow={"hidden"}
             textOverflow={"ellipsis"}
             whiteSpace={"nowrap"}
+            onClick={onOpen}
             >
               <Text fontSize={fontSize}>
                 Contato
@@ -278,8 +327,70 @@ function MissionaryHeader({activeTab, handleTabClick}) {
           ))}
         </Flex>
       </Flex>
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent bg={"white"} boxShadow={"xl"} border={"1px solid gray"} mx={3}>
+          <ModalHeader />
+          <ModalCloseButton />
+          <ModalBody>
+              {/* Container Flex */}
+            <Flex bg={"black"}>
+              <Stack spacing={4} w={"full"} maxW={"md"} bg={"white"} p={6} my={0}>
+                    <Heading lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl" }}>
+                      Contato
+                    </Heading>
+      
+                    <Box>
+                      <Input 
+                        value={value}
+                        isReadOnly
+                        placeholder="Email"
+                        size="sm"
+                        w="full"
+                        border={"2px solid black"}
+                      />
+                  </Box>
+                  <Button
+                    bg={"orange.400"}
+                    color={"white"}
+                    size='sm'
+                    w='full'
+                    _hover={{ bg: "orange.500" }}
+                    onClick={onCopyEmail}
+                  >
+                    {hasCopiedEmail ? 'Copiado' : 'Copiar Email'}
+                  </Button>
+
+                  <Box>
+                    <Input 
+                      value={phoneValue}
+                      isReadOnly
+                      placeholder="Phone"
+                      size="sm"
+                      w="full"
+                      border={"2px solid black"}
+                    />
+                  </Box>
+                  <Button
+                    bg={"orange.400"}
+                    color={"white"}
+                    size='sm'
+                    w='full'
+                    _hover={{ bg: "orange.500" }}
+                    onClick={onCopyPhone}
+                  >
+                    {hasCopiedPhone ? 'Copiado' : 'Copiar Telefone'}
+                  </Button>
+
+                </Stack>
+            </Flex>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </Container>
   )
 }
 
 export default MissionaryHeader;
+

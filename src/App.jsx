@@ -9,7 +9,7 @@ import AuthMissionaryForm from "./Pages/AuthForms/AuthMissionaryPage/AuthMission
 import AuthSocialProjectForm from "./Pages/AuthForms/AuthSocialProjectPage/AuthSocialProjectForm";
 import { onAuthStateChanged, updateProfile } from "firebase/auth";
 import { auth, db } from "./utils/firebase";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { getDoc, doc, collection, getDocs, query, where } from "firebase/firestore";
 import CustomPasswordReset from "./Pages/AuthForms/ResetPassword/CustomPasswordReset";
 import AuthAdmin from "./Pages/AuthForms/AuthAdmin/AuthAdmin";
@@ -21,11 +21,13 @@ import DonorHomePage from "./Pages/HomePagesFolder/DonorHomePage/DonorHomePage";
 import useGetUserProfileByUsername from "./hooks/useGetUserProfileByUsername";
 import EditHeader from "./components/EditPages/MissionaryEditPages/EditHeader";
 import { Button, Flex, VStack } from "@chakra-ui/react";
+import useAuthStore from "./store/authStore";
 
 
 function App() {
 
-  const [authUser, setAuthUser] = useState(null);
+  const authUser = useAuthStore((state) => state.user);
+  const setAuthUser = useAuthStore((state) => state.setUser);
   const [loading, setLoading] = useState(true);
   const storedAdminUser = useAuthAdminStore((state) => state.user);
 
@@ -48,7 +50,7 @@ function App() {
         const userDoc = await getDoc(doc(db, "users", user.uid));
         if (userDoc.exists()) {
           const userData = userDoc.data();
-          setAuthUser({ ...user, username: userData.username, role: userData.role });
+          setAuthUser(userData);
         } else {
           setAuthUser(null);
         }
@@ -116,7 +118,7 @@ function App() {
           <Route 
             path="/:username" 
             element={isMissionary ? (
-              <UsernameRoute isMissionary={isMissionary} authUser={authUser} />
+              <UsernameRoute isMissionary={isMissionary} authUser={authUser} setAuthUser={setAuthUser} />
             ) : isAdmin ? (
               <Navigate to="/adminRegistrationPanel" />
             ) : isUser ? (
@@ -157,8 +159,9 @@ function App() {
             ) : <EmailFormResetPassword />
           } />
 
-          
-          <Route path="/resetPassword" element={isMissionary ? (
+          <Route path="/resetPassword" element={<CustomPasswordReset />} />
+
+          {/*<Route path="/resetPassword" element={isMissionary ? (
               <Navigate to={`/${authUser.username}`} />
             ) : isAdmin ? (
               <Navigate to="/adminRegistrationPanel" />
@@ -166,7 +169,7 @@ function App() {
               <Navigate to={`/${authUser.username}`} />
             ) : <CustomPasswordReset />
 
-          } />
+          } />*/}
 
           
           <Route 
@@ -219,39 +222,21 @@ function App() {
   );
 }
 
-function UsernameRoute({ isMissionary, authUser }) {
+function UsernameRoute({ isMissionary, authUser, setAuthUser}) {
   const { username } = useParams();
   const {isLoading, userProfile} = useGetUserProfileByUsername(username);
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
 
+
   useEffect(() => {
-    const checkUserExists = async () => {
-      if(username) {
-        try{
-          const usersRef = collection(db, "users");
-          const q = query(usersRef, where("username", "==", username));
-          const querySnapshot = await getDocs(q);
-          if(querySnapshot.empty) {
-            setErrorMessage("Usuário não encontrado");
-            navigate(isMissionary ? `/${authUser.username}` : "/landingPage");
-            
-          } else {
-            setLoading(false);
-          }
-        } catch (error) {
-          navigate(isMissionary ? `/${authUser.username}` : "/landingPage");
-        }
-      } else {
-        navigate(isMissionary ? `/${authUser.username}` : "/landingPage");
-      }
-    };
+    if(!isLoading && userProfile === null) {
+      setErrorMessage("Usuário não encontrado");
+      navigate(isMissionary ? `/${authUser.username}` : "/landingPage");
+    }
+  }, [isLoading, userProfile, navigate, isMissionary, authUser]);
 
-    checkUserExists();
-  }, [username, isMissionary, authUser, navigate]);
-
-  if(loading) {
+  if(isLoading) {
     return <PageLayoutSpinner />
   }
 
@@ -270,34 +255,7 @@ function MissionaryEditHeaderRoute({authUser, isMissionary, isUser}) {
   const { username } = useParams();
   const { isLoading, userProfile } = useGetUserProfileByUsername(username);
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
-
-
-  useEffect(() => {
-    const checkUserExists = async () => {
-      if(username) {
-        try{
-          const usersRef = collection(db, "users");
-          const q = query(usersRef, where("username", "==", username));
-          const querySnapshot = await getDocs(q);
-          if(querySnapshot.empty) {
-            setErrorMessage("Usuário não encontrado");
-            navigate(isMissionary ? `/${authUser.username}` : isUser ? `${authUser.username}` : "/landingPage");
-            
-          } else {
-            setLoading(false);
-          }
-        } catch (error) {
-          navigate(isMissionary ? `/${authUser.username}` : isUser ? `${authUser.username}` : "/landingPage");
-        }
-      } else {
-        navigate(isMissionary ? `/${authUser.username}` : isUser ? `${authUser.username}` : "/landingPage");
-      }
-    };
-
-    checkUserExists();
-  }, [username, isMissionary, authUser, navigate]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -314,12 +272,12 @@ function MissionaryEditHeaderRoute({authUser, isMissionary, isUser}) {
   }, [isLoading, isMissionary, isUser, authUser, username, userProfile, setErrorMessage, navigate]);
 
 
-  if(loading || isLoading) {
+  if(isLoading) {
     return <PageLayoutSpinner />
   }
 
   if(isMissionary && authUser.username === username) {
-      return <EditHeader />;
+      return <EditHeader username={username} />;
   } else if(isMissionary && authUser.username !== username && userProfile.role === "missionary") {
     return navigate(`/${authUser.username}`);
   } else if(isMissionary && authUser.username !== username && userProfile.role === "user") {
