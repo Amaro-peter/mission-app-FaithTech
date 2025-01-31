@@ -22,6 +22,7 @@ import useGetUserProfileByUsername from "./hooks/useGetUserProfileByUsername";
 import EditHeader from "./components/EditPages/MissionaryEditPages/EditHeader";
 import { Button, Flex, VStack } from "@chakra-ui/react";
 import useAuthStore from "./store/authStore";
+import ScrollToTop from "./Layouts/Scrolling/ScrollToTop";
 
 
 function App() {
@@ -77,6 +78,7 @@ function App() {
 
   return (
     <>
+      <ScrollToTop />
       <PageLayout loading={loading} authUser={authUser}>
         <Routes>
           <Route path="*" element={<PageNotFound />} />
