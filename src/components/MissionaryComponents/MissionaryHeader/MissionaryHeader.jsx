@@ -19,6 +19,11 @@ function  MissionaryHeader({activeTab, handleTabClick}) {
   const visitingAnotherProfileAndAuth = authUser && authUser.username !== userProfile.username;
   
   const {isOpen, onOpen, onClose} = useDisclosure();
+  const {isOpen: isLinkOpen, onOpen: onLinkOpen, onClose: onLinkClose} = useDisclosure();
+
+  const [linkValue, setLinkValue] = useState('');
+
+  const {hasCopied: hasCopiedLink, onCopy: onCopyLink} = useClipboard(linkValue);
 
   const [value, setValue] = useState(userProfile.publicEmail);
   const [phoneValue, setPhoneValue] = useState(userProfile.publicPhone);
@@ -28,11 +33,11 @@ function  MissionaryHeader({activeTab, handleTabClick}) {
 
   const navigate = useNavigate();
 
+  const [imageLoaded, setImageLoaded] = useState(false);
+
   const handleEditClick = () => {
     navigate(`/${authUser.username}/EditHeader`);
   };
-
-  const [imageLoaded, setImageLoaded] = useState(false);
 
   const handleImageLoad = () => {
     setImageLoaded(true);
@@ -44,6 +49,11 @@ function  MissionaryHeader({activeTab, handleTabClick}) {
     img.onload = handleImageLoad;
   }, [userProfile?.profilePicture]);
 
+
+  const handleLinkClick = () => {
+    setLinkValue(window.location.href);
+    onLinkOpen();
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -64,7 +74,7 @@ function  MissionaryHeader({activeTab, handleTabClick}) {
       }
 
       setFontSize(newFontSize)
-    }
+    };
 
     window.addEventListener('resize', handleResize);
     handleResize()
@@ -245,6 +255,7 @@ function  MissionaryHeader({activeTab, handleTabClick}) {
             overflow={"hidden"}
             textOverflow={"ellipsis"}
             whiteSpace={"nowrap"}
+            onClick={handleLinkClick}
             >
             <Text fontSize={fontSize}>
               Compartilhar
@@ -383,6 +394,45 @@ function  MissionaryHeader({activeTab, handleTabClick}) {
                     {hasCopiedPhone ? 'Copiado' : 'Copiar Telefone'}
                   </Button>
 
+                </Stack>
+            </Flex>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isLinkOpen} onClose={onLinkClose}>
+        <ModalOverlay />
+        <ModalContent bg={"white"} boxShadow={"xl"} border={"1px solid gray"} mx={3}>
+          <ModalHeader />
+          <ModalCloseButton />
+          <ModalBody>
+              {/* Container Flex */}
+            <Flex bg={"black"}>
+              <Stack spacing={4} w={"full"} maxW={"md"} bg={"white"} p={6} my={0}>
+                    <Heading lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl" }}>
+                      Compartilhar página
+                    </Heading>
+      
+                    <Box>
+                      <Input 
+                        value={linkValue}
+                        isReadOnly
+                        placeholder="Link"
+                        size="sm"
+                        w="full"
+                        border={"2px solid black"}
+                      />
+                  </Box>
+                  <Button
+                    bg={"orange.400"}
+                    color={"white"}
+                    size='sm'
+                    w='full'
+                    _hover={{ bg: "orange.500" }}
+                    onClick={onCopyLink}
+                  >
+                    {hasCopiedLink ? 'Copiado' : 'Copiar Link'}
+                  </Button>
                 </Stack>
             </Flex>
           </ModalBody>
