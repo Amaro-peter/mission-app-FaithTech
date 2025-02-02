@@ -1,14 +1,49 @@
-import { Flex, Text, Box, Image, Button, Container } from '@chakra-ui/react';
+import { Flex, Text, Box, Image, Button, Container, useDisclosure, useClipboard, 
+    Modal, ModalBody, ModalCloseButton, ModalContent, Input, ModalHeader, 
+    ModalOverlay, Stack, Heading,
+    AspectRatio
+} from '@chakra-ui/react';
 import React from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import useAuthStore from '../../../store/authStore';
 import useUserProfileStore from '../../../store/useProfileStore';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import useGetMissionaryProject from '../../../hooks/useGetMissionaryProject';
+import useUserProjectStore from '../../../store/useProjectStore';
+import Zoom from 'react-medium-image-zoom';
+import 'react-medium-image-zoom/dist/styles.css';
 
 function MyWork() {
     const authUser = useAuth();
+
     const {userProfile} = useUserProfileStore();
 
+    const navigate = useNavigate();
+
     const visitingOwnProfileAndAuth = authUser && authUser.username === userProfile.username;
+
+    const {isLoading, userProject} = useGetMissionaryProject(userProfile);
+
+
+    const {isOpen: isLinkOpen, onOpen: onLinkOpen, onClose: onLinkClose} = useDisclosure();
+    
+    const [linkValue, setLinkValue] = useState('');
+    
+    const {hasCopied: hasCopiedLink, onCopy: onCopyLink} = useClipboard(linkValue);
+
+    const handleLinkClick = () => {
+        setLinkValue(window.location.href);
+        onLinkOpen();
+    };
+
+    const handleEditClick = () => {
+        navigate(`/${authUser.username}/EditProject`);
+    };
+
+    const [isExpanded, setIsExpanded] = useState(false);
+    const description =  userProject ? userProject.description : "Descrição ainda a ser definida";
+    const truncatedDescription = description.length > 350 ? description.slice(0, 350) + "..." : description
 
   return (
     <Container
@@ -24,8 +59,7 @@ function MyWork() {
         boxShadow="md"
         direction={"column"}
         mx={"auto"}
-        justifyContent={"space-between"}
-        alignItems={"center"}
+        gap={1}
         >
             <Flex 
             direction="row"
@@ -52,6 +86,7 @@ function MyWork() {
                         borderRadius={50}
                         backgroundColor={"#FFEFE7"}
                         _hover={{background: "#FFB999"}}
+                        onClick={handleEditClick}
                         >
                             <Text fontSize={"auto"}>
                                 Editar
@@ -70,7 +105,7 @@ function MyWork() {
                 fontWeight={"semibold"}
                 fontSize={"20px"}
                 >
-                    Missões na África do Sul
+                    {userProject ? userProject.title  : "Projeto ainda a ser definido"}
                 </Text>
                 <Text
                 fontSize={"auto"}
@@ -78,8 +113,14 @@ function MyWork() {
                 whiteSpace="normal" // Allow text to wrap
                 textAlign="justfied" // Justify text
                 >
-                    Meu nome é Samuel Mendonça e sou missionário em tempo integral. Desde minha infância tenho sido chamado por Deus para servir na África e na Ásia. Junte-se comigo e ajude a trazer luz para aqueles que estão em trevas !
-                    Atuo na África do Sul juntamente com a base missionária da JOCUM. Realizamos evangelismo de impacto em escolas, hospitais e nos locais onde os mais marginalizados da sociedade se encontram.
+                    {isExpanded ? description : truncatedDescription}
+                    {description.length > 350 && (
+                        <Link onClick={() => setIsExpanded(!isExpanded)}>
+                            <Text color={"blue.500"} fontWeight={"bold"}>
+                                {isExpanded ? " Ler menos" : "Ler mais"}
+                            </Text>
+                        </Link>
+                    )}
                 </Text>
             </Flex>
 
@@ -88,26 +129,40 @@ function MyWork() {
             direction={"column"}
             gap={2}
             >
-                <Image 
-                src='./Video_Youtube.png' 
-                alt="Missionary" 
-                width={"full"}
-                height={"auto"}
-                cursor={"pointer"} 
-                />
+                {userProject && userProject.publicYoutubeLink ? (
+                    <AspectRatio ratio={16/9} width={"full"}>
+                        <iframe 
+                        width="942" 
+                        height="530" 
+                        src={userProject.publicYoutubeLink} 
+                        title="Lista Mundial da Perseguição 2025" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        referrerpolicy="strict-origin-when-cross-origin" 
+                        allowFullScreen></iframe>
+                    </AspectRatio>
+                ) : null}
 
-                <Image 
-                src='./Kids.png' 
-                alt="Missionary" 
-                width={"full"}
-                height={"auto"}
-                cursor={"pointer"} 
-                />
+                {userProject && userProject.publicPhoto ?
+                    <>
+                        <Zoom
+                        zoomMargin={10} // Adjusts the margin around the zoomed image
+                        overlayBgColorEnd="rgba(0, 0, 0, 0.85)" // Smooth dark overlay for better focus
+                        transitionDuration={300} // Smooth zoom animation duration
+                        >
+                            <Image 
+                            src={userProject.publicPhoto}
+                            width={"full"}
+                            height={"auto"}
+                            />
+                        </Zoom>
+                    </>
+                : null}
             </Flex>
 
             <Flex
+            mt={4}
             gap={4}
-            m={4}
             width={"full"}
             justifyContent={"center"}
             alignItems={"center"}
@@ -136,11 +191,51 @@ function MyWork() {
                 overflow={"hidden"}
                 textOverflow={"ellipsis"}
                 whiteSpace={"nowrap"}
+                onClick={handleLinkClick}
                 >
                     Compartilhar
                 </Button>
             </Flex>
         </Flex>
+
+        <Modal isOpen={isLinkOpen} onClose={onLinkClose}>
+            <ModalOverlay />
+            <ModalContent bg={"white"} boxShadow={"xl"} border={"1px solid gray"} mx={3}>
+                <ModalHeader />
+                <ModalCloseButton />
+                <ModalBody>
+                    {/* Container Flex */}
+                <Flex bg={"black"}>
+                    <Stack spacing={4} w={"full"} maxW={"md"} bg={"white"} p={6} my={0}>
+                        <Heading lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl" }}>
+                            Compartilhar página
+                        </Heading>
+              
+                        <Box>
+                            <Input 
+                            value={linkValue}
+                            isReadOnly
+                            placeholder="Link"
+                            size="sm"
+                            w="full"
+                            border={"2px solid black"}
+                            />
+                        </Box>
+                        <Button
+                        bg={"orange.400"}
+                        color={"white"}
+                        size='sm'
+                        w='full'
+                        _hover={{ bg: "orange.500" }}
+                        onClick={onCopyLink}
+                        >
+                        {hasCopiedLink ? 'Copiado' : 'Copiar Link'}
+                        </Button>
+                    </Stack>
+                </Flex>
+                </ModalBody>
+            </ModalContent>
+        </Modal>
     </Container>
   )
 }

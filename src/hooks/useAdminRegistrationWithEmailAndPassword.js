@@ -108,16 +108,13 @@ function useAdminRegistrationWithEmailAndPassword() {
                         //Adiciona o documento do usuário ao Firestore
                         await setDoc(doc(db, "users", newUser.user.uid), userDoc);
 
-                        //Cria as subcoleções de seguidores, seguindo e posts
-                        await setDoc(doc(db, "followers", newUser.user.uid), {});
-                        await setDoc(doc(db, "following", newUser.user.uid), {});
-
                         // Ensure pastor fields are not undefined
                         const pastorData = {
                             pastorName: inputs.pastorName || "",
                             pastorPhone: inputs.pastorPhone || "",
                             faithCommunity: inputs.faithCommunity || "",
-                            churchPhone: inputs.churchPhone || ""
+                            churchPhone: inputs.churchPhone || "",
+                            pastorOf: userDoc.uid
                         };
 
                         // Create a unique ID for the pastor
@@ -127,7 +124,8 @@ function useAdminRegistrationWithEmailAndPassword() {
                         // Ensure church fields are not undefined
                         const churchData = {
                             faithCommunity: inputs.faithCommunity || "",
-                            churchPhone: inputs.churchPhone || ""
+                            churchPhone: inputs.churchPhone || "",
+                            churchOf: userDoc.uid
                         };
 
                         // Create a unique ID for the church

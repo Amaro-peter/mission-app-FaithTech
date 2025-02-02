@@ -1,67 +1,56 @@
-import { Avatar, Box, Button, Center, Container, Divider, Flex, FormControl, FormLabel, Heading, Input, Skeleton, SkeletonCircle, Stack, Textarea, useToast, VStack } from '@chakra-ui/react';
+import { Avatar, Box, Button, Center, Container, Divider, 
+    Flex, Image, FormControl, FormLabel, Heading, Input, Skeleton, SkeletonCircle, Stack, Textarea, useToast, VStack } from '@chakra-ui/react';
 import { useRef, useState, useEffect } from 'react';
 import HomePageFooter from '../../../components/HomePageFooter/HomePageFooter';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import usePreviewImage from '../../../hooks/usePreviewImage';
-import useEditHeader from '../../../hooks/useEditHeader';
-import useGetUserProfileByUsername from '../../../hooks/useGetUserProfileByUsername';
+import useEditProject from '../../../hooks/useEditProject';
 import useAuthStore from '../../../store/authStore';
-import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
+import useGetMissionaryProject from '../../../hooks/useGetMissionaryProject';
 
-function EditHeader({username, errorMessage, setErrorMessage}) {
+function EditProject({username, errorMessage, setErrorMessage}) {
 
   const userStore = useAuthStore((state) => state.user);
 
-  const {isLoading, userProfile} = useGetUserProfileByUsername(username);
+  const {isLoading, userProject} = useGetMissionaryProject(userStore);
 
   const toast = useToast();
 
   const navigate = useNavigate();
 
-  const authUser = useAuth();
-
   const {selectedFile, handleImageChange, setSelectedFile} = usePreviewImage();
 
   const fileRef = useRef(null);
 
-  const {editHeader, isUpdating} = useEditHeader();
+  const {editProject, isUpdating} = useEditProject();
 
   const [imageLoaded, setImageLoaded] = useState(false);
   
   const handleImageLoad = () => {
     setImageLoaded(true);
   };
-  
-  useEffect(() => {
-    const img = new Image();
-    img.src = userProfile?.profilePicture;
-    img.onload = handleImageLoad;
-  }, [userProfile?.profilePicture]);
-  
 
 
   const [inputs, setInputs] = useState({
-    username: "",
-    fullName: "",
-    publicEmail: "",
-    publicPhone: "",
-    bio: "",
+    title: "",
+    description: "",
+    publicYoutubeLink: "",
+    publicPhoto: "",
   });
 
 
   useEffect(() => {
-    if(userProfile) {
+    if(userProject) {
       setInputs({
-        username: userProfile.username || "",
-        fullName: userProfile.fullName || "",
-        publicEmail: userProfile.publicEmail || "",
-        publicPhone: userProfile.publicPhone || "",
-        bio: userProfile.bio || "",
+        title: userProject.title || "",
+        description: userProject.description || "",
+        publicYoutubeLink: userProject.publicYoutubeLink || "",
+        publicPhoto: userProject.publicPhoto || "",
       });
     }
-  }, [userProfile]);
+  }, [userProject]);
 
 
   const [charLimitReached, setCharLimitReached] = useState(false);
@@ -76,15 +65,27 @@ function EditHeader({username, errorMessage, setErrorMessage}) {
   }, [charLimitReached]);
 
 
-  const handleEditHeader = async () => {
+  const [titleCharLimit, setTitleCharLimit] = useState(false);
+
+  useEffect(() => {
+    if(titleCharLimit) {
+      const timer = setTimeout(() => {
+        setTitleCharLimit(false);
+      }, 10000);
+      return () => clearTimeout(timer);
+    }
+  }, [titleCharLimit]);
+
+
+  const handleEditProject = async () => {
     try{
-      await editHeader(inputs, selectedFile);
+      await editProject(inputs, selectedFile);
       setSelectedFile(null);
     } catch(error) {
-      if(!toast.isActive("editHeaderError")) {
+      if(!toast.isActive("editProjectError")) {
         toast({
-          id: "editHeaderError",
-          title: "Erro ao editar cabeçalho",
+          id: "editProjectError",
+          title: "Erro ao editar projeto",
           description: error.message,
           status: "error",
           duration: 5000,
@@ -143,36 +144,96 @@ function EditHeader({username, errorMessage, setErrorMessage}) {
                 lineHeight={1.1}
                 fontSize={{base: "2xl", sm: "3xl", lg: "4xl"}}  
                 >
-                  Editar Cabeçalho
+                  Editar Projeto
                 </Heading>
 
                 <FormControl>
-                  <Stack direction={["column", "row"]} spacing={6}>
-                    <Center>
+                  <FormControl>
+                    <FormLabel>Título</FormLabel>
+                    <Input 
+                    placeholder='Título' 
+                    size={"sm"} 
+                    type='text'
+                    value={inputs.title}
+                    onChange={(e) => {
+                      if(e.target.value.length <= 50) {
+                        setInputs({...inputs, title: e.target.value});
+                        setTitleCharLimit(false);
+                      } else {
+                        setTitleCharLimit(true);
+                        if(!toast.isActive("titleCharLimitToast")) {
+                          toast({
+                            id: "titleCharLimitToast",
+                            title: "Limite de caracteres excedido",
+                            description: "O título deve ter no máximo 50 caracteres.",
+                            status: "warning",
+                            duration: 5000,
+                            isClosable: true,
+                            position: "top"
+                          });
+                        }
+                      }
+                    }}
+                    />
+                    {titleCharLimit && <span>Limite de caracteres atingido (até 50 caracteres)</span>}
+                  </FormControl>
+                </FormControl>
 
-                      <Avatar 
-                      size="lg" 
-                      src={selectedFile || userProfile.profilePicture} 
-                      border={"2px solid black"}
-                      style={{
-                        backgroundColor: imageLoaded ? 'transparent' : 'rgb(250, 192, 121)',
-                        animation: imageLoaded || !userProfile?.profilePicture ? 'none' : 'spin 1s linear infinite',
-                      }} 
-                      />
+                <FormControl>
+                  <FormControl>
+                    <FormLabel>Link de vídeo para o Youtube</FormLabel>
+                    <FormLabel>(copie e cole o link)</FormLabel>
+                    <Input 
+                    placeholder='Link' 
+                    size={"sm"} 
+                    type='text'
+                    value={inputs.publicYoutubeLink}
+                    onChange={(e) => setInputs({...inputs, publicYoutubeLink: e.target.value})}
+                    />
+                  </FormControl>
+                </FormControl>
 
-                      <style>
-                        {`
-                          @keyframes spin {
-                          0% { transform: rotate(0deg); }
-                          100% { transform: rotate(360deg); }
-                          }
-                        `}
-                      </style>
+                <FormControl>
+                  <FormControl>
+                    <FormLabel>Descrição</FormLabel>
+                    <Textarea 
+                    placeholder='Descrição' 
+                    size={"sm"} 
+                    type='text'
+                    resize="vertical"
+                    width={"100%"}
+                    minHeight="300px"
+                    maxHeight="500px"
+                    value={inputs.description}
+                    onChange={(e) => {
+                      if(e.target.value.length <= 1000) {
+                        setInputs({...inputs, description: e.target.value});
+                        setCharLimitReached(false);
+                      } else {
+                        setCharLimitReached(true);
+                        if(!toast.isActive("charLimitToast")) {
+                          toast({
+                            id: "charLimitToast",
+                            title: "Limite de caracteres excedido",
+                            description: "A minibiografia deve ter no máximo 1000 caracteres.",
+                            status: "warning",
+                            duration: 5000,
+                            isClosable: true,
+                            position: "top"
+                          });
+                        }
+                      }
+                    }}
+                    />
+                    {charLimitReached && <span>Limite de caracteres atingido (até 1000 caracteres)</span>}
+                  </FormControl>
+                </FormControl>
 
-                    </Center>
-                    <Center>
-                      <Button w={"full"} onClick={() => fileRef.current.click()}>
-                        Editar Foto de Perfil
+                <FormControl>
+                  <Stack direction={"column"} spacing={6}>
+                  <Center>
+                      <Button w={"100%"} onClick={() => fileRef.current.click()}>
+                        Selecionar foto para o Projeto
                       </Button>
                     </Center>
                     <Input 
@@ -181,91 +242,20 @@ function EditHeader({username, errorMessage, setErrorMessage}) {
                       ref={fileRef}
                       onChange={handleImageChange}
                     />
+
+                    <Center>
+
+                      {selectedFile ? 
+                      <Image 
+                      src={selectedFile}
+                      alt="Foto de Projeto"
+                      width={"50%"}
+                      height={"auto"}
+                      /> : null}
+
+                    </Center>
+                    
                   </Stack>
-                </FormControl>
-
-                <FormControl>
-                  <FormControl>
-                    <FormLabel>Nome Completo</FormLabel>
-                    <Input 
-                    placeholder='Nome completo' 
-                    size={"sm"} 
-                    type='text'
-                    value={inputs.fullName}
-                    onChange={(e) => setInputs({...inputs, fullName: e.target.value})}
-                    />
-                  </FormControl>
-                </FormControl>
-
-                <FormControl>
-                  <FormControl>
-                    <FormLabel>Nome de Usuário</FormLabel>
-                    <Input 
-                    placeholder='Nome de usuário' 
-                    size={"sm"} 
-                    type='text'
-                    value={inputs.username}
-                    onChange={(e) => setInputs({...inputs, username: e.target.value})}
-                    />
-                  </FormControl>
-                </FormControl>
-
-                <FormControl>
-                  <FormControl>
-                    <FormLabel>Minibiografia</FormLabel>
-                    <Textarea 
-                    placeholder='Minibiografia' 
-                    size={"sm"} 
-                    type='text'
-                    value={inputs.bio}
-                    onChange={(e) => {
-                      if(e.target.value.length <= 200) {
-                        setInputs({...inputs, bio: e.target.value});
-                        setCharLimitReached(false);
-                      } else {
-                        setCharLimitReached(true);
-                        if(!toast.isActive("charLimitToast")) {
-                          toast({
-                            id: "charLimitToast",
-                            title: "Limite de caracteres excedido",
-                            description: "A minibiografia deve ter no máximo 200 caracteres.",
-                            status: "warning",
-                            duration: 5000,
-                            isClosable: true,
-                            position: "top"
-                          });
-                        }
-                        
-                      }
-                    }}
-                    />
-                    {charLimitReached && <span>Limite de caracteres atingido (até 200 caracteres)</span>}
-                  </FormControl>
-                </FormControl>
-
-                <FormControl>
-                  <FormControl>
-                    <FormLabel>Email para o público</FormLabel>
-                    <Input 
-                    placeholder='Email' 
-                    size={"sm"} 
-                    type='text'
-                    value={inputs.publicEmail}
-                    onChange={(e) => setInputs({...inputs, publicEmail: e.target.value})}
-                    />
-                  </FormControl>
-                </FormControl>
-
-                <FormControl>
-                  <FormControl>
-                    <FormLabel>Telefone para o público</FormLabel>
-                    <PhoneInput 
-                      country={"br"}
-                      value={inputs.publicPhone}
-                      onChange={(value) => setInputs({...inputs, publicPhone: value})}
-                      inputStyle={{width: '100%'}}
-                    />
-                  </FormControl>
                 </FormControl>
 
                 <Stack spacing={6} direction={["column", "row"]} >
@@ -286,7 +276,7 @@ function EditHeader({username, errorMessage, setErrorMessage}) {
                   w={"full"}
                   size={"sm"}
                   _hover={{ background: "orange.500" }}
-                  onClick={handleEditHeader}
+                  onClick={handleEditProject}
                   isLoading={isUpdating}
                   >
                     Submeter
@@ -305,4 +295,4 @@ function EditHeader({username, errorMessage, setErrorMessage}) {
   );
 }
 
-export default EditHeader;
+export default EditProject;
