@@ -1,4 +1,4 @@
-import { Flex, Text, Box, Image, Button, Container, useDisclosure, useClipboard, 
+import { Flex, Text, Box, Button, Container, useDisclosure, useClipboard, 
     Modal, ModalBody, ModalCloseButton, ModalContent, Input, ModalHeader, 
     ModalOverlay, Stack, Heading,
     AspectRatio
@@ -47,18 +47,37 @@ function MyWork() {
     const truncatedDescription = description.length > 350 ? description.slice(0, 350) + "..." : description;
 
     const [isImageLoaded, setIsImageLoaded] = useState(false);
+    const [isLoadingData, setIsLoadingData] = useState(true);
+    const hasImage = userProject?.publicPhoto?.trim(); // Ensure empty strings are treated as false
 
     useEffect(() => {
-        if(userProject && userProject.publicPhoto) {
-            const img = document.createElement("img");
-            img.src = userProject.publicPhoto;
-            img.onload = () => setIsImageLoaded(true);
-        } else {
-            setIsImageLoaded(true);
+        if (isLoading) {
+            setIsImageLoaded(false);
+            return;
         }
-    }, [userProject]);
+    
+        if (!userProject || !hasImage) {
+            setIsImageLoaded(true); // No image case, show content immediately
+            return;
+        }
+    
+        setIsImageLoaded(false); // Show skeleton while image loads
+        const img = new Image();
+        img.src = userProject.publicPhoto;
+        img.onload = () => setIsImageLoaded(true);
+        img.onerror = () => setIsImageLoaded(true);
 
-    console.log(isImageLoaded);
+    }, [isLoading, userProject?.publicPhoto]);
+
+    if(isLoading) {
+        return (<>
+            <Container
+            maxW={"container.lg"}
+            >
+                <MyWorkSkeleton />
+            </Container>
+        </>);
+    }
 
   return (
     <Container
@@ -66,8 +85,7 @@ function MyWork() {
     >
         {!isImageLoaded && <MyWorkSkeleton />}
 
-        <Flex
-        display={isImageLoaded ? "flex" : "none"}
+        {isImageLoaded && <Flex
         width={{base: "100%", md: "80%"}}
         bg="white"
         color="black"
@@ -155,10 +173,9 @@ function MyWork() {
                         overlayBgColorEnd="rgba(0, 0, 0, 0.85)" // Smooth dark overlay for better focus
                         transitionDuration={300} // Smooth zoom animation duration
                         >
-                            <Image 
+                            <img 
                             src={userProject.publicPhoto}
-                            width={"full"}
-                            height={"auto"}
+                            style={{ width: "100%", height: "auto" }}
                             onLoad={() => setIsImageLoaded(true)}
                             />
                         </Zoom>
@@ -188,6 +205,7 @@ function MyWork() {
             justifyContent={"center"}
             alignItems={"center"}
             >
+                
                 <Button
                 width={"auto"}
                 height={["30px", "35px", "35px", "35px", "35px"]}
@@ -217,7 +235,7 @@ function MyWork() {
                     Compartilhar
                 </Button>
             </Flex>
-        </Flex>
+        </Flex> }
 
         <Modal isOpen={isLinkOpen} onClose={onLinkClose}>
             <ModalOverlay />
