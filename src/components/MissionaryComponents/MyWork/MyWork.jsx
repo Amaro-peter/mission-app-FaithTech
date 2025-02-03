@@ -3,7 +3,7 @@ import { Flex, Text, Box, Image, Button, Container, useDisclosure, useClipboard,
     ModalOverlay, Stack, Heading,
     AspectRatio
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import useAuthStore from '../../../store/authStore';
 import useUserProfileStore from '../../../store/useProfileStore';
@@ -13,6 +13,7 @@ import useGetMissionaryProject from '../../../hooks/useGetMissionaryProject';
 import useUserProjectStore from '../../../store/useProjectStore';
 import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
+import MyWorkSkeleton from '../Skeletons/MyWorkSkeleton';
 
 function MyWork() {
     const authUser = useAuth();
@@ -43,13 +44,30 @@ function MyWork() {
 
     const [isExpanded, setIsExpanded] = useState(false);
     const description =  userProject ? userProject.description : "Descrição ainda a ser definida";
-    const truncatedDescription = description.length > 350 ? description.slice(0, 350) + "..." : description
+    const truncatedDescription = description.length > 350 ? description.slice(0, 350) + "..." : description;
+
+    const [isImageLoaded, setIsImageLoaded] = useState(false);
+
+    useEffect(() => {
+        if(userProject && userProject.publicPhoto) {
+            const img = document.createElement("img");
+            img.src = userProject.publicPhoto;
+            img.onload = () => setIsImageLoaded(true);
+        } else {
+            setIsImageLoaded(true);
+        }
+    }, [userProject]);
+
+    console.log(isImageLoaded);
 
   return (
     <Container
     maxW={"container.lg"}
     >
+        {!isImageLoaded && <MyWorkSkeleton />}
+
         <Flex
+        display={isImageLoaded ? "flex" : "none"}
         width={{base: "100%", md: "80%"}}
         bg="white"
         color="black"
@@ -129,20 +147,7 @@ function MyWork() {
             direction={"column"}
             gap={2}
             >
-                {userProject && userProject.publicYoutubeLink ? (
-                    <AspectRatio ratio={16/9} width={"full"}>
-                        <iframe 
-                        width="942" 
-                        height="530" 
-                        src={userProject.publicYoutubeLink} 
-                        title="Lista Mundial da Perseguição 2025" 
-                        frameborder="0" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                        referrerpolicy="strict-origin-when-cross-origin" 
-                        allowFullScreen></iframe>
-                    </AspectRatio>
-                ) : null}
-
+                
                 {userProject && userProject.publicPhoto ?
                     <>
                         <Zoom
@@ -154,10 +159,26 @@ function MyWork() {
                             src={userProject.publicPhoto}
                             width={"full"}
                             height={"auto"}
+                            onLoad={() => setIsImageLoaded(true)}
                             />
                         </Zoom>
                     </>
                 : null}
+
+                {userProject && userProject.publicYoutubeLink ? (
+                    <AspectRatio ratio={16/9} width={"full"}>
+                        <iframe 
+                        width="942" 
+                        height="530" 
+                        src={userProject.publicYoutubeLink} 
+                        title="Lista Mundial da Perseguição 2025" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        referrerpolicy="strict-origin-when-cross-origin" 
+                        allowFullScreen ></iframe>
+                    </AspectRatio>
+                ) : null}
+
             </Flex>
 
             <Flex
