@@ -99,7 +99,6 @@ function useEditHeader() {
             }
             navigate(`/${authUser.username}`);
         } catch(error) {
-            console.log(error);
             if(!toast.isActive("projectUpdateError")) {
                 toast({
                     id: "projectUpdateError",

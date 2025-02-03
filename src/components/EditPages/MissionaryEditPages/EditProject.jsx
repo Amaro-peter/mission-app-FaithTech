@@ -105,7 +105,6 @@ function EditProject({username, errorMessage, setErrorMessage}) {
   };
 
   const handleDeleteProject = async () => {
-    console.log("Hello");
     try{
       await deleteProject(userStore);
     } catch(error) {
