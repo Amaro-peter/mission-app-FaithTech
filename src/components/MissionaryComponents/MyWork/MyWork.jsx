@@ -26,6 +26,8 @@ function MyWork() {
 
     const {isLoading, userProject} = useGetMissionaryProject(userProfile);
 
+    console.log(userProject);
+
 
     const {isOpen: isLinkOpen, onOpen: onLinkOpen, onClose: onLinkClose} = useDisclosure();
     

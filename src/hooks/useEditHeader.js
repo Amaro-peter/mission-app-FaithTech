@@ -66,7 +66,7 @@ function useEditHeader() {
             };
 
             await updateDoc(userDocRef, updatedUser);
-            localStorage.setItem("user", JSON.stringify(updatedUser));
+            localStorage.setItem("user-info", JSON.stringify(updatedUser));
             setAuthUser({...updatedUser});
             setUserProfile({...updatedUser});
             if(!toast.isActive("profileUpdated")) {

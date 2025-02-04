@@ -15,12 +15,27 @@ function useEditHeader() {
 
     const editProject = async (inputs, selectedFile) => {
 
-        if(inputs.title === "" || inputs.description === "" || (!selectedFile && inputs.publicPhoto === "")) {
+        if(inputs.title === "" || inputs.description === "") {
             if(!toast.isActive("inputsProjectError")) {
                 toast({
                     id: "inputsProjectError",
                     title: "Preencha todos os campos",
-                    description: "Por favor, preencha todos os campos",
+                    description: "Por favor, preencha o título e a descrição do projeto.",	
+                    status: "success",
+                    duration: 5000,
+                    isClosable: true,
+                    position: "top"
+                });
+            }
+            return;
+        }
+
+        if(!selectedFile && inputs.publicPhoto === "") {
+            if(!toast.isActive("noImage")) {
+                toast({
+                    id: "noImage",
+                    title: "Selecione uma imagem",
+                    description: "Por favor, selecione uma imagem para o projeto.",
                     status: "success",
                     duration: 5000,
                     isClosable: true,
