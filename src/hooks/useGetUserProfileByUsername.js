@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import useUserProfileStore from "../store/useProfileStore";
 import { useToast } from "@chakra-ui/react";
 import { db } from "../utils/firebase";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
 import { useRouteError } from "react-router-dom";
+import useAuthStore from "../store/authStore";
 
 function useGetUserProfileByUsername(username) {
     const [isLoading, setIsLoading] = useState(true);
-    const { userProfile, setUserProfile } = useUserProfileStore();
+    const { userProfile, setUserProfile, setFollowStatus } = useUserProfileStore();
+    const authUser = useAuthStore((state) => state.user);
     const toast = useToast();
 
     useEffect(() => {
@@ -26,6 +28,13 @@ function useGetUserProfileByUsername(username) {
                 });
                 
                 setUserProfile(userDoc);
+
+                if(authUser && userDoc.uid) {
+                    const followerDocRef = doc(db, "users", userDoc.uid, "followers", authUser.uid);
+                    const followerDocSnap = await getDoc(followerDocRef);
+                    setFollowStatus(followerDocSnap.exists());
+                }
+
             } catch (error) {
                 toast({
                     title: "Error",
@@ -42,7 +51,7 @@ function useGetUserProfileByUsername(username) {
         if (username) {
             getUserProfile();
         }
-    }, [setUserProfile, username, toast]);
+    }, [setUserProfile, setFollowStatus, username, toast, authUser]);
 
     return { isLoading, userProfile };
 }

@@ -3,7 +3,7 @@ import { Flex, Text, Box, Button, Container, useDisclosure, useClipboard,
     ModalOverlay, Stack, Heading,
     AspectRatio
 } from '@chakra-ui/react';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import useAuthStore from '../../../store/authStore';
 import useUserProfileStore from '../../../store/useProfileStore';
@@ -24,9 +24,14 @@ function MyWork() {
 
     const visitingOwnProfileAndAuth = authUser && authUser.username === userProfile.username;
 
-    const {isLoading, userProject} = useGetMissionaryProject(userProfile);
-
-    console.log(userProject);
+    const profileWithoutFollow = useMemo(() => {
+        if(!userProfile) {
+            return null;
+        }
+        const {isFollowed, ...restProfile} = userProfile;
+        return restProfile;
+    }, [userProfile]);
+    const {isLoading, userProject} = useGetMissionaryProject(profileWithoutFollow);
 
 
     const {isOpen: isLinkOpen, onOpen: onLinkOpen, onClose: onLinkClose} = useDisclosure();

@@ -14,7 +14,7 @@ function useLogout() {
         setIsLoggingOut(true);
         try{
             await signOut(auth);
-            localStorage.removeItem("user-info")
+            localStorage.removeItem("user-info");
             logoutUser();
             
         } catch (error) {

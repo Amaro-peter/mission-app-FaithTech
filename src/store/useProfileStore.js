@@ -1,9 +1,17 @@
 import {create} from "zustand";
 import { db } from "../utils/firebase";
 
-const useUserProfileStore = create((set) => ({
-    userProfile: {posts: [], lastVisible: null},
+const useUserProfileStore = create((set, get) => ({
+    userProfile: {posts: [], lastVisible: null, isFollowed: false},
     setUserProfile: (userProfile) => set({userProfile}),
+
+    setFollowStatus: (status) => set((state) => ({
+        userProfile: {
+            ...state.userProfile,
+            isFollowed: status,
+        },
+    })),
+
     addPosts: (newPosts, lastVisible) => set((state) => ({
         userProfile: {
             ...state.userProfile,

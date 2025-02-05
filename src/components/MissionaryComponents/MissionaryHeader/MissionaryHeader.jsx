@@ -7,13 +7,21 @@ import useUserProfileStore from '../../../store/useProfileStore';
 import LogOut from '../../NavBarItems/LogOut';
 import { useAuth } from '../../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import useFollowUser from '../../../hooks/useFollowUser';
+import useUnfollowUser from '../../../hooks/useUnfollowUser';
 
 function  MissionaryHeader({activeTab, handleTabClick}) {
   const[fontSize, setFontSize] = useState("16px");
   const [isLargerThan360] = useMediaQuery("(min-width: 371px)");
+
   const authUser = useAuth();
 
   const {userProfile} = useUserProfileStore();
+
+  const {isUpdatingFollow, handleFollowUser} = useFollowUser();
+  const {isUpdatingUnfollow, handleUnfollowUser} = useUnfollowUser();
+
+  const isFollowing = userProfile ? userProfile.isFollowed : false;
 
   const visitingOwnProfileAndAuth = authUser && authUser.username === userProfile.username;
   const visitingAnotherProfileAndAuth = authUser && authUser.username !== userProfile.username;
@@ -53,6 +61,14 @@ function  MissionaryHeader({activeTab, handleTabClick}) {
   const handleLinkClick = () => {
     setLinkValue(window.location.href);
     onLinkOpen();
+  };
+
+  const handleFollowUnfollow = () => {
+    if(isFollowing) {
+      handleUnfollowUser(userProfile.uid);
+    } else {
+      handleFollowUser(userProfile.uid);
+    }
   };
 
   useEffect(() => {
@@ -179,9 +195,11 @@ function  MissionaryHeader({activeTab, handleTabClick}) {
                 borderRadius={50}
                 backgroundColor={"#FFEFE7"}
                 _hover={{background: "#FFB999"}}
+                onClick={handleFollowUnfollow}
+                isLoading={isUpdatingFollow || isUpdatingUnfollow}
                 >
                   <Text fontSize={fontSize}>
-                    Seguir
+                    {isFollowing ? "Seguindo" : "Seguir"}
                   </Text>
                 </Button>
                 <Button

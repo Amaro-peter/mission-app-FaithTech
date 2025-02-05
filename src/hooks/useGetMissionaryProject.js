@@ -5,7 +5,7 @@ import { collection, query, where, getDocs, doc, getDoc } from "firebase/firesto
 import useProjectStore from "../store/useProjectStore";
 import useAuthStore from "../store/authStore";
 
-function useGetMissionaryProject(authUser) {
+function useGetMissionaryProject(profileWithoutFollow) {
     const [isLoading, setIsLoading] = useState(true);
     const { userProject, setUserProject } = useProjectStore();
     const toast = useToast();
@@ -14,7 +14,7 @@ function useGetMissionaryProject(authUser) {
         const getUserProject = async () => {
             setIsLoading(true);
             try {
-                const userProjectRef = doc(db, "users", authUser.uid, "project", "projectDoc");
+                const userProjectRef = doc(db, "users", profileWithoutFollow.uid, "project", "projectDoc");
                 const userDoc = await getDoc(userProjectRef);
 
                 if (!userDoc.exists()) {
@@ -31,10 +31,10 @@ function useGetMissionaryProject(authUser) {
             }
         };
 
-        if (authUser) {
+        if (profileWithoutFollow?.uid) {
             getUserProject();
         }
-    }, [setUserProject, authUser, toast]);
+    }, [setUserProject, profileWithoutFollow?.uid, toast]);
 
     return { isLoading, userProject };
 }
