@@ -71,6 +71,10 @@ function  MissionaryHeader({activeTab, handleTabClick}) {
     }
   };
 
+  const handleFollowersClick = () => {
+    navigate(`/${authUser.username}/Followers`);
+  };
+
   useEffect(() => {
     const handleResize = () => {
       const zoomLevel = 1;
@@ -165,6 +169,7 @@ function  MissionaryHeader({activeTab, handleTabClick}) {
                 borderRadius={50}
                 backgroundColor={"#FFEFE7"}
                 _hover={{background: "#FFB999"}}
+                onClick={handleFollowersClick}
                 >
                   <Text fontSize={fontSize}>
                     Seguidores

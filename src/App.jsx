@@ -24,6 +24,7 @@ import { Button, Flex, VStack } from "@chakra-ui/react";
 import useAuthStore from "./store/authStore";
 import ScrollToTop from "./Layouts/Scrolling/ScrollToTop";
 import EditProject from "./components/EditPages/MissionaryEditPages/EditProject";
+import Followers from "./components/MissionaryComponents/Followers/Followers";
 
 
 function App() {
@@ -108,6 +109,15 @@ function App() {
 
           <Route path="/:username/EditHeader" element={
             isMissionary ? <MissionaryEditHeaderRoute authUser={authUser} isMissionary={isMissionary} isUser={isUser} /> : 
+            isAdmin ? (
+            <Navigate to={"/adminRegistrationPanel"} />
+          ) : isUser ? (
+            <Navigate to={`/${authUser.username}`} />
+          ) : (<Navigate to={"/landingPage"} />) } 
+          />
+
+          <Route path="/:username/Followers" element={
+            isMissionary ? <MissionaryFollowersRoute authUser={authUser} isMissionary={isMissionary} isUser={isUser} /> : 
             isAdmin ? (
             <Navigate to={"/adminRegistrationPanel"} />
           ) : isUser ? (
@@ -326,6 +336,42 @@ function MissionaryEditProjectRoute({authUser, isMissionary, isUser}) {
 
   if(isMissionary && authUser.username === username) {
       return <EditProject username={username} />;
+  } else if(isMissionary && authUser.username !== username && userProfile.role === "missionary") {
+    return navigate(`/${authUser.username}`);
+  } else if(isMissionary && authUser.username !== username && userProfile.role === "user") {
+    return navigate(`/${authUser.username}`);
+  } else {
+    return <Navigate to="/landingPage" />;
+  }
+}
+
+function MissionaryFollowersRoute({authUser, isMissionary, isUser}) {
+  const { username } = useParams();
+  const { isLoading, userProfile } = useGetUserProfileByUsername(username);
+  const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState(null);
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (isMissionary && authUser.username === username) {
+
+      } else if (isMissionary && authUser.username !== username) {
+        setErrorMessage("Acesso negado");
+      } else if (isUser && authUser.username !== username && userProfile?.role === "user") {
+        setErrorMessage("Acesso negado");
+      } else {
+        navigate("/landingPage");
+      }
+    }
+  }, [isLoading, isMissionary, isUser, authUser, username, userProfile, setErrorMessage, navigate]);
+
+
+  if(isLoading) {
+    return <PageLayoutSpinner />
+  }
+
+  if(isMissionary && authUser.username === username) {
+    return <Followers />;
   } else if(isMissionary && authUser.username !== username && userProfile.role === "missionary") {
     return navigate(`/${authUser.username}`);
   } else if(isMissionary && authUser.username !== username && userProfile.role === "user") {
