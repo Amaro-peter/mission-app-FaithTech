@@ -312,7 +312,7 @@ function MissionaryEditHeaderRoute({authUser, isMissionary, isUser}) {
 
 
   if(isLoading) {
-    return <PageLayoutSpinner />
+    return <PageLayoutSpinner />;
   }
 
   if(isMissionary && authUser.username === username) {
@@ -348,7 +348,7 @@ function MissionaryEditProjectRoute({authUser, isMissionary, isUser}) {
 
 
   if(isLoading) {
-    return <PageLayoutSpinner />
+    return <PageLayoutSpinner />;
   }
 
   if(isMissionary && authUser.username === username) {
@@ -432,7 +432,7 @@ function UserDonorRoute({ isUser, authUser }) {
   }, [username, isUser, authUser, navigate]);
 
   if(loading) {
-    return <PageLayoutSpinner />
+    return <PageLayoutSpinner />;
   }
 
   if(isUser && authUser.username === username) {
