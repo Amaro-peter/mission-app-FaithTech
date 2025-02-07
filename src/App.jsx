@@ -75,7 +75,7 @@ function App() {
   const isUser = authUser && authUser.role === "user";
 
   if(loading) {
-    return <PageLayoutSpinner />
+    return <PageLayoutSpinner />;
   }
 
   return (
@@ -84,6 +84,7 @@ function App() {
       <PageLayout loading={loading} authUser={authUser}>
         <Routes>
           <Route path="*" element={<PageNotFound />} />
+
           <Route path="/adminMissionarySignUpSucess" element={ isAdmin ? <AdminMissionarySignUpSucess /> : isMissionary ? (
             <Navigate to={`/${authUser.username}`} />
           ) : isUser ? (
@@ -128,7 +129,8 @@ function App() {
           
           <Route 
           path="/" 
-          element= {isMissionary ? ( <Navigate to={`/${authUser.username}`} />) : isAdmin ? (
+          element= {isMissionary ? ( <Navigate to={`/${authUser.username}`} />) 
+            : isAdmin ? (
                 <Navigate to="/adminRegistrationPanel" />
               ) : isUser ? (
                 <Navigate to={`/${authUser.username}`} />
@@ -140,13 +142,13 @@ function App() {
           <Route 
             path="/:username" 
             element={isMissionary ? (
-              <UsernameRoute isMissionary={isMissionary} authUser={authUser} setAuthUser={setAuthUser} />
+              <UserMissionaryRoute isMissionary={isMissionary} authUser={authUser} setAuthUser={setAuthUser} />
             ) : isAdmin ? (
               <Navigate to="/adminRegistrationPanel" />
             ) : isUser ? (
               <UserDonorRoute isUser={isUser} authUser={authUser} />
             ) : (
-              <Navigate to="/landingPage" />
+              <UserMissionaryRoute isMissionary={isMissionary} authUser={authUser} setAuthUser={setAuthUser} />
             )} 
           />
 
@@ -244,7 +246,7 @@ function App() {
   );
 }
 
-function UsernameRoute({ isMissionary, authUser, setAuthUser}) {
+function UserMissionaryRoute({ isMissionary, authUser, setAuthUser}) {
   const { username } = useParams();
   const {isLoading, userProfile} = useGetUserProfileByUsername(username);
   const navigate = useNavigate();
@@ -259,7 +261,22 @@ function UsernameRoute({ isMissionary, authUser, setAuthUser}) {
   }, [isLoading, userProfile, navigate, isMissionary, authUser]);
 
   if(isLoading) {
-    return <PageLayoutSpinner />
+    return <PageLayoutSpinner />;
+  }
+
+  if(!authUser && userProfile.role === "missionary") {
+    return (
+      <MissionaryHomePage 
+        unauthenticated={true}
+        username={username}
+        errorMessage={errorMessage}
+        setErrorMessage={setErrorMessage}
+      />
+    );
+  } else if(!authUser && userProfile.role === "user") {
+    return <Navigate to={"/landingPage"} />;
+  } else if(!authUser && !userProfile) {
+    return <Navigate to={"/landingPage"} />;
   }
 
   if(isMissionary && authUser.username === username) {
@@ -367,7 +384,7 @@ function MissionaryFollowersRoute({authUser, isMissionary, isUser}) {
 
 
   if(isLoading) {
-    return <PageLayoutSpinner />
+    return <PageLayoutSpinner />;
   }
 
   if(isMissionary && authUser.username === username) {

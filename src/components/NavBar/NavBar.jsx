@@ -1,12 +1,15 @@
-import { Box, Flex, Button, Image, Avatar, Spacer, useBreakpointValue } from "@chakra-ui/react"
+import { Box, Flex, Button, Image, Text, Spacer, useBreakpointValue } from "@chakra-ui/react"
 import LogOut from "../NavBarItems/LogOut"
 import Notification from "../NavBarItems/Notifications"
 import NavBarItems from "../NavBarItems/NavBarItems"
 import useLogOut from "../../hooks/useLogOut"
 import { base } from "framer-motion/client";
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 
-function NavBar( { isLargerThanBase } ) {
+function NavBar( { authUser, isLargerThanBase } ) {
+
+  const navigate = useNavigate();
 
   const imageWidth = useBreakpointValue({
     base: "40%", // For very small screens
@@ -39,8 +42,6 @@ function NavBar( { isLargerThanBase } ) {
     lg: "1em", // Large screens
     xl: "1em" // Extra large screens
   });
-
-  const {handleLogOut, isLoggingOut} = useLogOut()
   
   return (
     <Box
@@ -57,7 +58,7 @@ function NavBar( { isLargerThanBase } ) {
     bg={"white"}
     overflow={"hidden"}
     >
-        {isLargerThanBase ? (
+      { authUser && isLargerThanBase ? (
           <Flex 
           direction={"row"} 
           gap={10} 
@@ -80,7 +81,7 @@ function NavBar( { isLargerThanBase } ) {
             <NavBarItems sizeOfIcon={"1.5em"} sizeOfText={"0.75em"} isLargerThanBase={isLargerThanBase} />
             
           </Flex> 
-        ) : (
+        ) : authUser && !isLargerThanBase ? (
           <>
             <Flex 
             direction={"row"} 
@@ -108,14 +109,84 @@ function NavBar( { isLargerThanBase } ) {
               alignItems={"center"}
               gap={3}
               >
-                <Notification isLargerThanBase={isLargerThanBase} sizeOfIcon={sizeOfIcon} sizeOfText={sizeOfText} />
                 <LogOut sizeOfIcon={sizeOfIcon} sizeOfText={sizeOfText} />
               </Flex>
             </Flex> 
           </>
-        )}    
+        ) : !authUser && !isLargerThanBase ? (
+            <Flex 
+            direction={"row"} 
+            gap={3} 
+            w={"full"} 
+            height={"full"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            
+            >
+              <Image
+              src={"/Mission.png"}  // Image source
+              alt="Mission Logo"
+              width={{ base: "50%", md: "20%", lg: "10%" }}  // Responsive width
+              maxWidth="200px"  // Max width to ensure proper scaling
+              minWidth="100px"
+              height="auto"  // Auto height to maintain aspect ratio
+              m={1}
+              />
+              <Spacer />
+              <Flex 
+              direction={"row"} 
+              cursor={"pointer"} 
+              justifyContent={"center"}
+              alignItems={"center"}
+              gap={3}
+              >
+                <Button
+                onClick={() => navigate("/donorSignPage")}
+                display={"flex"}
+                justifyContent={"center"}
+                alignItems={"center"}
+                gap={2}
+                mb={1}
+                >
+                  <Text fontSize={"auto"}>Cadastre-se</Text>
+                </Button> 
+              </Flex>
+            </Flex> 
+        ) : (
+
+            <Flex 
+            direction={"row"} 
+            gap={10} 
+            w={"full"} 
+            height={"full"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            
+            >
+              <Image
+              src={"/Mission.png"}  // Image source
+              alt="Mission Logo"
+              width={{ base: "50%", md: "20%", lg: "10%" }}  // Responsive width
+              maxWidth="200px"  // Max width to ensure proper scaling
+              minWidth="100px"
+              height="auto"  // Auto height to maintain aspect ratio
+              m={2}
+              />
+            
+              <Button
+              onClick={() => navigate("/donorSignPage")}
+              display={"flex"}
+              justifyContent={"center"}
+              alignItems={"center"}
+              gap={2}
+              mb={1}
+              >
+                <Text fontSize={"auto"}>Cadastre-se</Text>
+              </Button> 
+          </Flex>
+        )}
     </Box>
-  )
+  );
 }
 
 export default NavBar

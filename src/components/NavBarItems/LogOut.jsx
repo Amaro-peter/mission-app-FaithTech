@@ -1,6 +1,6 @@
 import { Box, Flex, Button, Text } from '@chakra-ui/react'
 import { IoIosLogOut } from 'react-icons/io'
-import { Link, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import useLogout from '../../hooks/useLogOut'
 
 function LogOut({ sizeOfIcon, sizeOfText }) {
@@ -8,11 +8,18 @@ function LogOut({ sizeOfIcon, sizeOfText }) {
   const { handleLogout } = useLogout();
 
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleLogoutAndNavigate = () => {
-    handleLogout();
-    navigate("/");
+  const handleLogoutAndNavigate = async () => {
+    await handleLogout();
+    navigate("/landingPage");
   };
+
+  const isEditPage = location.pathname.includes('/EditHeader') || location.pathname.includes('/EditProject');
+
+  if(isEditPage) {
+    return null;
+  }
 
   return (
     <Flex

@@ -14,7 +14,7 @@ import useGetUserProfileByUsername from '../../../hooks/useGetUserProfileByUsern
 import MissionaryHeaderSkeleton from '../../../components/MissionaryComponents/Skeletons/MissionaryHeaderSkeleton';
 import useAuthStore from '../../../store/authStore';
 
-function HomePage({username, errorMessage, setErrorMessage}) {
+function HomePage({unauthenticated, username, errorMessage, setErrorMessage}) {
   const {isLoading, userProfile} = useGetUserProfileByUsername(username);
   const[activeTab, setActiveTab] = useState('Projeto');
   const[myPosts, setMyPosts] = useState('Meu feed');
@@ -77,7 +77,8 @@ function HomePage({username, errorMessage, setErrorMessage}) {
         >
           <VStack gap={5} width="100%" align={"strecht"} >
             <Box flex={2} mt={10}>
-              {!isLoading && userProfile && <MissionaryHeader activeTab={activeTab} handleTabClick={handleTabClick} />}
+              {!isLoading && unauthenticated && <MissionaryHeader unauthenticated={unauthenticated} activeTab={activeTab} handleTabClick={handleTabClick} />}
+              {!isLoading && userProfile && !unauthenticated && <MissionaryHeader activeTab={activeTab} handleTabClick={handleTabClick} />}
               {isLoading && <MissionaryHeaderSkeleton />}
             </Box>
             { activeTab === 'Postagens' && visitingOwnProfileAndAuth ? (
@@ -87,7 +88,8 @@ function HomePage({username, errorMessage, setErrorMessage}) {
             ) : (null)
             }
             <Box>
-              {activeTab === 'Projeto' && <MyWork />}
+              {activeTab === 'Projeto' && unauthenticated && <MyWork unauthenticated={unauthenticated} />}
+              {activeTab === 'Projeto' && !unauthenticated && <MyWork />}
               {activeTab === 'Campanha' && <Campaign />}
               {activeTab === 'Postagens' && visitingOwnProfileAndAuth && <NewPost />}
             </Box>

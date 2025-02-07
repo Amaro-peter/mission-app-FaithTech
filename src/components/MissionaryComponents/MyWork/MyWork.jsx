@@ -1,7 +1,7 @@
 import { Flex, Text, Box, Button, Container, useDisclosure, useClipboard, 
     Modal, ModalBody, ModalCloseButton, ModalContent, Input, ModalHeader, 
     ModalOverlay, Stack, Heading,
-    AspectRatio
+    AspectRatio, Center, VStack
 } from '@chakra-ui/react';
 import React, { useEffect, useMemo } from 'react';
 import { useAuth } from '../../../context/AuthContext';
@@ -15,7 +15,7 @@ import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
 import MyWorkSkeleton from '../Skeletons/MyWorkSkeleton';
 
-function MyWork() {
+function MyWork({unauthenticated}) {
     const authUser = useAuth();
 
     const {userProfile} = useUserProfileStore();
@@ -35,6 +35,7 @@ function MyWork() {
 
 
     const {isOpen: isLinkOpen, onOpen: onLinkOpen, onClose: onLinkClose} = useDisclosure();
+    const {isOpen: isUnauthDonateOpen, onOpen: onUnauthDonateOpen, onClose: onUnauthDonateClose} = useDisclosure();
     
     const [linkValue, setLinkValue] = useState('');
     
@@ -213,19 +214,36 @@ function MyWork() {
             alignItems={"center"}
             >
                 
-                <Button
-                width={"auto"}
-                height={["30px", "35px", "35px", "35px", "35px"]}
-                border={"2px solid black"}
-                borderRadius={50}
-                backgroundColor={"#FFEFE7"}
-                _hover={{background: "#FFB999"}}
-                overflow={"hidden"}
-                textOverflow={"ellipsis"}
-                whiteSpace={"nowrap"}
-                >
-                    Apoiar a missão
-                </Button>
+                {!unauthenticated ? (
+                    <Button
+                    width={"auto"}
+                    height={["30px", "35px", "35px", "35px", "35px"]}
+                    border={"2px solid black"}
+                    borderRadius={50}
+                    backgroundColor={"#FFEFE7"}
+                    _hover={{background: "#FFB999"}}
+                    overflow={"hidden"}
+                    textOverflow={"ellipsis"}
+                    whiteSpace={"nowrap"}
+                    >
+                        Apoiar a missão
+                    </Button>
+                ) : (
+                    <Button
+                    width={"auto"}
+                    height={["30px", "35px", "35px", "35px", "35px"]}
+                    border={"2px solid black"}
+                    borderRadius={50}
+                    backgroundColor={"#FFEFE7"}
+                    _hover={{background: "#FFB999"}}
+                    overflow={"hidden"}
+                    textOverflow={"ellipsis"}
+                    whiteSpace={"nowrap"}
+                    onClick={onUnauthDonateOpen}
+                    >
+                        Apoiar a missão
+                    </Button>
+                )}
 
                 <Button
                 width={"auto"}
@@ -279,6 +297,41 @@ function MyWork() {
                         </Button>
                     </Stack>
                 </Flex>
+                </ModalBody>
+            </ModalContent>
+        </Modal>
+
+        <Modal isOpen={isUnauthDonateOpen} onClose={onUnauthDonateClose}>
+            <ModalOverlay />
+            <ModalContent bg={"white"} boxShadow={"xl"} border={"1px solid gray"} mx={3}>
+                <ModalHeader />
+                <ModalCloseButton />
+                <ModalBody>
+                    {/* Container Flex */}
+                    <Flex bg={"black"}>
+                      <Stack spacing={4} w={"full"} maxW={"md"} bg={"white"} p={6} my={0}>
+                        <Center>
+                          <Heading lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl" }}>
+                            Deseja doar?
+                          </Heading>
+                        </Center>
+                                        
+                        <VStack mt={2} gap={1}>
+                          <Text fontSize={"xl"} fontWeight={"bold"}>Cadastre-se primeiro!</Text>
+                        </VStack>
+              
+                        <Button
+                        color={"black"}
+                        size='sm'
+                        w='full'
+                        backgroundColor={"#E6B89C"}
+                        _hover={{background: "#FFB999"}}
+                        onClick={() => navigate('/donorSignPage')}
+                        >
+                          Cadastre-se
+                        </Button>
+                      </Stack>
+                    </Flex>
                 </ModalBody>
             </ModalContent>
         </Modal>

@@ -11,17 +11,16 @@ import MissionaryHomePage from "../../Pages/HomePagesFolder/MissionaryHomePage/M
 
 
 function PageLayout({children, loading, authUser}) {
-  const {pathname} = useLocation()
+  const {pathname} = useLocation();
   
-  const [showNavBar, setShowNavBar] = useState(true)
+  const [showNavBar, setShowNavBar] = useState(true);
 
-  const [isLargerThanBase, setIsLargerThanBase] = useState(window.innerWidth >= 1000)
+  const [isLargerThanBase, setIsLargerThanBase] = useState(window.innerWidth >= 1000);
 
-  const lastScrollY = useRef(0)
+  const lastScrollY = useRef(0);
 
 
-  const canRenderNavBar = authUser !== null
-  && pathname !== "/landingPage"
+  const canRenderNavBar = pathname !== "/landingPage"
   && pathname !== "/donorSignPage"
   && pathname !== "/missionarySignPage"
   && pathname !== "/resetForm"
@@ -31,7 +30,7 @@ function PageLayout({children, loading, authUser}) {
   && pathname !== "/adminRegistrationPanel"
   && pathname !== "/adminMissionarySignUpSucess";
 
-  const canRenderBottomBar = authUser !== null
+  const canRenderBottomBar = authUser !== null 
   && pathname !== "/landingPage"
   && pathname !== "/donorSignPage"
   && pathname !== "/missionarySignPage"
@@ -56,7 +55,7 @@ function PageLayout({children, loading, authUser}) {
     return () => {
       window.removeEventListener("resize", handleResize);
     }
-  }, [])
+  }, []);
 
   useEffect(() =>{
     const handleScroll = () => {
@@ -75,7 +74,7 @@ function PageLayout({children, loading, authUser}) {
     return () => {
       window.removeEventListener("scroll", handleScroll)
     }
-  }, [])
+  }, []);
 
   return (
     <AuthProvider authUser={authUser}>
@@ -83,7 +82,7 @@ function PageLayout({children, loading, authUser}) {
         {canRenderNavBar && showNavBar && (
           <Box w={"full"} justifyContent={"center"} alignItems={"center"}
           >
-            <NavBar isLargerThanBase={isLargerThanBase} />
+            <NavBar authUser={authUser} isLargerThanBase={isLargerThanBase} />
           </Box>
         )}
               

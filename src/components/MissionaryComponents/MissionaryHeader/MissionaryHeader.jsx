@@ -1,6 +1,6 @@
 import { Box, Button, Flex, VStack, Text, Avatar, Divider, Container, useMediaQuery, useDisclosure,
   useClipboard, Modal, ModalBody, ModalCloseButton, ModalContent, Input, ModalHeader, 
-  ModalOverlay, Stack, Heading} from '@chakra-ui/react';
+  ModalOverlay, Stack, Heading, Center} from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import useAuthStore from '../../../store/authStore';
 import useUserProfileStore from '../../../store/useProfileStore';
@@ -10,9 +10,10 @@ import { useNavigate } from 'react-router-dom';
 import useFollowUser from '../../../hooks/useFollowUser';
 import useUnfollowUser from '../../../hooks/useUnfollowUser';
 
-function  MissionaryHeader({activeTab, handleTabClick}) {
+function  MissionaryHeader({unauthenticated, activeTab, handleTabClick}) {
   const[fontSize, setFontSize] = useState("16px");
   const [isLargerThan360] = useMediaQuery("(min-width: 371px)");
+  const responsiveFontSize = { base: '10px', sm: '12px', md: '14px', lg: '16px', xl: '18px' };
 
   const authUser = useAuth();
 
@@ -28,6 +29,7 @@ function  MissionaryHeader({activeTab, handleTabClick}) {
   
   const {isOpen, onOpen, onClose} = useDisclosure();
   const {isOpen: isLinkOpen, onOpen: onLinkOpen, onClose: onLinkClose} = useDisclosure();
+  const {isOpen: isUnauthDonateOpen, onOpen: onUnauthDonateOpen, onClose: onUnauthDonateClose} = useDisclosure();
 
   const [linkValue, setLinkValue] = useState('');
 
@@ -191,7 +193,7 @@ function  MissionaryHeader({activeTab, handleTabClick}) {
                 </Button>
               
               </>
-            ) : (
+            ) : !unauthenticated ? (
               <>
                 <Button
                 width={"auto"}
@@ -220,6 +222,22 @@ function  MissionaryHeader({activeTab, handleTabClick}) {
                   </Text>
                 </Button>
               </>
+            ): (
+              <>
+                <Button
+                width={"auto"}
+                height={["30px", "35px", "35px", "35px", "35px"]}
+                border={"2px solid black"}
+                borderRadius={50}
+                backgroundColor={"#FFEFE7"}
+                _hover={{background: "#FFB999"}}
+                onClick={onUnauthDonateOpen}
+                >
+                  <Text fontSize={fontSize}>
+                    Doar
+                  </Text>
+                </Button>
+              </>
             )}
           </Flex>
         </Flex>
@@ -230,8 +248,7 @@ function  MissionaryHeader({activeTab, handleTabClick}) {
           fontFamily={"Inter, sans-serif"}
           fontWeight={"bold"}
           fontSize={["20px", "25px", "30px"]}
-          whiteSpace="normal" // Allow text to wrap
-          textAlign="justify" // Justify text
+          wordSpacing={["1px", "1.5px", "2px", "2.5px"]} // Responsive word spacing
           >
             {userProfile.fullName}
           </Text>
@@ -240,8 +257,6 @@ function  MissionaryHeader({activeTab, handleTabClick}) {
           fontFamily={"Inter, sans-serif"}
           fontWeight={"bold"}
           fontSize={"auto"}
-          whiteSpace="normal" // Allow text to wrap
-          textAlign="justify" // Justify text
           >
             (missionário)
           </Text>
@@ -250,16 +265,12 @@ function  MissionaryHeader({activeTab, handleTabClick}) {
           fontFamily={"Inter, sans-serif"}
           fontWeight={"bold"}
           fontSize={"15px"}
-          whiteSpace="normal" // Allow text to wrap
-          textAlign="justify" // Justify text
           >
             {userProfile.username}
           </Text>
           <Text
           fontSize={"sm"}
           fontFamily={"Inter, sans-serif"}
-          whiteSpace="normal" // Allow text to wrap
-          textAlign="justify" // Justify text
           >
             {userProfile.bio}
           </Text>
@@ -457,6 +468,41 @@ function  MissionaryHeader({activeTab, handleTabClick}) {
                     {hasCopiedLink ? 'Copiado' : 'Copiar Link'}
                   </Button>
                 </Stack>
+            </Flex>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isUnauthDonateOpen} onClose={onUnauthDonateClose}>
+        <ModalOverlay />
+        <ModalContent bg={"white"} boxShadow={"xl"} border={"1px solid gray"} mx={3}>
+          <ModalHeader />
+          <ModalCloseButton />
+          <ModalBody>
+            {/* Container Flex */}
+            <Flex bg={"black"}>
+              <Stack spacing={4} w={"full"} maxW={"md"} bg={"white"} p={6} my={0}>
+                <Center>
+                  <Heading lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl" }}>
+                    Deseja doar?
+                  </Heading>
+                </Center>
+                                
+                <VStack mt={2} gap={1}>
+                  <Text fontSize={"xl"} fontWeight={"bold"}>Cadastre-se primeiro!</Text>
+                </VStack>
+      
+                <Button
+                color={"black"}
+                size='sm'
+                w='full'
+                backgroundColor={"#E6B89C"}
+                _hover={{background: "#FFB999"}}
+                onClick={() => navigate('/donorSignPage')}
+                >
+                  Cadastre-se
+                </Button>
+              </Stack>
             </Flex>
           </ModalBody>
         </ModalContent>
