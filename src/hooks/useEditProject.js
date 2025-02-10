@@ -30,7 +30,7 @@ function useEditProject() {
                     position: "top"
                 });
             }
-            return;
+            return false;
         }
 
         if(!selectedFile && inputs.publicPhoto === "") {
@@ -45,15 +45,16 @@ function useEditProject() {
                     position: "top"
                 });
             }
-            return;
+            return false;
         }
 
         if(isUpdating || !authUser) {
-            return;
+            return false;
         }
 
         if(inputs.publicYoutubeLink) {
-            const regex = /^(https:\/\/(?:www\.)?youtube\.com\/(?:watch\?v=|embed\/)|https:\/\/youtu\.be\/)[\w-]+(?:\?t=\d+|&t=\d+|&[\w-]+=[\w-]+)*$/;
+            const regex = /^https:\/\/(?:www\.)?(?:youtube\.com\/|youtu\.be\/|m\.youtube\.com\/|youtube\.com\/embed\/)(.+)$/;
+
             if(!regex.test(inputs.publicYoutubeLink)){
                 if(!toast.isActive("invalidYoutubeLink")) {
                     toast({
@@ -66,19 +67,20 @@ function useEditProject() {
                     position: "top"
                     });
                 }
-                return;
+                return false;
             }
         }
 
-        if(inputs.publicYoutubeLink) {
+        if (inputs.publicYoutubeLink) {
             const youtubeLink = inputs.publicYoutubeLink;
-            const regex = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})(?:\?t=\d+)?$/;
+            const regex = /(?:https?:\/\/)?(?:www\.|m\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
             const match = youtubeLink.match(regex);
             
-            if(match) {
+            if (match) {
                 inputs.publicYoutubeLink = `https://www.youtube.com/embed/${match[1]}`;
             }
         }
+        
 
         setIsUpdating(true);
 
@@ -117,6 +119,7 @@ function useEditProject() {
                 });
             }
             navigate(`/${authUser.username}`);
+            return true;
         } catch(error) {
             if(!toast.isActive("projectUpdateError")) {
                 toast({
@@ -128,6 +131,7 @@ function useEditProject() {
                     isClosable: true,
                     position: "top"
                 });
+                return false;
             }
         } finally {
             setProjectFlag(true);

@@ -49,6 +49,10 @@ function EditProject({username, errorMessage, setErrorMessage}) {
     publicPhoto: "",
   });
 
+  const [isInputsEmpty, setIsInputsEmpty] = useState(
+    inputs.title === "" && inputs.description === "" && inputs.publicYoutubeLink === "" && inputs.publicPhoto === ""
+  );
+
 
   useEffect(() => {
     if(!isLoadingProj && userProject) {
@@ -58,6 +62,7 @@ function EditProject({username, errorMessage, setErrorMessage}) {
         publicYoutubeLink: userProject.publicYoutubeLink || "",
         publicPhoto: userProject.publicPhoto || "",
       });
+      setIsInputsEmpty(false);
     }
   }, [isLoadingProj, userProject]);
 
@@ -88,8 +93,10 @@ function EditProject({username, errorMessage, setErrorMessage}) {
 
   const handleEditProject = async () => {
     try{
-      await editProject(inputs, selectedFile);
-      setSelectedFile(null);
+      const success = await editProject(inputs, selectedFile);
+      if(success) {
+        setSelectedFile(null);
+      }
     } catch(error) {
       if(!toast.isActive("editProjectError")) {
         toast({
@@ -295,7 +302,7 @@ function EditProject({username, errorMessage, setErrorMessage}) {
                   size={"sm"}
                   _hover={{bg: "red.500"}}
                   onClick={() => navigate(`/${userStore.username}`)}
-                  isDisabled={isUpdating}
+                  isDisabled={isUpdating || isDeleting}
                   >
                     Voltar
                   </Button>
@@ -307,7 +314,7 @@ function EditProject({username, errorMessage, setErrorMessage}) {
                   size={"sm"}
                   _hover={{bg: "red.500"}}
                   onClick={onOpen}
-                  isDisabled={isUpdating}
+                  isDisabled={isUpdating || isInputsEmpty}
                   >
                     Deletar projeto
                   </Button>
@@ -320,6 +327,7 @@ function EditProject({username, errorMessage, setErrorMessage}) {
                   _hover={{ background: "orange.500" }}
                   onClick={handleEditProject}
                   isLoading={isUpdating}
+                  isDisabled={isDeleting}
                   >
                     Submeter
                   </Button>
