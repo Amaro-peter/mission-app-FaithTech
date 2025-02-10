@@ -1,13 +1,11 @@
-import { Avatar, Box, Button, Flex, VStack } from "@chakra-ui/react";
+import { Avatar, Box, Flex, VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 
 export default function Follower({user}) {
 
     const [imageLoaded, setImageLoaded] = useState(false);
-
-    const navigate = useNavigate();
 
     const handleImageLoaded = () => {
         setImageLoaded(true);
@@ -20,6 +18,7 @@ export default function Follower({user}) {
     }, [user?.profilePicture]);
 
     return (
+        <Link to={`/${user.username}`} style={{ textDecoration: "none" }}>
             <Box
             background={"white"}
             border={"1px solid"}
@@ -66,12 +65,8 @@ export default function Follower({user}) {
                             </Box>
                         </VStack>
                     </Flex>
-                    <Button
-                    onClick={() => navigate(`/${user?.username}`)}
-                    >
-                        Ver
-                    </Button>
                 </Flex>
             </Box>
+        </Link>
     );
 }
