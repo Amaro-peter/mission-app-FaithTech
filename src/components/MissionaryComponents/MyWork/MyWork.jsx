@@ -3,18 +3,14 @@ import { Flex, Text, Box, Button, Container, useDisclosure, useClipboard,
     ModalOverlay, Stack, Heading,
     AspectRatio, Center, VStack
 } from '@chakra-ui/react';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
-import useAuthStore from '../../../store/authStore';
-import useUserProfileStore from '../../../store/useProfileStore';
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import useGetMissionaryProject from '../../../hooks/useGetMissionaryProject';
-import useUserProjectStore from '../../../store/useProjectStore';
 import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
 import MyWorkSkeleton from '../Skeletons/MyWorkSkeleton';
-import useGetUserTest from '../../../hooks/useGetUserTest';
 import { useUserProfile } from '../../../context/UserProfileContext';
 
 function MyWork({unauthenticated}) {
@@ -35,13 +31,6 @@ function MyWork({unauthenticated}) {
     const visitingOwnProfileAndAuth = authUser && authUser.username === userProfile.username;
 
     const {isLoadingProj, userProject} = useGetMissionaryProject(userProfile);
-    const [tempUserProject, setTempUserProject] = useState(null);
-
-    useEffect(() => {
-        if(isLoadingProj === false && userProject) {
-            setTempUserProject(userProject);
-        }
-    }, [isLoadingProj, userProject]);
 
     const {isOpen: isLinkOpen, onOpen: onLinkOpen, onClose: onLinkClose} = useDisclosure();
     const {isOpen: isUnauthDonateOpen, onOpen: onUnauthDonateOpen, onClose: onUnauthDonateClose} = useDisclosure();
@@ -60,11 +49,11 @@ function MyWork({unauthenticated}) {
     };
 
     const [isExpanded, setIsExpanded] = useState(false);
-    const description =  tempUserProject ? tempUserProject.description : "Descrição ainda a ser definida";
+    const description =  userProject ? userProject.description : "Descrição ainda a ser definida";
     const truncatedDescription = description.length > 350 ? description.slice(0, 350) + "..." : description;
 
     const [isImageLoaded, setIsImageLoaded] = useState(false);
-    const hasImage = tempUserProject?.publicPhoto?.trim();
+    const hasImage = userProject?.publicPhoto?.trim();
 
     useEffect(() => {
         if (isLoadingProj) {
@@ -72,18 +61,18 @@ function MyWork({unauthenticated}) {
             return;
         }
     
-        if (!tempUserProject || !hasImage) {
+        if (!userProject || !hasImage) {
             setIsImageLoaded(true); // No image case, show content immediately
             return;
         }
     
         setIsImageLoaded(false); // Show skeleton while image loads
         const img = new Image();
-        img.src = tempUserProject.publicPhoto;
+        img.src = userProject.publicPhoto;
         img.onload = () => setIsImageLoaded(true);
         img.onerror = () => setIsImageLoaded(true);
 
-    }, [isLoadingProj, tempUserProject?.publicPhoto]);
+    }, [isLoadingProj, userProject?.publicPhoto]);
 
     if(isLoadingProj || isUserProfileLoading) {
         return (<>
@@ -158,7 +147,7 @@ function MyWork({unauthenticated}) {
                     fontWeight={"semibold"}
                     fontSize={"20px"}
                     >
-                        {tempUserProject ? tempUserProject.title  : "Projeto ainda a ser definido"}
+                        {userProject ? userProject.title  : "Projeto ainda a ser definido"}
                     </Text>
                     <Text
                     fontSize={"auto"}
@@ -183,7 +172,7 @@ function MyWork({unauthenticated}) {
                 gap={2}
                 >
                     
-                    {tempUserProject && tempUserProject.publicPhoto ?
+                    {userProject && userProject.publicPhoto ?
                         <>
                             <Zoom
                             zoomMargin={10} // Adjusts the margin around the zoomed image
@@ -191,7 +180,7 @@ function MyWork({unauthenticated}) {
                             transitionDuration={300} // Smooth zoom animation duration
                             >
                                 <img 
-                                src={tempUserProject.publicPhoto}
+                                src={userProject.publicPhoto}
                                 style={{ width: "100%", height: "auto" }}
                                 onLoad={() => setIsImageLoaded(true)}
                                 />
@@ -199,12 +188,12 @@ function MyWork({unauthenticated}) {
                         </>
                     : null}
 
-                    {tempUserProject && tempUserProject.publicYoutubeLink ? (
+                    {userProject && userProject.publicYoutubeLink ? (
                         <AspectRatio ratio={16/9} width={"full"}>
                             <iframe 
                             width="942" 
                             height="530" 
-                            src={tempUserProject.publicYoutubeLink} 
+                            src={userProject.publicYoutubeLink} 
                             title="Lista Mundial da Perseguição 2025" 
                             frameborder="0" 
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 

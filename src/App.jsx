@@ -20,7 +20,7 @@ import MissionarySignUpSucess from "./components/AuthForms/MissionaryForms/Missi
 import DonorHomePage from "./Pages/HomePagesFolder/DonorHomePage/DonorHomePage";
 import useGetUserProfileByUsername from "./hooks/useGetUserProfileByUsername";
 import EditHeader from "./components/EditPages/MissionaryEditPages/EditHeader";
-import { Button, Flex, VStack } from "@chakra-ui/react";
+import { Button, Flex, useToast, VStack } from "@chakra-ui/react";
 import useAuthStore from "./store/authStore";
 import ScrollToTop from "./Layouts/Scrolling/ScrollToTop";
 import EditProject from "./components/EditPages/MissionaryEditPages/EditProject";
@@ -234,6 +234,7 @@ function App() {
 
 function UserMissionaryRoute({authUser, setAuthUser}) {
   const { username } = useParams();
+  const toast = useToast();
   
   if(!authUser && username && username.endsWith("_missionary")) {
     return (
@@ -245,8 +246,8 @@ function UserMissionaryRoute({authUser, setAuthUser}) {
       />
     );
   } else if(!authUser && username) {
-    return (
-      <DonorHomePage username={username} errorMessage={null} setErrorMessage={null} />
+    return(
+      <Navigate to={"/landingPage"}/>
     );
   } else if(authUser && username && username.endsWith("_missionary")) {
     return (

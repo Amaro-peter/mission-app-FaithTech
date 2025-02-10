@@ -13,6 +13,7 @@ import useAuthStore from '../../../store/authStore';
 import 'react-phone-input-2/lib/style.css';
 import useGetMissionaryProject from '../../../hooks/useGetMissionaryProject';
 import useDeleteProject from '../../../hooks/useDeleteProject';
+import EditProjectSkeleton from '../../MissionaryComponents/Skeletons/EditProjectSkeleton';
 
 function EditProject({username, errorMessage, setErrorMessage}) {
 
@@ -148,7 +149,10 @@ function EditProject({username, errorMessage, setErrorMessage}) {
           maxW={"container.lg"}
           mt={10}
           >
-            <Flex
+            {isLoadingProj ? (
+              <EditProjectSkeleton />
+            ) : (
+              <Flex
               width={{base: "100%", md: "80%"}}
               bg="white"
               color="black"
@@ -323,6 +327,8 @@ function EditProject({username, errorMessage, setErrorMessage}) {
 
               </Stack>
             </Flex>
+            )}
+            
 
             <Modal isOpen={isOpen} onClose={onClose}>
               <ModalOverlay />
