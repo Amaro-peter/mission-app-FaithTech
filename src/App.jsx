@@ -25,52 +25,38 @@ import useAuthStore from "./store/authStore";
 import ScrollToTop from "./Layouts/Scrolling/ScrollToTop";
 import EditProject from "./components/EditPages/MissionaryEditPages/EditProject";
 import Followers from "./components/MissionaryComponents/Followers/Followers";
-
+import useUserProfileStore from "./store/useProfileStore";
+import { signOut } from "firebase/auth";
 
 function App() {
 
   const authUser = useAuthStore((state) => state.user);
   const setAuthUser = useAuthStore((state) => state.setUser);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const setAdmin = useAuthAdminStore((state) => state.setUser);
   const storedAdminUser = useAuthAdminStore((state) => state.user);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-
-      if (!user) {
-        setAuthUser(null);
-        setLoading(false);
-        return;
-      }
-
-      if (storedAdminUser?.role === "admin") {
-        setAuthUser({ ...storedAdminUser });
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          setAuthUser(userData);
-        } else {
-          setAuthUser(null);
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-        setAuthUser(null);
-      } finally {
+      if(user) {
         setLoading(false);
       }
     });
-
     return () => unsubscribe();
-  }, [storedAdminUser]);
+  }, [setAuthUser, authUser]);  
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if(user && !storedAdminUser) {
+        setLoading(false);
+      }
+    });
+    return () => unsubscribe();
+  }, [storedAdminUser, setAdmin]);
 
   const isMissionary = authUser && authUser.role === "missionary";
 
-  const isAdmin = authUser && authUser.role === "admin";
+  const isAdmin = storedAdminUser && storedAdminUser.role === "admin";
 
   const isUser = authUser && authUser.role === "user";
 
@@ -201,7 +187,7 @@ function App() {
           element={isMissionary ? (
             <Navigate to={`/${authUser.username}`} />
           ) : isAdmin ? (
-            <AdminRoute isAdmin={isAdmin} authUser={authUser} />
+            <AdminRoute isAdmin={isAdmin} storedAdminUser={storedAdminUser} />
           ) : isUser ? (
             <Navigate to={`/${authUser.username}`} />
           ) : (
@@ -246,47 +232,39 @@ function App() {
   );
 }
 
-function UserMissionaryRoute({ isMissionary, authUser, setAuthUser}) {
+function UserMissionaryRoute({authUser, setAuthUser}) {
   const { username } = useParams();
-  const {isLoading, userProfile} = useGetUserProfileByUsername(username);
-  const navigate = useNavigate();
-  const [errorMessage, setErrorMessage] = useState(null);
-
-
-  useEffect(() => {
-    if(!isLoading && userProfile === null) {
-      setErrorMessage("Usuário não encontrado");
-      navigate(isMissionary ? `/${authUser.username}` : "/landingPage");
-    }
-  }, [isLoading, userProfile, navigate, isMissionary, authUser]);
-
-  if(isLoading) {
-    return <PageLayoutSpinner />;
-  }
-
-  if(!authUser && userProfile.role === "missionary") {
+  
+  if(!authUser && username && username.endsWith("_missionary")) {
     return (
       <MissionaryHomePage 
-        unauthenticated={true}
-        username={username}
-        errorMessage={errorMessage}
-        setErrorMessage={setErrorMessage}
+      unauthenticated={true} 
+      username={username}
+      errorMessage={null}
+      setErrorMessage={null}
       />
     );
-  } else if(!authUser && userProfile.role === "user") {
-    return <Navigate to={"/landingPage"} />;
-  } else if(!authUser && !userProfile) {
-    return <Navigate to={"/landingPage"} />;
-  }
-
-  if(isMissionary && authUser.username === username) {
-    return <MissionaryHomePage username={username} errorMessage={errorMessage} setErrorMessage={setErrorMessage} />;
-  } else if(isMissionary && authUser.username !== username && userProfile.role === "missionary") {
-    return <MissionaryHomePage username={username} errorMessage={errorMessage} setErrorMessage={setErrorMessage} />;
-  } else if(isMissionary && authUser.username !== username && userProfile.role === "user") {
-    return <DonorHomePage username={username} errorMessage={errorMessage} setErrorMessage={setErrorMessage} />;
+  } else if(!authUser && username) {
+    return (
+      <DonorHomePage username={username} errorMessage={null} setErrorMessage={null} />
+    );
+  } else if(authUser && username && username.endsWith("_missionary")) {
+    return (
+      <MissionaryHomePage 
+      unauthenticated={false} 
+      username={username}
+      errorMessage={null}
+      setErrorMessage={null}
+      />
+    );
   } else {
-    return <Navigate to="/landingPage" />;
+    return(
+      <DonorHomePage 
+      username={username} 
+      errorMessage={null} 
+      setErrorMessage={null}
+      /> 
+    );
   }
 }
 
@@ -294,21 +272,6 @@ function MissionaryEditHeaderRoute({authUser, isMissionary, isUser}) {
   const { username } = useParams();
   const { isLoading, userProfile } = useGetUserProfileByUsername(username);
   const navigate = useNavigate();
-  const [errorMessage, setErrorMessage] = useState(null);
-
-  useEffect(() => {
-    if (!isLoading) {
-      if (isMissionary && authUser.username === username) {
-        // Do nothing, let the component render EditHeader
-      } else if (isMissionary && authUser.username !== username) {
-        setErrorMessage("Acesso negado");
-      } else if (isUser && authUser.username !== username && userProfile?.role === "user") {
-        setErrorMessage("Acesso negado");
-      } else {
-        navigate("/landingPage");
-      }
-    }
-  }, [isLoading, isMissionary, isUser, authUser, username, userProfile, setErrorMessage, navigate]);
 
 
   if(isLoading) {
@@ -332,20 +295,6 @@ function MissionaryEditProjectRoute({authUser, isMissionary, isUser}) {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState(null);
 
-  useEffect(() => {
-    if (!isLoading) {
-      if (isMissionary && authUser.username === username) {
-        // Do nothing, let the component render EditHeader
-      } else if (isMissionary && authUser.username !== username) {
-        setErrorMessage("Acesso negado");
-      } else if (isUser && authUser.username !== username && userProfile?.role === "user") {
-        setErrorMessage("Acesso negado");
-      } else {
-        navigate("/landingPage");
-      }
-    }
-  }, [isLoading, isMissionary, isUser, authUser, username, userProfile, setErrorMessage, navigate]);
-
 
   if(isLoading) {
     return <PageLayoutSpinner />;
@@ -368,20 +317,6 @@ function MissionaryFollowersRoute({authUser, isMissionary, isUser}) {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState(null);
 
-  useEffect(() => {
-    if (!isLoading) {
-      if (isMissionary && authUser.username === username) {
-
-      } else if (isMissionary && authUser.username !== username) {
-        setErrorMessage("Acesso negado");
-      } else if (isUser && authUser.username !== username && userProfile?.role === "user") {
-        setErrorMessage("Acesso negado");
-      } else {
-        navigate("/landingPage");
-      }
-    }
-  }, [isLoading, isMissionary, isUser, authUser, username, userProfile, setErrorMessage, navigate]);
-
 
   if(isLoading) {
     return <PageLayoutSpinner />;
@@ -401,59 +336,52 @@ function MissionaryFollowersRoute({authUser, isMissionary, isUser}) {
 
 function UserDonorRoute({ isUser, authUser }) {
   const { username } = useParams();
-  const {isLoading, userProfile} = useGetUserProfileByUsername(username);
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState(null);
 
-  useEffect(() => {
-    const checkUserExists = async () => {
-      if(username) {
-        try{
-          const usersRef = collection(db, "users");
-          const q = query(usersRef, where("username", "==", username));
-          const querySnapshot = await getDocs(q);
-          if(querySnapshot.empty) {
-            setErrorMessage("Usuário não encontrado");
-            navigate(isUser ? `/${authUser.username}` : "/landingPage");
-            
-          } else {
-            setLoading(false);
-          }
-        } catch (error) {
-          navigate(isUser ? `/${authUser.username}` : "/landingPage");
-        }
-      } else {
-        navigate(isUser ? `/${authUser.username}` : "/landingPage");
-      }
-    };
-
-    checkUserExists();
-  }, [username, isUser, authUser, navigate]);
-
-  if(loading) {
-    return <PageLayoutSpinner />;
-  }
-
-  if(isUser && authUser.username === username) {
-    return <DonorHomePage username={username} errorMessage={errorMessage} setErrorMessage={setErrorMessage} />;
-  } else if(isUser && authUser.username !== username && userProfile.role === "missionary") {
-    return <MissionaryHomePage username={username} errorMessage={errorMessage} setErrorMessage={setErrorMessage} />;
-  } else if(isUser && authUser.username !== username && userProfile.role === "user") {
-    return <DonorHomePage username={username} errorMessage={errorMessage} setErrorMessage={setErrorMessage} />;
-  } else {
-    return <Navigate to="/landingPage" />;
+  if(!authUser && username && username.endsWith("_missionary")) {
+    return (
+      <MissionaryHomePage 
+      unauthenticated={true} 
+      username={username}
+      errorMessage={null}
+      setErrorMessage={null}
+      />
+    );
+  } else if(!authUser && username) {
+    return (
+      <DonorHomePage 
+      username={username} 
+      errorMessage={null} 
+      setErrorMessage={null} 
+      />
+    );
+  } else if(authUser && username && username.endsWith("_missionary")) {
+    return (
+      <MissionaryHomePage 
+        unauthenticated={false}
+        username={username}
+        errorMessage={null}
+        setErrorMessage={null}
+      />
+    );
+  } else if(authUser) {
+    return (
+      <DonorHomePage 
+        username={username} 
+        errorMessage={null} 
+        setErrorMessage={null} 
+      />
+    );
   }
 }
 
-function AdminRoute({ isAdmin, authUser }) {
+function AdminRoute({ isAdmin, storedAdminUser }) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     const checkAdminExists = async () => {
-      if (authUser.role === "admin") {
+      if (storedAdminUser && storedAdminUser.role === "admin") {
         setLoading(false);
       } else {
         setErrorMessage("Acesso negado");
@@ -462,7 +390,7 @@ function AdminRoute({ isAdmin, authUser }) {
     };
 
     checkAdminExists();
-  }, [authUser, navigate]);
+  }, [storedAdminUser, navigate]);
 
   if (loading) {
     return <PageLayoutSpinner />;

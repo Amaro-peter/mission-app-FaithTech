@@ -6,11 +6,14 @@ import { ref, getDownloadURL, uploadString } from "firebase/storage";
 import { storage, db } from "../utils/firebase";
 import { addDoc, collection, doc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import { TbRuler2Off } from "react-icons/tb";
+import useUserProjectStore from "../store/useProjectStore";
 
-function useEditHeader() {
+function useEditProject() {
     const [isUpdating, setIsUpdating] = useState(false);
     const authUser = useAuthStore((state) => state.user);
     const toast = useToast();
+    const setProjectFlag = useUserProjectStore((state) => state.setProjectFlag);
     const navigate = useNavigate();
 
     const editProject = async (inputs, selectedFile) => {
@@ -95,7 +98,8 @@ function useEditHeader() {
                 title: inputs.title || "",
                 description: inputs.description || "",
                 publicYoutubeLink: inputs.publicYoutubeLink || "",
-                publicPhoto: URL !== "" ? URL : inputs.publicPhoto
+                publicPhoto: URL !== "" ? URL : inputs.publicPhoto,
+                uid: authUser.uid,
             };
 
             await setDoc(userProjectRef, newProject, {merge: true});
@@ -126,6 +130,7 @@ function useEditHeader() {
                 });
             }
         } finally {
+            setProjectFlag(true);
             setIsUpdating(false);
         }
     };
@@ -133,4 +138,4 @@ function useEditHeader() {
     return {editProject, isUpdating};
 }
 
-export default useEditHeader;
+export default useEditProject;

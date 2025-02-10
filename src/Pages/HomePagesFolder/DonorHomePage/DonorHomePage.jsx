@@ -8,15 +8,22 @@ import { useParams } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import useAuthStore from '../../../store/authStore.js';
 import useGetUserProfileByUsername from '../../../hooks/useGetUserProfileByUsername';
+import DonorHomePageSkeleton from '../../../components/DonorComponents/DonorSkeletons/DonorHomePageSkeleton.jsx';
+import { UserProfileProvider } from '../../../context/UserProfileContext.jsx';
 
-function HomePage({errorMessage, setErrorMessage}) {
-  const {username} = useParams();
+function DonorHomePage({username, errorMessage, setErrorMessage}) {
   const[activeTab, setActiveTab] = useState('Feed');
   const toast = useToast();
   const toastId = 'error-toast';
   const authUser = useAuth();
-  const {isLoading, userProfile} = useGetUserProfileByUsername(username); 
+  const {isLoading, userProfile} = useGetUserProfileByUsername(username);
+  
 
+  if(isLoading || !userProfile) {
+    return (
+      <DonorHomePageSkeleton isLoading={isLoading} />
+    );
+  }
 
   const handleSelectionPostTabClick = (tab) => {
     setMyPosts(tab);
@@ -43,42 +50,44 @@ function HomePage({errorMessage, setErrorMessage}) {
 
 
   return (
-    <Flex
-    direction={"column"}
-    flex={1}
-    width={"100%"}
-    minHeight={0}
-    mt={4}
-    >
+    <UserProfileProvider userProfile={userProfile}>
       <Flex
-      bg={"#FFEFE759"}
-      flex="1"
-      width="100%"
-      direction="column"
-      minHeight={0} // Prevents overflow within this container
+      direction={"column"}
+      flex={1}
+      width={"100%"}
+      minHeight={0}
+      mt={4}
       >
-        <Container
-        maxW="container.lg"
+        <Flex
+        bg={"#FFEFE759"}
         flex="1"
-        p={0}
-        overflow="hidden" // Remove unnecessary scrollbars
-        minH="0" // Key: Prevents overflow from flex children
+        width="100%"
+        direction="column"
+        minHeight={0} // Prevents overflow within this container
         >
-          <VStack gap={5} width="100%" align={"strecht"} >
-            <Box flex={2} mt={10}>
-              <DonorHeader activeTab={activeTab} handleTabClick={handleTabClick} />
-            </Box>
-            <Box>
-              {activeTab === 'Feed' && <DonorFeedPosts />}
-              {activeTab === 'Explore novos projetos' && <Projects />}
-            </Box>
-          </VStack>
-        </Container>
-        <Divider w={"full"} h={"2px"} bg={"gray"} mt={10} />
-          <HomePageFooter />
+          <Container
+          maxW="container.lg"
+          flex="1"
+          p={0}
+          overflow="hidden" // Remove unnecessary scrollbars
+          minH="0" // Key: Prevents overflow from flex children
+          >
+            <VStack gap={5} width="100%" align={"strecht"} >
+              <Box flex={2} mt={10}>
+                <DonorHeader activeTab={activeTab} userProfile={userProfile} handleTabClick={handleTabClick} />
+              </Box>
+              <Box>
+                {activeTab === 'Feed' && <DonorFeedPosts />}
+                {activeTab === 'Explore novos projetos' && <Projects />}
+              </Box>
+            </VStack>
+          </Container>
+          <Divider w={"full"} h={"2px"} bg={"gray"} mt={10} />
+            <HomePageFooter />
+        </Flex>
       </Flex>
-    </Flex>
+    </UserProfileProvider>
   );
 }
 
-export default HomePage;
+export default DonorHomePage;

@@ -2,10 +2,12 @@ import { Flex, Box, Button, Text, Image, Container } from "@chakra-ui/react";
 import { useAuth } from "../../../context/AuthContext";
 import useAuthStore from "../../../store/authStore";
 import useUserProfileStore from "../../../store/useProfileStore";
+import { useUserProfile } from "../../../context/UserProfileContext";
 
 function Campaign() {
   const authUser = useAuth();
-  const {userProfile} = useUserProfileStore();
+
+  const userProfile = useUserProfile();
 
   const visitingOwnProfileAndAuth = authUser && authUser.username === userProfile.username;
 

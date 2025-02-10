@@ -12,7 +12,8 @@ function useEditHeader() {
     const [isUpdating, setIsUpdating] = useState(false);
     const authUser = useAuthStore((state) => state.user);
     const setAuthUser = useAuthStore((state) => state.setUser);
-    const setUserProfile = useUserProfileStore((state) => state.setUserProfile);
+    {/*const userProfile = useUserProfileStore((state) => state.userProfile);
+    const {setUserProfile} = useUserProfileStore();*/}
     const toast = useToast();
     const navigate = useNavigate();
 
@@ -21,12 +22,36 @@ function useEditHeader() {
             return;
         }
 
-        if(inputs.username !== authUser.username) {
-            const usersRef = collection(db, "users");
+        setIsUpdating(true);
+        let completed = false;
 
-            const q = query(usersRef, where("username", "==", inputs.username));
+        if(inputs.username) {
+            if(inputs.username.includes("_missionary")) {
+                setIsUpdating(false);
+                if(!toast.isActive("reservedWordWarning")) {
+                    toast({
+                        id: "reservedWordWarning",
+                        title: "Palavra reservada",
+                        description: "O nome de usuário não pode conter '_missionary' pois é uma palavra reservada",
+                        status: "warning",
+                        duration: 8000,
+                        isClosable: true,
+                        position: "top"
+                    });
+                }
+                return;
+            }
+        }
+
+        const updatedUsername = inputs.username && inputs.username !== authUser.username ? 
+            inputs.username + "_missionary" : authUser.username;
+
+        if(updatedUsername !== authUser.username) {
+            const usersRef = collection(db, "users");
+            const q = query(usersRef, where("username", "==", updatedUsername));
             const querySnapshot = await getDocs(q);
             if(!querySnapshot.empty) {
+                setIsUpdating(false);
                 if(!toast.isActive("usernameTaken")) {
                     toast({
                         id: "usernameTaken",
@@ -42,8 +67,6 @@ function useEditHeader() {
             }
         }
 
-        setIsUpdating(true);
-
         const storageRef = ref(storage, `profilePics/${authUser.uid}`);
         const userDocRef = doc(db, "users", authUser.uid);
 
@@ -57,7 +80,7 @@ function useEditHeader() {
 
             const updatedUser = {
                 ...authUser,
-                username: inputs.username || authUser.username,
+                username: updatedUsername,
                 fullName: inputs.fullName || authUser.fullName,
                 bio: inputs.bio || authUser.bio,
                 publicEmail: inputs.publicEmail || authUser.publicEmail,
@@ -68,7 +91,6 @@ function useEditHeader() {
             await updateDoc(userDocRef, updatedUser);
             localStorage.setItem("user-info", JSON.stringify(updatedUser));
             setAuthUser({...updatedUser});
-            setUserProfile({...updatedUser});
             if(!toast.isActive("profileUpdated")) {
                 toast({
                     id: "profileUpdated",
@@ -80,7 +102,7 @@ function useEditHeader() {
                     position: "top"
                 });
             }
-            navigate(`/${updatedUser.username}`);
+            completed = true;
         } catch(error) {
             if(!toast.isActive("profileUpdateError")) {
                 toast({
@@ -95,6 +117,9 @@ function useEditHeader() {
             }
         } finally {
             setIsUpdating(false);
+            if(completed) {
+                navigate(`/${updatedUsername}`);
+            }
         }
     };
 

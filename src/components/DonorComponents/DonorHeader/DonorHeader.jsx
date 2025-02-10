@@ -1,17 +1,22 @@
-import { Box, Button, Flex, VStack, Text, Spacer, Image, Avatar, AvatarGroup, Divider, Container, useMediaQuery } from '@chakra-ui/react';
+import { Box, Button, Flex, VStack, Text, Avatar, Divider, Container, useMediaQuery, Skeleton, SkeletonCircle } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../../context/AuthContext';
-import { base } from 'framer-motion/client';
-import useAuthStore from '../../../store/authStore';
-import useGetUserProfileByUsername from '../../../hooks/useGetUserProfileByUsername';
-import { useParams } from 'react-router-dom';
-import useUserProfileStore from '../../../store/useProfileStore';
+import { useUserProfile } from '../../../context/UserProfileContext';
 
-function MissionaryHeader({activeTab, handleTabClick}) {
+function DonorHeader({activeTab, handleTabClick}) {
   const[fontSize, setFontSize] = useState("16px");
   const [isLargerThan360] = useMediaQuery("(min-width: 371px)");
+
   const authUser = useAuth();
-  const {userProfile} = useUserProfileStore();
+
+  const userProfile = useUserProfile();
+  const [isUserProfileLoading, setIsUserProfileLoading] = useState(true);
+
+  useEffect(() => {
+    if(userProfile && typeof userProfile === 'object') {
+      setIsUserProfileLoading(false);
+    }
+  }, [userProfile]);
 
   const visitingMyOwnProfileAndAuth = authUser && authUser.username === userProfile.username;
 
@@ -59,6 +64,27 @@ function MissionaryHeader({activeTab, handleTabClick}) {
         direction={"column"}
         mx={"auto"}
       >
+
+        {isUserProfileLoading && (
+          <Flex
+          gap={{base: 4, md: 8}}
+          py={10}
+          direction={{base: "column", sm: "row"}}
+          justifyContent={"center"}
+          alignItems={"center"}
+          > 
+            <SkeletonCircle size={"24"} />
+            <VStack 
+            alignItems={{base: "center", sm: "flex-start"}}
+            gap={2}
+            mx={"auto"}
+            flex={1}
+            >
+              <Skeleton height="12px" width="150px" />
+              <Skeleton height="12px" width="100px" />
+            </VStack> 
+          </Flex>
+        )}
         <Flex 
           direction="row"
           alignItems="center"
@@ -214,4 +240,4 @@ function MissionaryHeader({activeTab, handleTabClick}) {
   )
 }
 
-export default MissionaryHeader;
+export default DonorHeader;

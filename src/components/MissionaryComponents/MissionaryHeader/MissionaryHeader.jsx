@@ -9,20 +9,23 @@ import { useAuth } from '../../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import useFollowUser from '../../../hooks/useFollowUser';
 import useUnfollowUser from '../../../hooks/useUnfollowUser';
+import { useUserProfile } from '../../../context/UserProfileContext';
 
 function  MissionaryHeader({unauthenticated, activeTab, handleTabClick}) {
   const[fontSize, setFontSize] = useState("16px");
   const [isLargerThan360] = useMediaQuery("(min-width: 371px)");
   const responsiveFontSize = { base: '10px', sm: '12px', md: '14px', lg: '16px', xl: '18px' };
 
-  const authUser = useAuth();
+  const userProfile = useUserProfile();
+  
+  const {followStatus} = useUserProfileStore();
 
-  const {userProfile} = useUserProfileStore();
+  const authUser = useAuth();
 
   const {isUpdatingFollow, handleFollowUser} = useFollowUser();
   const {isUpdatingUnfollow, handleUnfollowUser} = useUnfollowUser();
 
-  const isFollowing = userProfile ? userProfile.isFollowed : false;
+  const isFollowing = followStatus ? followStatus.isFollowed : false;
 
   const visitingOwnProfileAndAuth = authUser && authUser.username === userProfile.username;
   const visitingAnotherProfileAndAuth = authUser && authUser.username !== userProfile.username;

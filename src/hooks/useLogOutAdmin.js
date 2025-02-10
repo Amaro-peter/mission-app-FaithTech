@@ -2,12 +2,12 @@ import { signOut } from 'firebase/auth';
 import { auth } from '../utils/firebase';
 import { useToast } from '@chakra-ui/react';
 import { useState } from "react";
-import useAuthAdminStore from '../store/authAdminStore';
+import useAuthStore from '../store/authAdminStore';
 
 function useLogout() {
     const toast = useToast();
     const [isLoggingOut, setIsLoggingOut] = useState(false);
-    const logoutAdmin = useAuthAdminStore((state) => state.logout);
+    const logoutAdmin = useAuthStore((state) => state.logout);
 
     const handleLogout = async () => {
         setIsLoggingOut(true);

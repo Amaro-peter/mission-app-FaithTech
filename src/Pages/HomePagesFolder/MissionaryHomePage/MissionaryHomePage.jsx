@@ -12,23 +12,22 @@ import { useParams } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import useGetUserProfileByUsername from '../../../hooks/useGetUserProfileByUsername';
 import MissionaryHeaderSkeleton from '../../../components/MissionaryComponents/Skeletons/MissionaryHeaderSkeleton';
-import useAuthStore from '../../../store/authStore';
+import { UserProfileProvider } from '../../../context/UserProfileContext';
 
 function HomePage({unauthenticated, username, errorMessage, setErrorMessage}) {
+  const toastId = 'error-toast';
   const {isLoading, userProfile} = useGetUserProfileByUsername(username);
   const[activeTab, setActiveTab] = useState('Projeto');
   const[myPosts, setMyPosts] = useState('Meu feed');
   const toast = useToast();
-  const toastId = 'error-toast';
   const authUser = useAuth();
   const userNotFound = !isLoading && !userProfile;
-
-  const visitingOwnProfileAndAuth = authUser && authUser.uid === userProfile.uid;
-
 
   if(userNotFound) {
     return <UserNotFound />
   }
+
+  const visitingOwnProfileAndAuth = authUser && authUser.uid === userProfile.uid;
 
   const handleSelectionPostTabClick = (tab) => {
     setMyPosts(tab);
@@ -43,17 +42,18 @@ function HomePage({unauthenticated, username, errorMessage, setErrorMessage}) {
       toast({
         id: toastId,
         title: "Erro",
-        description: "Usuário não encontrado",
+        description: errorMessage,
         status: "error",
         duration: 5000,
         isClosable: true,
         position: "top"
-      })
+      });
     }
   }
 
 
   return (
+    <UserProfileProvider userProfile={userProfile}>
     <Flex
     direction={"column"}
     flex={1}
@@ -77,7 +77,8 @@ function HomePage({unauthenticated, username, errorMessage, setErrorMessage}) {
         >
           <VStack gap={5} width="100%" align={"strecht"} >
             <Box flex={2} mt={10}>
-              {!isLoading && unauthenticated && <MissionaryHeader unauthenticated={unauthenticated} activeTab={activeTab} handleTabClick={handleTabClick} />}
+              {!isLoading && unauthenticated && <MissionaryHeader unauthenticated={unauthenticated}
+              activeTab={activeTab} handleTabClick={handleTabClick} />}
               {!isLoading && userProfile && !unauthenticated && <MissionaryHeader activeTab={activeTab} handleTabClick={handleTabClick} />}
               {isLoading && <MissionaryHeaderSkeleton />}
             </Box>
@@ -88,7 +89,7 @@ function HomePage({unauthenticated, username, errorMessage, setErrorMessage}) {
             ) : (null)
             }
             <Box>
-              {activeTab === 'Projeto' && unauthenticated && <MyWork unauthenticated={unauthenticated} />}
+              {activeTab === 'Projeto' && unauthenticated && <MyWork unauthenticated={unauthenticated}/>}
               {activeTab === 'Projeto' && !unauthenticated && <MyWork />}
               {activeTab === 'Campanha' && <Campaign />}
               {activeTab === 'Postagens' && visitingOwnProfileAndAuth && <NewPost />}
@@ -98,7 +99,7 @@ function HomePage({unauthenticated, username, errorMessage, setErrorMessage}) {
               {myPosts === 'Meu feed' && 
               
                 <Box>
-                  <ProfilePosts />
+                  <ProfilePosts userProfile={userProfile} />
                 </Box>
               }
               {myPosts === 'Feed de amigos' && 
@@ -120,6 +121,7 @@ function HomePage({unauthenticated, username, errorMessage, setErrorMessage}) {
           <HomePageFooter />
       </Flex>
     </Flex>
+    </UserProfileProvider>
   );
 }
 

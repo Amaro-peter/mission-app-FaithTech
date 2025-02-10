@@ -18,7 +18,7 @@ function EditProject({username, errorMessage, setErrorMessage}) {
 
   const userStore = useAuthStore((state) => state.user);
 
-  const {isLoading, userProject} = useGetMissionaryProject();
+  const {isLoadingProj, userProject} = useGetMissionaryProject(userStore);
 
   const {isDeleting, deleteProject} = useDeleteProject(userStore);
 
@@ -50,7 +50,7 @@ function EditProject({username, errorMessage, setErrorMessage}) {
 
 
   useEffect(() => {
-    if(userProject) {
+    if(!isLoadingProj && userProject) {
       setInputs({
         title: userProject.title || "",
         description: userProject.description || "",
@@ -58,7 +58,7 @@ function EditProject({username, errorMessage, setErrorMessage}) {
         publicPhoto: userProject.publicPhoto || "",
       });
     }
-  }, [userProject]);
+  }, [isLoadingProj, userProject]);
 
 
   const [charLimitReached, setCharLimitReached] = useState(false);
@@ -291,6 +291,7 @@ function EditProject({username, errorMessage, setErrorMessage}) {
                   size={"sm"}
                   _hover={{bg: "red.500"}}
                   onClick={() => navigate(`/${userStore.username}`)}
+                  isDisabled={isUpdating}
                   >
                     Voltar
                   </Button>
@@ -302,6 +303,7 @@ function EditProject({username, errorMessage, setErrorMessage}) {
                   size={"sm"}
                   _hover={{bg: "red.500"}}
                   onClick={onOpen}
+                  isDisabled={isUpdating}
                   >
                     Deletar projeto
                   </Button>
@@ -326,7 +328,6 @@ function EditProject({username, errorMessage, setErrorMessage}) {
               <ModalOverlay />
               <ModalContent bg={"white"} boxShadow={"xl"} border={"1px solid gray"} mx={3}>
                 <ModalHeader />
-                <ModalCloseButton />
                 <ModalBody>
                   {/* Container Flex */}
                   <Flex bg={"black"}>
@@ -349,6 +350,7 @@ function EditProject({username, errorMessage, setErrorMessage}) {
                       w='full'
                       _hover={{ bg: "blue.500" }}
                       onClick={onClose}
+                      isDisabled={isDeleting}
                       >
                         Não
                       </Button>

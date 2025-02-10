@@ -4,13 +4,12 @@ import { useState } from 'react';
 import { useAuth } from '../../../../context/AuthContext';
 import useAuthStore from '../../../../store/authStore';
 import useUserProfileStore from '../../../../store/useProfileStore';
+import { useUserProfile } from '../../../../context/UserProfileContext';
 
 function PostHeader() {
   const[isFollowing, setIsFollowing] = useState(false);
   const authUser = useAuth();
-
-  const{userProfile} = useUserProfileStore();
-
+  const userProfile = useUserProfile();
   const visitingAnotherProfileAndAuth = authUser && authUser.username !== userProfile.username;
 
   return (

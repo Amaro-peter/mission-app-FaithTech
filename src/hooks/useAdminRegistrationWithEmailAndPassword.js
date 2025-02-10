@@ -28,11 +28,12 @@ function useAdminRegistrationWithEmailAndPassword() {
             return { success: false, error };
         }
 
+        const updatedUsername = inputs.username + "_missionary";
 
         const usersRef = collection(db, "users");
     
         // Create a query against the collection to verify if username is already in use
-        const usernameQuery = query(usersRef, where("username", "==", inputs.username));
+        const usernameQuery = query(usersRef, where("username", "==", updatedUsername));
         const usernameSnapshot = await getDocs(usernameQuery);
 
         if (!usernameSnapshot.empty) {
@@ -88,7 +89,7 @@ function useAdminRegistrationWithEmailAndPassword() {
                     role: "missionary",
                     email: inputs.emailForm,
                     phoneNumber: inputs.phoneNumber || "", 
-                    username: inputs.username,
+                    username: updatedUsername,
                     fullName: inputs.fullName,
                     faithCommunity: inputs.faithCommunity,
                     pastorName: inputs.pastorName,

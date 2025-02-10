@@ -8,4 +8,4 @@ function PageLayoutSpinner() {
   )
 }
 
-export default PageLayoutSpinner
+export default PageLayoutSpinner;

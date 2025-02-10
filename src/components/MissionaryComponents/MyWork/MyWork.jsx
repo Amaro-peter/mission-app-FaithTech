@@ -8,31 +8,40 @@ import { useAuth } from '../../../context/AuthContext';
 import useAuthStore from '../../../store/authStore';
 import useUserProfileStore from '../../../store/useProfileStore';
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import useGetMissionaryProject from '../../../hooks/useGetMissionaryProject';
 import useUserProjectStore from '../../../store/useProjectStore';
 import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
 import MyWorkSkeleton from '../Skeletons/MyWorkSkeleton';
+import useGetUserTest from '../../../hooks/useGetUserTest';
+import { useUserProfile } from '../../../context/UserProfileContext';
 
 function MyWork({unauthenticated}) {
     const authUser = useAuth();
 
-    const {userProfile} = useUserProfileStore();
-
     const navigate = useNavigate();
+
+    const userProfile = useUserProfile();
+    const [isUserProfileLoading, setIsUserProfileLoading] = useState(true);
+
+    useEffect(() => {
+        if(userProfile && typeof userProfile === 'object') {
+            setIsUserProfileLoading(false);
+        }
+    }, [userProfile]);
+    
 
     const visitingOwnProfileAndAuth = authUser && authUser.username === userProfile.username;
 
-    const profileWithoutFollow = useMemo(() => {
-        if(!userProfile) {
-            return null;
-        }
-        const {isFollowed, ...restProfile} = userProfile;
-        return restProfile;
-    }, [userProfile]);
-    const {isLoading, userProject} = useGetMissionaryProject(profileWithoutFollow);
+    const {isLoadingProj, userProject} = useGetMissionaryProject(userProfile);
+    const [tempUserProject, setTempUserProject] = useState(null);
 
+    useEffect(() => {
+        if(isLoadingProj === false && userProject) {
+            setTempUserProject(userProject);
+        }
+    }, [isLoadingProj, userProject]);
 
     const {isOpen: isLinkOpen, onOpen: onLinkOpen, onClose: onLinkClose} = useDisclosure();
     const {isOpen: isUnauthDonateOpen, onOpen: onUnauthDonateOpen, onClose: onUnauthDonateClose} = useDisclosure();
@@ -51,33 +60,32 @@ function MyWork({unauthenticated}) {
     };
 
     const [isExpanded, setIsExpanded] = useState(false);
-    const description =  userProject ? userProject.description : "Descrição ainda a ser definida";
+    const description =  tempUserProject ? tempUserProject.description : "Descrição ainda a ser definida";
     const truncatedDescription = description.length > 350 ? description.slice(0, 350) + "..." : description;
 
     const [isImageLoaded, setIsImageLoaded] = useState(false);
-    const [isLoadingData, setIsLoadingData] = useState(true);
-    const hasImage = userProject?.publicPhoto?.trim(); // Ensure empty strings are treated as false
+    const hasImage = tempUserProject?.publicPhoto?.trim();
 
     useEffect(() => {
-        if (isLoading) {
+        if (isLoadingProj) {
             setIsImageLoaded(false);
             return;
         }
     
-        if (!userProject || !hasImage) {
+        if (!tempUserProject || !hasImage) {
             setIsImageLoaded(true); // No image case, show content immediately
             return;
         }
     
         setIsImageLoaded(false); // Show skeleton while image loads
         const img = new Image();
-        img.src = userProject.publicPhoto;
+        img.src = tempUserProject.publicPhoto;
         img.onload = () => setIsImageLoaded(true);
         img.onerror = () => setIsImageLoaded(true);
 
-    }, [isLoading, userProject?.publicPhoto]);
+    }, [isLoadingProj, tempUserProject?.publicPhoto]);
 
-    if(isLoading) {
+    if(isLoadingProj || isUserProfileLoading) {
         return (<>
             <Container
             maxW={"container.lg"}
@@ -91,38 +99,131 @@ function MyWork({unauthenticated}) {
     <Container
     maxW={"container.lg"}
     >
-        {!isImageLoaded && <MyWorkSkeleton />}
 
-        {isImageLoaded && <Flex
-        width={{base: "100%", md: "80%"}}
-        bg="white"
-        color="black"
-        border="1px solid gray.500"
-        borderRadius={10}
-        p={4}
-        boxShadow="md"
-        direction={"column"}
-        mx={"auto"}
-        gap={1}
-        >
-            <Flex 
-            direction="row"
-            alignItems="center"
-            width={"full"}
-            justifyContent={"space-between"}
-            height="100%"
-            gap={{base: 4, sm: 7}}
+        {(!isImageLoaded || isLoadingProj) ? (<MyWorkSkeleton />) : (
+        <>
+            <Flex
+            width={{base: "100%", md: "80%"}}
+            bg="white"
+            color="black"
+            border="1px solid gray.500"
+            borderRadius={10}
+            p={4}
+            boxShadow="md"
+            direction={"column"}
+            mx={"auto"}
+            gap={1}
             >
-                <Text
-                fontFamily={"Inter, sans-serif"}
-                fontWeight={"black"}
-                fontSize={"25px"}
+                <Flex 
+                direction="row"
+                alignItems="center"
+                width={"full"}
+                justifyContent={"space-between"}
+                height="100%"
+                gap={{base: 4, sm: 7}}
                 >
-                    Projeto de impacto
-                </Text>
+                    <Text
+                    fontFamily={"Inter, sans-serif"}
+                    fontWeight={"black"}
+                    fontSize={"25px"}
+                    >
+                        Projeto de impacto
+                    </Text>
 
-                {visitingOwnProfileAndAuth ? (
-                    <>
+                    {visitingOwnProfileAndAuth ? (
+                        <>
+                            <Button
+                            width={"auto"}
+                            height={["30px", "35px", "35px", "35px", "35px"]}
+                            border={"2px solid black"}
+                            borderRadius={50}
+                            backgroundColor={"#FFEFE7"}
+                            _hover={{background: "#FFB999"}}
+                            onClick={handleEditClick}
+                            >
+                                <Text fontSize={"auto"}>
+                                    Editar
+                                </Text>
+                            </Button>
+                        </>
+                    ) : null}
+
+                </Flex>
+                <Flex
+                direction={"column"}
+                gap={2}
+                >
+                    <Text
+                    fontFamily={"Inter, sans-serif"}
+                    fontWeight={"semibold"}
+                    fontSize={"20px"}
+                    >
+                        {tempUserProject ? tempUserProject.title  : "Projeto ainda a ser definido"}
+                    </Text>
+                    <Text
+                    fontSize={"auto"}
+                    fontFamily={"Inter, sans-serif"}
+                    whiteSpace="normal" // Allow text to wrap
+                    textAlign="justfied" // Justify text
+                    >
+                        {isExpanded ? description : truncatedDescription}
+                        {description.length > 350 && (
+                            <Link onClick={() => setIsExpanded(!isExpanded)}>
+                                <Text color={"blue.500"} fontWeight={"bold"}>
+                                    {isExpanded ? " Ler menos" : "Ler mais"}
+                                </Text>
+                            </Link>
+                        )}
+                    </Text>
+                </Flex>
+
+                <Flex
+                mt={4}
+                direction={"column"}
+                gap={2}
+                >
+                    
+                    {tempUserProject && tempUserProject.publicPhoto ?
+                        <>
+                            <Zoom
+                            zoomMargin={10} // Adjusts the margin around the zoomed image
+                            overlayBgColorEnd="rgba(0, 0, 0, 0.85)" // Smooth dark overlay for better focus
+                            transitionDuration={300} // Smooth zoom animation duration
+                            >
+                                <img 
+                                src={tempUserProject.publicPhoto}
+                                style={{ width: "100%", height: "auto" }}
+                                onLoad={() => setIsImageLoaded(true)}
+                                />
+                            </Zoom>
+                        </>
+                    : null}
+
+                    {tempUserProject && tempUserProject.publicYoutubeLink ? (
+                        <AspectRatio ratio={16/9} width={"full"}>
+                            <iframe 
+                            width="942" 
+                            height="530" 
+                            src={tempUserProject.publicYoutubeLink} 
+                            title="Lista Mundial da Perseguição 2025" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                            referrerpolicy="strict-origin-when-cross-origin" 
+                            allowFullScreen ></iframe>
+                        </AspectRatio>
+                    ) : null}
+
+                </Flex>
+
+                <Flex
+                mt={4}
+                gap={4}
+                width={"full"}
+                justifyContent={"center"}
+                alignItems={"center"}
+                >
+                    
+                    {!unauthenticated ? (
                         <Button
                         width={"auto"}
                         height={["30px", "35px", "35px", "35px", "35px"]}
@@ -130,91 +231,29 @@ function MyWork({unauthenticated}) {
                         borderRadius={50}
                         backgroundColor={"#FFEFE7"}
                         _hover={{background: "#FFB999"}}
-                        onClick={handleEditClick}
+                        overflow={"hidden"}
+                        textOverflow={"ellipsis"}
+                        whiteSpace={"nowrap"}
                         >
-                            <Text fontSize={"auto"}>
-                                Editar
-                            </Text>
+                            Apoiar a missão
                         </Button>
-                    </>
-                ) : null}
-
-            </Flex>
-            <Flex
-            direction={"column"}
-            gap={2}
-            >
-                <Text
-                fontFamily={"Inter, sans-serif"}
-                fontWeight={"semibold"}
-                fontSize={"20px"}
-                >
-                    {userProject ? userProject.title  : "Projeto ainda a ser definido"}
-                </Text>
-                <Text
-                fontSize={"auto"}
-                fontFamily={"Inter, sans-serif"}
-                whiteSpace="normal" // Allow text to wrap
-                textAlign="justfied" // Justify text
-                >
-                    {isExpanded ? description : truncatedDescription}
-                    {description.length > 350 && (
-                        <Link onClick={() => setIsExpanded(!isExpanded)}>
-                            <Text color={"blue.500"} fontWeight={"bold"}>
-                                {isExpanded ? " Ler menos" : "Ler mais"}
-                            </Text>
-                        </Link>
-                    )}
-                </Text>
-            </Flex>
-
-            <Flex
-            mt={4}
-            direction={"column"}
-            gap={2}
-            >
-                
-                {userProject && userProject.publicPhoto ?
-                    <>
-                        <Zoom
-                        zoomMargin={10} // Adjusts the margin around the zoomed image
-                        overlayBgColorEnd="rgba(0, 0, 0, 0.85)" // Smooth dark overlay for better focus
-                        transitionDuration={300} // Smooth zoom animation duration
+                    ) : (
+                        <Button
+                        width={"auto"}
+                        height={["30px", "35px", "35px", "35px", "35px"]}
+                        border={"2px solid black"}
+                        borderRadius={50}
+                        backgroundColor={"#FFEFE7"}
+                        _hover={{background: "#FFB999"}}
+                        overflow={"hidden"}
+                        textOverflow={"ellipsis"}
+                        whiteSpace={"nowrap"}
+                        onClick={onUnauthDonateOpen}
                         >
-                            <img 
-                            src={userProject.publicPhoto}
-                            style={{ width: "100%", height: "auto" }}
-                            onLoad={() => setIsImageLoaded(true)}
-                            />
-                        </Zoom>
-                    </>
-                : null}
+                            Apoiar a missão
+                        </Button>
+                    )}
 
-                {userProject && userProject.publicYoutubeLink ? (
-                    <AspectRatio ratio={16/9} width={"full"}>
-                        <iframe 
-                        width="942" 
-                        height="530" 
-                        src={userProject.publicYoutubeLink} 
-                        title="Lista Mundial da Perseguição 2025" 
-                        frameborder="0" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                        referrerpolicy="strict-origin-when-cross-origin" 
-                        allowFullScreen ></iframe>
-                    </AspectRatio>
-                ) : null}
-
-            </Flex>
-
-            <Flex
-            mt={4}
-            gap={4}
-            width={"full"}
-            justifyContent={"center"}
-            alignItems={"center"}
-            >
-                
-                {!unauthenticated ? (
                     <Button
                     width={"auto"}
                     height={["30px", "35px", "35px", "35px", "35px"]}
@@ -225,42 +264,13 @@ function MyWork({unauthenticated}) {
                     overflow={"hidden"}
                     textOverflow={"ellipsis"}
                     whiteSpace={"nowrap"}
+                    onClick={handleLinkClick}
                     >
-                        Apoiar a missão
+                        Compartilhar
                     </Button>
-                ) : (
-                    <Button
-                    width={"auto"}
-                    height={["30px", "35px", "35px", "35px", "35px"]}
-                    border={"2px solid black"}
-                    borderRadius={50}
-                    backgroundColor={"#FFEFE7"}
-                    _hover={{background: "#FFB999"}}
-                    overflow={"hidden"}
-                    textOverflow={"ellipsis"}
-                    whiteSpace={"nowrap"}
-                    onClick={onUnauthDonateOpen}
-                    >
-                        Apoiar a missão
-                    </Button>
-                )}
-
-                <Button
-                width={"auto"}
-                height={["30px", "35px", "35px", "35px", "35px"]}
-                border={"2px solid black"}
-                borderRadius={50}
-                backgroundColor={"#FFEFE7"}
-                _hover={{background: "#FFB999"}}
-                overflow={"hidden"}
-                textOverflow={"ellipsis"}
-                whiteSpace={"nowrap"}
-                onClick={handleLinkClick}
-                >
-                    Compartilhar
-                </Button>
+                </Flex>
             </Flex>
-        </Flex> }
+        </>)}
 
         <Modal isOpen={isLinkOpen} onClose={onLinkClose}>
             <ModalOverlay />

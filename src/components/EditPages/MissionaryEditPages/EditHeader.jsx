@@ -5,7 +5,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import usePreviewImage from '../../../hooks/usePreviewImage';
 import useEditHeader from '../../../hooks/useEditHeader';
-import useGetUserProfileByUsername from '../../../hooks/useGetUserProfileByUsername';
 import useAuthStore from '../../../store/authStore';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
@@ -13,8 +12,6 @@ import 'react-phone-input-2/lib/style.css';
 function EditHeader({username, errorMessage, setErrorMessage}) {
 
   const userStore = useAuthStore((state) => state.user);
-
-  const {isLoading, userProfile} = useGetUserProfileByUsername(username);
 
   const toast = useToast();
 
@@ -36,9 +33,9 @@ function EditHeader({username, errorMessage, setErrorMessage}) {
   
   useEffect(() => {
     const img = new Image();
-    img.src = userProfile?.profilePicture;
+    img.src = authUser.profilePicture;
     img.onload = handleImageLoad;
-  }, [userProfile?.profilePicture]);
+  }, [authUser?.profilePicture]);
   
 
 
@@ -52,16 +49,16 @@ function EditHeader({username, errorMessage, setErrorMessage}) {
 
 
   useEffect(() => {
-    if(userProfile) {
+    if(authUser) {
       setInputs({
-        username: userProfile.username || "",
-        fullName: userProfile.fullName || "",
-        publicEmail: userProfile.publicEmail || "",
-        publicPhone: userProfile.publicPhone || "",
-        bio: userProfile.bio || "",
+        username: authUser.username ? authUser.username.replace(/_missionary$/, '') : "",
+        fullName: authUser.fullName || "",
+        publicEmail: authUser.publicEmail || "",
+        publicPhone: authUser.publicPhone || "",
+        bio: authUser.bio || "",
       });
     }
-  }, [userProfile]);
+  }, [authUser]);
 
 
   const [charLimitReached, setCharLimitReached] = useState(false);
@@ -152,11 +149,11 @@ function EditHeader({username, errorMessage, setErrorMessage}) {
 
                       <Avatar 
                       size="lg" 
-                      src={selectedFile || userProfile.profilePicture} 
+                      src={selectedFile || authUser.profilePicture} 
                       border={"2px solid black"}
                       style={{
                         backgroundColor: imageLoaded ? 'transparent' : 'rgb(250, 192, 121)',
-                        animation: imageLoaded || !userProfile?.profilePicture ? 'none' : 'spin 1s linear infinite',
+                        animation: imageLoaded || !authUser?.profilePicture ? 'none' : 'spin 1s linear infinite',
                       }} 
                       />
 
@@ -276,6 +273,7 @@ function EditHeader({username, errorMessage, setErrorMessage}) {
                   size={"sm"}
                   _hover={{bg: "red.500"}}
                   onClick={() => navigate(`/${userStore.username}`)}
+                  isDisabled={isUpdating}
                   >
                     Cancelar
                   </Button>
