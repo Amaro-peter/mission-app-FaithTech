@@ -1,17 +1,13 @@
 import { Box, Flex, Button, Image, Text, Spacer, useBreakpointValue } from "@chakra-ui/react";
 import LogOut from "../NavBarItems/LogOut";
 import NavBarItems from "../NavBarItems/NavBarItems";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { IoIosArrowBack } from "react-icons/io";
-import useAuthStore from "../../store/authStore";
-import { useUserProfile } from "../../context/UserProfileContext";
+import Return from "../NavBarItems/Return";
 
 function NavBar( { isLargerThanBase } ) {
 
   const authUser = useAuth();
-
-  const { username } = useParams();
 
   const navigate = useNavigate();
 
@@ -96,16 +92,8 @@ function NavBar( { isLargerThanBase } ) {
             alignItems={"center"}
             justifyContent={"space-between"}
             >
-              <Button
-              display={"flex"}
-              justifyContent={"center"}
-              alignItems={"center"}
-              mb={1}
-              mt={1}
-              onClick={() => navigate(-1)}
-              >
-                <IoIosArrowBack />
-              </Button>
+
+              <Return />
 
               <Link to={`${authUser.username}`} style={{ textDecoration: "none" }}>
                 <Image
