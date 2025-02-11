@@ -8,6 +8,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../utils/firebase";
 import { AuthProvider } from "../../context/AuthContext.jsx";
 import MissionaryHomePage from "../../Pages/HomePagesFolder/MissionaryHomePage/MissionaryHomePage";
+import useAuthStore from "../../store/authStore.js";
 
 
 function PageLayout({children, loading, authUser}) {
@@ -79,10 +80,10 @@ function PageLayout({children, loading, authUser}) {
   return (
     <AuthProvider authUser={authUser}>
       <VStack minH={"100vh"} spacing={0}>
-        {canRenderNavBar && showNavBar && (
+        {canRenderNavBar && (
           <Box w={"full"} justifyContent={"center"} alignItems={"center"}
           >
-            <NavBar authUser={authUser} isLargerThanBase={isLargerThanBase} />
+            <NavBar isLargerThanBase={isLargerThanBase} />
           </Box>
         )}
               

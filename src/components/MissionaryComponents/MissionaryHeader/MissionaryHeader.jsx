@@ -136,7 +136,7 @@ function  MissionaryHeader({unauthenticated, activeTab, handleTabClick}) {
           <Avatar 
           src={userProfile?.profilePicture} 
           alt="Missionary" 
-          size={{base: "md", md: "lg"}}
+          size={"lg"}
           style={{
             backgroundColor: imageLoaded ? 'transparent' : 'rgb(250, 192, 121)',
             animation: imageLoaded || !userProfile?.profilePicture ? 'none' : 'spin 1s linear infinite',

@@ -22,7 +22,7 @@ function Home({ sizeOfIcon, sizeOfText }) {
           alignItems={"center"}
           >
             <Avatar size="xs" />
-            <Text fontSize={sizeOfText} color={"black"}>Perfil</Text>
+            <Text fontSize={sizeOfText} color={"black"}>Conta</Text>
           </Flex>
           
         </Button>

@@ -1,13 +1,17 @@
-import { Box, Flex, Button, Image, Text, Spacer, useBreakpointValue } from "@chakra-ui/react"
-import LogOut from "../NavBarItems/LogOut"
-import Notification from "../NavBarItems/Notifications"
-import NavBarItems from "../NavBarItems/NavBarItems"
-import useLogOut from "../../hooks/useLogOut"
-import { base } from "framer-motion/client";
-import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { Box, Flex, Button, Image, Text, Spacer, useBreakpointValue } from "@chakra-ui/react";
+import LogOut from "../NavBarItems/LogOut";
+import NavBarItems from "../NavBarItems/NavBarItems";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { IoIosArrowBack } from "react-icons/io";
+import useAuthStore from "../../store/authStore";
+import { useUserProfile } from "../../context/UserProfileContext";
 
-function NavBar( { authUser, isLargerThanBase } ) {
+function NavBar( { isLargerThanBase } ) {
+
+  const authUser = useAuth();
+
+  const { username } = useParams();
 
   const navigate = useNavigate();
 
@@ -68,15 +72,17 @@ function NavBar( { authUser, isLargerThanBase } ) {
           justifyContent={"center"}
           
           >
-            <Image
-            src={"/Mission.png"}  // Image source
-            alt="Mission Logo"
-            width={{ base: "50%", md: "20%", lg: "10%" }}  // Responsive width
-            maxWidth="200px"  // Max width to ensure proper scaling
-            minWidth="100px"
-            height="auto"  // Auto height to maintain aspect ratio
-            m={2}
-            />
+            <Link to={`${authUser.username}`} style={{ textDecoration: "none" }}>
+              <Image
+              src={"/Mission.png"}  // Image source
+              alt="Mission Logo"
+              width={{ base: "70%", md: "80%", lg: "90%" }}
+              maxWidth="200px"  // Max width to ensure proper scaling
+              minWidth="100px"
+              height="auto"  // Auto height to maintain aspect ratio
+              m={2}
+              />
+            </Link>
           
             <NavBarItems sizeOfIcon={"1.5em"} sizeOfText={"0.75em"} isLargerThanBase={isLargerThanBase} />
             
@@ -85,32 +91,37 @@ function NavBar( { authUser, isLargerThanBase } ) {
           <>
             <Flex 
             direction={"row"} 
-            gap={3} 
             w={"full"} 
             height={"full"}
             alignItems={"center"}
-            justifyContent={"center"}
-            
+            justifyContent={"space-between"}
             >
-              <Image
-              src={"/Mission.png"}  // Image source
-              alt="Mission Logo"
-              width={{ base: "50%", md: "20%", lg: "10%" }}  // Responsive width
-              maxWidth="200px"  // Max width to ensure proper scaling
-              minWidth="100px"
-              height="auto"  // Auto height to maintain aspect ratio
-              m={1}
-              />
-              <Spacer />
-              <Flex 
-              direction={"row"} 
-              cursor={"pointer"} 
+              <Button
+              display={"flex"}
               justifyContent={"center"}
               alignItems={"center"}
-              gap={3}
+              mb={1}
+              mt={1}
+              onClick={() => navigate(-1)}
               >
-                <LogOut sizeOfIcon={sizeOfIcon} sizeOfText={sizeOfText} />
-              </Flex>
+                <IoIosArrowBack />
+              </Button>
+
+              <Link to={`${authUser.username}`} style={{ textDecoration: "none" }}>
+                <Image
+                src={"/Mission.png"}  // Image source
+                alt="Mission Logo"
+                width={{ base: "70%", md: "80%", lg: "90%" }}  // Responsive width
+                maxWidth="200px"  // Max width to ensure proper scaling
+                minWidth="100px"
+                height="auto"  // Auto height to maintain aspect ratio
+                mt={2}
+                ml={9}
+                />
+              </Link>
+
+              <LogOut sizeOfIcon={sizeOfIcon} sizeOfText={sizeOfText} />
+
             </Flex> 
           </>
         ) : !authUser && !isLargerThanBase ? (
@@ -123,15 +134,17 @@ function NavBar( { authUser, isLargerThanBase } ) {
             justifyContent={"center"}
             
             >
-              <Image
-              src={"/Mission.png"}  // Image source
-              alt="Mission Logo"
-              width={{ base: "50%", md: "20%", lg: "10%" }}  // Responsive width
-              maxWidth="200px"  // Max width to ensure proper scaling
-              minWidth="100px"
-              height="auto"  // Auto height to maintain aspect ratio
-              m={1}
-              />
+              <Link to={"/landingPage"} style={{ textDecoration: "none" }}>
+                <Image
+                src={"/Mission.png"}  // Image source
+                alt="Mission Logo"
+                width={{ base: "70%", md: "80%", lg: "90%" }} 
+                maxWidth="200px"  // Max width to ensure proper scaling
+                minWidth="100px"
+                height="auto"  // Auto height to maintain aspect ratio
+                m={2}
+                />
+              </Link>
               <Spacer />
               <Flex 
               direction={"row"} 
@@ -163,15 +176,17 @@ function NavBar( { authUser, isLargerThanBase } ) {
             justifyContent={"center"}
             
             >
-              <Image
-              src={"/Mission.png"}  // Image source
-              alt="Mission Logo"
-              width={{ base: "50%", md: "20%", lg: "10%" }}  // Responsive width
-              maxWidth="200px"  // Max width to ensure proper scaling
-              minWidth="100px"
-              height="auto"  // Auto height to maintain aspect ratio
-              m={2}
-              />
+              <Link to={"/landingPage"} style={{ textDecoration: "none" }}>
+                <Image
+                src={"/Mission.png"}  // Image source
+                alt="Mission Logo"
+                width={{ base: "70%", md: "80%", lg: "90%" }} 
+                maxWidth="200px"  // Max width to ensure proper scaling
+                minWidth="100px"
+                height="auto"  // Auto height to maintain aspect ratio
+                m={2}
+                />
+              </Link>
             
               <Button
               onClick={() => navigate("/donorSignPage")}
@@ -189,4 +204,4 @@ function NavBar( { authUser, isLargerThanBase } ) {
   );
 }
 
-export default NavBar
+export default NavBar;

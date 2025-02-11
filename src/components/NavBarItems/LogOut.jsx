@@ -34,6 +34,7 @@ function LogOut({ sizeOfIcon, sizeOfText }) {
         alignItems={"center"}
         gap={2}
         mb={1}
+        mt={1}
         >
           <IoIosLogOut size={sizeOfIcon} />
           <Text fontSize={sizeOfText}>Sair</Text>
