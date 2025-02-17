@@ -282,20 +282,11 @@ function UserMissionaryRoute({authUser, setAuthUser}) {
 
 function MissionaryEditHeaderRoute({authUser, isMissionary, isUser}) {
   const { username } = useParams();
-  const { isLoading, userProfile } = useGetUserProfileByUsername(username);
-  const navigate = useNavigate();
-
-
-  if(isLoading) {
-    return <PageLayoutSpinner />;
-  }
 
   if(isMissionary && authUser.username === username) {
-      return <EditHeader username={username} />;
-  } else if(isMissionary && authUser.username !== username && userProfile.role === "missionary") {
-    return navigate(`/${authUser.username}`);
-  } else if(isMissionary && authUser.username !== username && userProfile.role === "user") {
-    return navigate(`/${authUser.username}`);
+    return <EditHeader username={username} />;
+  } else if(authUser) {
+    return <Navigate to={`/${authUser.username}`} />;
   } else {
     return <Navigate to="/landingPage" />;
   }
@@ -303,20 +294,11 @@ function MissionaryEditHeaderRoute({authUser, isMissionary, isUser}) {
 
 function MissionaryEditProjectRoute({authUser, isMissionary, isUser}) {
   const { username } = useParams();
-  const { isLoading, userProfile } = useGetUserProfileByUsername(username);
-  const navigate = useNavigate();
-
-
-  if(isLoading) {
-    return <PageLayoutSpinner />;
-  }
 
   if(isMissionary && authUser.username === username) {
-      return <EditProject username={username} />;
-  } else if(isMissionary && authUser.username !== username && userProfile.role === "missionary") {
-    return navigate(`/${authUser.username}`);
-  } else if(isMissionary && authUser.username !== username && userProfile.role === "user") {
-    return navigate(`/${authUser.username}`);
+    return <EditProject username={username} />;
+  } else if(authUser) {
+    return <Navigate to={`/${authUser.username}`} />;
   } else {
     return <Navigate to="/landingPage" />;
   }
@@ -324,20 +306,11 @@ function MissionaryEditProjectRoute({authUser, isMissionary, isUser}) {
 
 function MissionaryFollowersRoute({authUser, isMissionary, isUser}) {
   const { username } = useParams();
-  const { isLoading, userProfile } = useGetUserProfileByUsername(username);
-  const navigate = useNavigate();
-
-
-  if(isLoading) {
-    return <PageLayoutSpinner />;
-  }
 
   if(isMissionary && authUser.username === username) {
     return <Followers />;
-  } else if(isMissionary && authUser.username !== username && userProfile.role === "missionary") {
-    return navigate(`/${authUser.username}`);
-  } else if(isMissionary && authUser.username !== username && userProfile.role === "user") {
-    return navigate(`/${authUser.username}`);
+  } else if(authUser) {
+    return <Navigate to={`/${authUser.username}`} />;
   } else {
     return <Navigate to="/landingPage" />;
   }
