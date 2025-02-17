@@ -1,8 +1,27 @@
-import { Avatar, Flex, Text, Button, Image, Container, Box, useDisclosure } from "@chakra-ui/react"
-import PostModal from "../PostModal/PostModal"
+import { Avatar, Flex, Text, Button, Container } from "@chakra-ui/react";
+import PostModal from "../PostModal/PostModal";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../../context/AuthContext";
+import { useEffect, useState } from "react";
+import { PostDataProvider } from "../../../../context/PostDataContext";
 
 function Posts() {
-  const {isOpen, onOpen, onClose} = useDisclosure()
+
+  const authUser = useAuth();
+
+  const navigate = useNavigate();
+
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  const handleImageLoad = () => {
+      setImageLoaded(true);
+    };
+  
+    useEffect(() => {
+      const img = new Image();
+      img.src = authUser?.profilePicture;
+      img.onload = handleImageLoad;
+    }, [authUser.profilePicture]);
 
   return (
     <Container
@@ -38,7 +57,24 @@ function Posts() {
         height="100%"
         gap={{base: 2, sm: 4}}
         >
-          <Avatar src='' alt="Missionary" size={{base: "md", md: "md"}} />
+          <Avatar 
+          src={authUser.profilePicture} 
+          alt="Missionary" 
+          size={{base: "md", md: "md"}} 
+          style={{
+            backgroundColor: imageLoaded ? 'transparent' : 'rgb(250, 192, 121)',
+            animation: imageLoaded || !authUser?.profilePicture ? 'none' : 'spin 1s linear infinite',
+          }}
+          />
+
+          <style>
+          {`
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          `}
+          </style>
 
           <Button
           flex={1}
@@ -51,7 +87,7 @@ function Posts() {
           overflow={"hidden"}
           textOverflow={"ellipsis"}
           whiteSpace={"nowrap"}
-          onClick={onOpen}
+          onClick={() => navigate(`/${authUser.username}/CreatePost`)}
           >
             <Text
             fontFamily={"Inter, sans-serif"}
@@ -61,10 +97,9 @@ function Posts() {
             </Text>
           </Button>
         </Flex>
-        {isOpen && (<PostModal isOpen={isOpen} onClose={onClose} />)}
       </Flex>
     </Container>
-  )
+  );
 }
 
-export default Posts
+export default Posts;

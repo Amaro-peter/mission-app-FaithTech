@@ -1,14 +1,61 @@
 import {
   Box,
   Flex,
+  SkeletonCircle,
+  Skeleton,
+  SkeletonText,
   Text,
 } from '@chakra-ui/react';
 import PostHeader from "../PostHeader/PostHeader";
 import PostFooter from "../PostFooter/PostFooter";
 import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
+import { useState, useEffect } from 'react';
 
-function ProfilePost({ source }) {
+function ProfilePost({ post, onImageLoad }) {
+
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+    onImageLoad && onImageLoad();
+  };
+  
+  useEffect(() => {
+    const img = new Image();
+    img.src = post?.imageURL;
+    img.onload = handleImageLoad;
+  }, [post?.imageURL]);
+
+  if(!imageLoaded) {
+    return(
+      <Flex
+      width={{ base: "100%", md: "80%" }}
+      bg="white"
+      color="black"
+      border="1px solid gray.500"
+      borderRadius={10}
+      p={4}
+      gap={1}
+      boxShadow="md"
+      direction={"column"}
+      mx={"auto"}
+      mb={4}
+      >
+        <Flex
+        gap={2}
+        >
+          <SkeletonCircle size='10' />
+          <SkeletonText noOfLines={1} width={"40%"} />
+        </Flex>
+        <Skeleton w={"full"}>
+          <Box h={"300px"}>
+          </Box>
+        </Skeleton>
+      </Flex>
+    );
+  }
+
   return (
     <Flex
       width={{ base: "100%", md: "80%" }}
@@ -31,7 +78,7 @@ function ProfilePost({ source }) {
           whiteSpace="normal"
           textAlign="justify"
         >
-          Hoje, fizemos uma leitura bíblica com as crianças sobre a vida de Jesus. Ensinamos a elas como manusear a bíblia e a diferença entre o novo e velho Testamento.
+          {post.caption}
         </Text>
 
         <Box
@@ -46,13 +93,14 @@ function ProfilePost({ source }) {
             transitionDuration={300} // Smooth zoom animation duration
           >
             <img
-              src={source}
+              src={post.imageURL}
               alt="Missionary"
               style={{
                 width: '100%',
                 height: 'auto',
                 borderRadius: '4px',
               }}
+              loading='lazy'
             />
           </Zoom>
         </Box>

@@ -1,3 +1,4 @@
+const compressImageService = require('./compressImageService.js');
 const express = require('express');
 const bodyParser = require('body-parser');
 const admin = require('firebase-admin');
@@ -6,12 +7,17 @@ const admin = require('firebase-admin');
 const serviceAccount = require('./serviceAccountKey.json');
 
 admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+    credential: admin.credential.cert({
+      ...serviceAccount,
+      // Ensure proper newline handling in the private key
+      privateKey: serviceAccount.private_key.replace(/\\n/g, '\n'),
+    }),
     databaseURL: 'https://mission-app-8539e.firebaseio.com',
-});
+  });
 
 const app = express();
 app.use(bodyParser.json());
+app.use('/api', compressImageService);
 
 const apiKey = 'AIzaSyDozO7D1nK8_y-cthmqejzSyNyEeC_u8t8'; // Replace with your actual API key
 

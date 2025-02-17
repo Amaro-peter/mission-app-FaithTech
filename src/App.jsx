@@ -1,4 +1,4 @@
-import {Navigate, Route, Routes, useLocation, useNavigate, useParams} from "react-router-dom";
+import {Navigate, Route, Routes, useNavigate, useParams} from "react-router-dom";
 import MissionaryHomePage from "./Pages/HomePagesFolder/MissionaryHomePage/MissionaryHomePage";
 import LandingPage from "./Pages/LandingPage/LandingPage";
 import PageLayout from "./Layouts/PageLayout/PageLayout";
@@ -7,10 +7,9 @@ import EmailFormResetPassword from "./Pages/AuthForms/ResetPassword/EmailFormRes
 import PageLayoutSpinner from "./Layouts/PageLayoutSpinner/PageLayoutSpinner";
 import AuthMissionaryForm from "./Pages/AuthForms/AuthMissionaryPage/AuthMissionaryForm";
 import AuthSocialProjectForm from "./Pages/AuthForms/AuthSocialProjectPage/AuthSocialProjectForm";
-import { onAuthStateChanged, updateProfile } from "firebase/auth";
-import { auth, db } from "./utils/firebase";
-import { useState, useEffect, useRef } from "react";
-import { getDoc, doc, collection, getDocs, query, where } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./utils/firebase";
+import { useState, useEffect } from "react";
 import CustomPasswordReset from "./Pages/AuthForms/ResetPassword/CustomPasswordReset";
 import AuthAdmin from "./Pages/AuthForms/AuthAdmin/AuthAdmin";
 import AuthRegistrationPanel from "./Pages/AuthForms/AuthAdmin/AuthRegistrationPanel";
@@ -25,11 +24,13 @@ import useAuthStore from "./store/authStore";
 import ScrollToTop from "./Layouts/Scrolling/ScrollToTop";
 import EditProject from "./components/EditPages/MissionaryEditPages/EditProject";
 import Followers from "./components/MissionaryComponents/Followers/Followers";
-import useUserProfileStore from "./store/useProfileStore";
-import { signOut } from "firebase/auth";
+import PostModal from "./components/MissionaryComponents/Posts/PostModal/PostModal";
+import { PostDataProvider } from "./context/PostDataContext";
+import { useTab } from "./context/TabContext";
 
 function App() {
 
+  const { activeTab } = useTab();
   const authUser = useAuthStore((state) => state.user);
   const setAuthUser = useAuthStore((state) => state.setUser);
   const [loading, setLoading] = useState(false);
@@ -66,153 +67,148 @@ function App() {
 
   return (
     <>
-      <ScrollToTop />
-      <PageLayout loading={loading} authUser={authUser}>
-        <Routes>
-          <Route path="*" element={<PageNotFound />} />
+      <PostDataProvider>
+        <ScrollToTop />
+        <PageLayout loading={loading} authUser={authUser}>
+          <Routes>
+            <Route path="*" element={<PageNotFound />} />
 
-          <Route path="/adminMissionarySignUpSucess" element={ isAdmin ? <AdminMissionarySignUpSucess /> : isMissionary ? (
-            <Navigate to={`/${authUser.username}`} />
-          ) : isUser ? (
-            <Navigate to={`/${authUser.username}`} />
-          ) : <Navigate to={"/landingPage"} />} 
-          />
+            <Route path="/adminMissionarySignUpSucess" element={ isAdmin ? <AdminMissionarySignUpSucess /> : isMissionary ? (
+              <Navigate to={`/${authUser.username}`} />
+            ) : isUser ? (
+              <Navigate to={`/${authUser.username}`} />
+            ) : <Navigate to={"/landingPage"} />} 
+            />
 
-          <Route path="/missionarySignUpSuccess" element={isMissionary ? <MissionarySignUpSucess /> : isAdmin ? (
-            <Navigate to={"/adminRegistrationPanel"} />
-          ) : isUser ? (
-            <Navigate to={`/${authUser.username}`} />
-          ) : (<Navigate to={"/landingPage"} />) } 
-          />
+            <Route path="/missionarySignUpSuccess" element={isMissionary ? <MissionarySignUpSucess /> : isAdmin ? (
+              <Navigate to={"/adminRegistrationPanel"} />
+            ) : isUser ? (
+              <Navigate to={`/${authUser.username}`} />
+            ) : (<Navigate to={"/landingPage"} />) } 
+            />
 
-          <Route path="/:username/EditProject" element={
-            isMissionary ? <MissionaryEditProjectRoute authUser={authUser} isMissionary={isMissionary} isUser={isUser} /> : 
-            isAdmin ? (
-            <Navigate to={"/adminRegistrationPanel"} />
-          ) : isUser ? (
-            <Navigate to={`/${authUser.username}`} />
-          ) : (<Navigate to={"/landingPage"} />) } 
-          />
+            <Route path="/:username/EditProject" element={
+              isMissionary ? <MissionaryEditProjectRoute authUser={authUser} isMissionary={isMissionary} isUser={isUser} /> : 
+              isAdmin ? (
+              <Navigate to={"/adminRegistrationPanel"} />
+            ) : isUser ? (
+              <Navigate to={`/${authUser.username}`} />
+            ) : (<Navigate to={"/landingPage"} />) } 
+            />
 
-          <Route path="/:username/EditHeader" element={
-            isMissionary ? <MissionaryEditHeaderRoute authUser={authUser} isMissionary={isMissionary} isUser={isUser} /> : 
-            isAdmin ? (
-            <Navigate to={"/adminRegistrationPanel"} />
-          ) : isUser ? (
-            <Navigate to={`/${authUser.username}`} />
-          ) : (<Navigate to={"/landingPage"} />) } 
-          />
+            <Route path="/:username/EditHeader" element={
+              isMissionary ? <MissionaryEditHeaderRoute authUser={authUser} isMissionary={isMissionary} isUser={isUser} /> : 
+              isAdmin ? (
+              <Navigate to={"/adminRegistrationPanel"} />
+            ) : isUser ? (
+              <Navigate to={`/${authUser.username}`} />
+            ) : (<Navigate to={"/landingPage"} />) } 
+            />
 
-          <Route path="/:username/Followers" element={
-            isMissionary ? <MissionaryFollowersRoute authUser={authUser} isMissionary={isMissionary} isUser={isUser} /> : 
-            isAdmin ? (
-            <Navigate to={"/adminRegistrationPanel"} />
-          ) : isUser ? (
-            <Navigate to={`/${authUser.username}`} />
-          ) : (<Navigate to={"/landingPage"} />) } 
-          />
-          
-          
-          <Route 
-          path="/" 
-          element= {isMissionary ? ( <Navigate to={`/${authUser.username}`} />) 
-            : isAdmin ? (
+            <Route path="/:username/Followers" element={
+              isMissionary ? <MissionaryFollowersRoute authUser={authUser} isMissionary={isMissionary} isUser={isUser} /> : 
+              isAdmin ? (
+              <Navigate to={"/adminRegistrationPanel"} />
+            ) : isUser ? (
+              <Navigate to={`/${authUser.username}`} />
+            ) : (<Navigate to={"/landingPage"} />) } 
+            />
+
+            <Route path="/:username/CreatePost" element={
+              isMissionary ? <MissionaryCreatePostRoute authUser={authUser} isMissionary={isMissionary} isUser={isUser} /> : 
+              isAdmin ? (
+              <Navigate to={"/adminRegistrationPanel"} />
+            ) : isUser ? (
+              <Navigate to={`/${authUser.username}`} />
+            ) : (<Navigate to={"/landingPage"} />) } 
+            />
+            
+            
+            <Route 
+            path="/" 
+            element= {isMissionary ? ( <Navigate to={`/${authUser.username}`} />) 
+              : isAdmin ? (
+                  <Navigate to="/adminRegistrationPanel" />
+                ) : isUser ? (
+                  <Navigate to={`/${authUser.username}`} />
+                ) : (
+                  <Navigate to="/landingPage" />
+                )} 
+            />
+
+            <Route 
+              path="/:username" 
+              element={isMissionary ? (
+                <UserMissionaryRoute isMissionary={isMissionary} authUser={authUser} setAuthUser={setAuthUser} />
+              ) : isAdmin ? (
+                <Navigate to="/adminRegistrationPanel" />
+              ) : isUser ? (
+                <UserDonorRoute isUser={isUser} authUser={authUser} />
+              ) : (
+                <UserMissionaryRoute isMissionary={isMissionary} authUser={authUser} setAuthUser={setAuthUser} />
+              )} 
+            />
+
+            <Route 
+            path='/landingPage' 
+            element={isMissionary ? (
+                <Navigate to={`/${authUser.username}`} />
+                ) : isAdmin ? (
+                <Navigate to="/adminRegistrationPanel" />
+                ) : isUser ? (
+                  <Navigate to={`/${authUser.username}`} />
+                ) : (
+                  <LandingPage />
+                )} 
+            />
+            <Route 
+            path='/donorSignPage' 
+            element={isMissionary ? (
+                <Navigate to={`/${authUser.username}`} />
+              ) : isAdmin ? (
                 <Navigate to="/adminRegistrationPanel" />
               ) : isUser ? (
                 <Navigate to={`/${authUser.username}`} />
-              ) : (
-                <Navigate to="/landingPage" />
-              )} 
-          />
-
-          <Route 
-            path="/:username" 
-            element={isMissionary ? (
-              <UserMissionaryRoute isMissionary={isMissionary} authUser={authUser} setAuthUser={setAuthUser} />
-            ) : isAdmin ? (
-              <Navigate to="/adminRegistrationPanel" />
-            ) : isUser ? (
-              <UserDonorRoute isUser={isUser} authUser={authUser} />
-            ) : (
-              <UserMissionaryRoute isMissionary={isMissionary} authUser={authUser} setAuthUser={setAuthUser} />
-            )} 
-          />
-
-          <Route 
-          path='/landingPage' 
-          element={isMissionary ? (
-              <Navigate to={`/${authUser.username}`} />
+              ) : <AuthDonorForm  />} 
+            />
+            <Route path="/resetForm" element={isMissionary ? (
+                <Navigate to={`/${authUser.username}`} />
               ) : isAdmin ? (
-              <Navigate to="/adminRegistrationPanel" />
+                <Navigate to="/adminRegistrationPanel" />
               ) : isUser ? (
                 <Navigate to={`/${authUser.username}`} />
-              ) : (
-                <LandingPage />
-              )} 
-          />
-          <Route 
-          path='/donorSignPage' 
-          element={isMissionary ? (
+              ) : <EmailFormResetPassword />
+            } />
+
+            <Route path="/resetPassword" element={<CustomPasswordReset />} />
+
+            {/*<Route path="/resetPassword" element={isMissionary ? (
+                <Navigate to={`/${authUser.username}`} />
+              ) : isAdmin ? (
+                <Navigate to="/adminRegistrationPanel" />
+              ) : isUser ? (
+                <Navigate to={`/${authUser.username}`} />
+              ) : <CustomPasswordReset />
+
+            } />*/}
+
+            
+            <Route 
+            path="/adminRegistrationPanel" 
+            element={isMissionary ? (
               <Navigate to={`/${authUser.username}`} />
             ) : isAdmin ? (
-              <Navigate to="/adminRegistrationPanel" />
+              <AdminRoute isAdmin={isAdmin} storedAdminUser={storedAdminUser} />
             ) : isUser ? (
               <Navigate to={`/${authUser.username}`} />
-            ) : <AuthDonorForm  />} 
-          />
-          <Route path="/resetForm" element={isMissionary ? (
-              <Navigate to={`/${authUser.username}`} />
-            ) : isAdmin ? (
-              <Navigate to="/adminRegistrationPanel" />
-            ) : isUser ? (
-              <Navigate to={`/${authUser.username}`} />
-            ) : <EmailFormResetPassword />
-          } />
-
-          <Route path="/resetPassword" element={<CustomPasswordReset />} />
-
-          {/*<Route path="/resetPassword" element={isMissionary ? (
-              <Navigate to={`/${authUser.username}`} />
-            ) : isAdmin ? (
-              <Navigate to="/adminRegistrationPanel" />
-            ) : isUser ? (
-              <Navigate to={`/${authUser.username}`} />
-            ) : <CustomPasswordReset />
-
-          } />*/}
-
-          
-          <Route 
-          path="/adminRegistrationPanel" 
-          element={isMissionary ? (
-            <Navigate to={`/${authUser.username}`} />
-          ) : isAdmin ? (
-            <AdminRoute isAdmin={isAdmin} storedAdminUser={storedAdminUser} />
-          ) : isUser ? (
-            <Navigate to={`/${authUser.username}`} />
-          ) : (
-            <Navigate to="/landingPage" />
-          )} 
-          />
-
-          <Route
-          path='/authAdmin'
-          element={
-            isMissionary ? (
-              <Navigate to={`/${authUser.username}`} />
-            ) : isAdmin ? (
-              <Navigate to="/adminRegistrationPanel" />
-            ) : isUser ? (
-              <Navigate to={`/${authUser.username}`}/>
             ) : (
-              <AuthAdmin />
-            )
-          }
-          />
+              <Navigate to="/landingPage" />
+            )} 
+            />
 
-          <Route
-          path='/missionarySignPage'
-          element={
+            <Route
+            path='/authAdmin'
+            element={
               isMissionary ? (
                 <Navigate to={`/${authUser.username}`} />
               ) : isAdmin ? (
@@ -220,14 +216,29 @@ function App() {
               ) : isUser ? (
                 <Navigate to={`/${authUser.username}`}/>
               ) : (
-                <AuthMissionaryForm />
+                <AuthAdmin />
               )
             }
-          />
-          
-          <Route path='/socialProjectSignPage' element={<AuthSocialProjectForm />} />
-        </Routes>
-      </PageLayout>
+            />
+
+            <Route
+            path='/missionarySignPage'
+            element={
+                isMissionary ? (
+                  <Navigate to={`/${authUser.username}`} />
+                ) : isAdmin ? (
+                  <Navigate to="/adminRegistrationPanel" />
+                ) : isUser ? (
+                  <Navigate to={`/${authUser.username}`}/>
+                ) : (
+                  <AuthMissionaryForm />
+                )
+              }
+            />
+            <Route path='/socialProjectSignPage' element={<AuthSocialProjectForm />} />
+          </Routes>
+        </PageLayout>
+      </PostDataProvider>
     </>
   );
 }
@@ -294,7 +305,6 @@ function MissionaryEditProjectRoute({authUser, isMissionary, isUser}) {
   const { username } = useParams();
   const { isLoading, userProfile } = useGetUserProfileByUsername(username);
   const navigate = useNavigate();
-  const [errorMessage, setErrorMessage] = useState(null);
 
 
   if(isLoading) {
@@ -316,7 +326,6 @@ function MissionaryFollowersRoute({authUser, isMissionary, isUser}) {
   const { username } = useParams();
   const { isLoading, userProfile } = useGetUserProfileByUsername(username);
   const navigate = useNavigate();
-  const [errorMessage, setErrorMessage] = useState(null);
 
 
   if(isLoading) {
@@ -329,6 +338,18 @@ function MissionaryFollowersRoute({authUser, isMissionary, isUser}) {
     return navigate(`/${authUser.username}`);
   } else if(isMissionary && authUser.username !== username && userProfile.role === "user") {
     return navigate(`/${authUser.username}`);
+  } else {
+    return <Navigate to="/landingPage" />;
+  }
+}
+
+function MissionaryCreatePostRoute({authUser, isMissionary, isUser}) {
+  const { username } = useParams();
+
+  if(isMissionary && authUser.username === username) {
+    return <PostModal />;
+  } else if(authUser) {
+    return <Navigate to={`/${authUser.username}`} />;
   } else {
     return <Navigate to="/landingPage" />;
   }
