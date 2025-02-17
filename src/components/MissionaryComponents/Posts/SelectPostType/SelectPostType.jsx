@@ -1,7 +1,15 @@
 import { Container, Flex, Box, Text, VStack, Button } from '@chakra-ui/react'
 import React from 'react'
+import { useTab } from '../../../../context/TabContext'
 
-function SelectPostType({myPosts, handleSelectionPostTabClick}) {
+function SelectPostType() {
+
+  const { myPosts, setMyPosts } = useTab();
+
+  const handleSelectionPostTabClick = (tab) => {
+    setMyPosts(tab);
+  }
+
   return (
     <Container
     maxW={"container.lg"}

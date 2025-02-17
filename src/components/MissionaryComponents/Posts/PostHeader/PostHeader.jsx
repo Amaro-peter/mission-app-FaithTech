@@ -1,16 +1,10 @@
-import { Avatar, Box, Button, Flex, Text } from '@chakra-ui/react';
+import { Avatar, Flex, Text } from '@chakra-ui/react';
 import React from 'react';
-import { useState } from 'react';
 import { useAuth } from '../../../../context/AuthContext';
-import useAuthStore from '../../../../store/authStore';
-import useUserProfileStore from '../../../../store/useProfileStore';
 import { useUserProfile } from '../../../../context/UserProfileContext';
 
 function PostHeader() {
-  const[isFollowing, setIsFollowing] = useState(false);
-  const authUser = useAuth();
   const userProfile = useUserProfile();
-  const visitingAnotherProfileAndAuth = authUser && authUser.username !== userProfile.username;
 
   return (
     <Flex
@@ -23,7 +17,7 @@ function PostHeader() {
         alignItems={"center"}
         gap={1}
         >
-            <Avatar src='' alt="user profile pic" size={"md"} />
+            <Avatar src={userProfile.profilePicture} alt="user profile pic" size={"md"} />
 
             <Flex
             direction={"column"}
@@ -34,7 +28,7 @@ function PostHeader() {
                 fontWeight={"bold"}
                 fontSize={"auto"}
                 >
-                    Samuel Mendonça
+                    {userProfile.fullName}
                 </Text>
 
                 <Text
@@ -46,24 +40,6 @@ function PostHeader() {
                 </Text>
             </Flex>
         </Flex>
-        {visitingAnotherProfileAndAuth ? (
-            <Box
-            cursor={"pointer"}
-            >
-                <Button
-                size={"xs"}
-                bg={"transparent"}
-                fontSize={"16"}
-                color={"orange.500"}
-                fontWeight={"bold"}
-                _hover={{color: "orange.700"}}
-                transition={"0.2s in ease-in-out"}
-                onClick={() => setIsFollowing(!isFollowing)}
-                >
-                    {isFollowing ? "Seguindo" : "Seguir"}
-                </Button>
-            </Box>
-        ) : null}
     </Flex>
   )
 }

@@ -1,11 +1,11 @@
-import { Avatar, Box, Button, Center, Container, Divider, 
+import { Button, Center, Container, Divider, 
     Flex, Image, FormControl, FormLabel, Heading, Input, 
     Stack, Textarea, useToast, VStack,
-    Modal, ModalBody, ModalCloseButton, ModalOverlay, 
+    Modal, ModalBody, ModalOverlay, 
     ModalContent, Text, useDisclosure, ModalHeader} from '@chakra-ui/react';
 import { useRef, useState, useEffect } from 'react';
 import HomePageFooter from '../../../components/HomePageFooter/HomePageFooter';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import usePreviewImage from '../../../hooks/usePreviewImage';
 import useEditProject from '../../../hooks/useEditProject';
@@ -108,7 +108,6 @@ function EditProject({username, errorMessage, setErrorMessage}) {
           isClosable: true,
         });
       }
-      
     }
   };
 

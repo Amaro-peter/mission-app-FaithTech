@@ -10,11 +10,18 @@ import { useNavigate } from 'react-router-dom';
 import useFollowUser from '../../../hooks/useFollowUser';
 import useUnfollowUser from '../../../hooks/useUnfollowUser';
 import { useUserProfile } from '../../../context/UserProfileContext';
+import { useTab } from '../../../context/TabContext';
 
-function  MissionaryHeader({unauthenticated, activeTab, handleTabClick}) {
+function  MissionaryHeader({ unauthenticated }) {
   const[fontSize, setFontSize] = useState("16px");
   const [isLargerThan360] = useMediaQuery("(min-width: 371px)");
   const responsiveFontSize = { base: '10px', sm: '12px', md: '14px', lg: '16px', xl: '18px' };
+
+  const {activeTab, setActiveTab} = useTab();
+
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
+  }
 
   const userProfile = useUserProfile();
   
