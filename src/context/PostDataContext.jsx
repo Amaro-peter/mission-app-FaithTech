@@ -5,7 +5,8 @@ export const PostDataContext = createContext();
 
 export const PostDataProvider = ({ children }) => {
     const [postsData, setPostsData] = useState([]);
-    const [hasMore, setHasMore] = useState(true);
+    const [postCount, setPostCount] = useState(0);
+    const [gotPostCount, setGotPostCount] = useState(false);
 
     const addPost = (post) => {
         if(Array.isArray(post)) {
@@ -21,7 +22,8 @@ export const PostDataProvider = ({ children }) => {
     };
 
     return (
-        <PostDataContext.Provider value={{ postsData, setPostsData, addPost, removePost }}>
+        <PostDataContext.Provider value={{ postsData, setPostsData, addPost, removePost,
+         postCount, setPostCount, gotPostCount, setGotPostCount }}>
             { children }
         </PostDataContext.Provider>
     );

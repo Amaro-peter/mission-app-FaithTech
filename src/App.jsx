@@ -17,7 +17,6 @@ import AdminMissionarySignUpSucess from "./components/AuthForms/AdminForms/Admin
 import useAuthAdminStore from "./store/authAdminStore";
 import MissionarySignUpSucess from "./components/AuthForms/MissionaryForms/MissionarySuccessPage";
 import DonorHomePage from "./Pages/HomePagesFolder/DonorHomePage/DonorHomePage";
-import useGetUserProfileByUsername from "./hooks/useGetUserProfileByUsername";
 import EditHeader from "./components/EditPages/MissionaryEditPages/EditHeader";
 import { Button, Flex, useToast, VStack } from "@chakra-ui/react";
 import useAuthStore from "./store/authStore";
@@ -122,19 +121,6 @@ function App() {
               <Navigate to={`/${authUser.username}`} />
             ) : (<Navigate to={"/landingPage"} />) } 
             />
-            
-            
-            <Route 
-            path="/" 
-            element= {isMissionary ? ( <Navigate to={`/${authUser.username}`} />) 
-              : isAdmin ? (
-                  <Navigate to="/adminRegistrationPanel" />
-                ) : isUser ? (
-                  <Navigate to={`/${authUser.username}`} />
-                ) : (
-                  <Navigate to="/landingPage" />
-                )} 
-            />
 
             <Route 
               path="/:username" 
@@ -161,6 +147,20 @@ function App() {
                   <LandingPage />
                 )} 
             />
+
+            <Route 
+            path='/loadingSkeleton' 
+            element={isMissionary ? (
+                <Navigate to={`/${authUser.username}`} />
+                ) : isAdmin ? (
+                <Navigate to="/adminRegistrationPanel" />
+                ) : isUser ? (
+                  <Navigate to={`/${authUser.username}`} />
+                ) : (
+                  <LandingPage />
+                )} 
+            />
+
             <Route 
             path='/donorSignPage' 
             element={isMissionary ? (

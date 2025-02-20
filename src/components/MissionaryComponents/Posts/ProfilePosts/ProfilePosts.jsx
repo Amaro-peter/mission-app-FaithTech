@@ -14,17 +14,24 @@ import { PostDataContext } from '../../../../context/PostDataContext';
 import NoPostsFound from '../NoPost/NoPostsFound';
 import { useUserProfile } from '../../../../context/UserProfileContext';
 import { useTab } from '../../../../context/TabContext';
+import useDeletePost from '../../../../hooks/useDeletePost';
+
+const PAGINATION_LIMIT = 4;
 
 function ProfilePosts() {
   const { myPosts } = useTab();
+
   const {
     postsData,
-    addPost
+    addPost,
+    postCount,
   } = useContext(PostDataContext);
 
   const userProfile = useUserProfile();
 
   const { getUserPosts, isLoading } = useGetUserPosts();
+
+  const {deletePost, isDeleting} = useDeletePost();
 
   const [hasMore, setHasMore] = useState(localStorage.getItem("hasMore") === "true");
 
@@ -37,6 +44,8 @@ function ProfilePosts() {
   const [loadedImages, setLoadedImages] = useState(0);
 
   const [showLoadMore, setShowLoadMore] = useState(false);
+
+  {/*const [isDeleting, setIsDeleting] = useState(false);*/}
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,7 +64,7 @@ function ProfilePosts() {
         document.body.style.overflow = "hidden";
         localStorage.setItem("loadMoreData", "true");
         setShowLoadMore(false);
-        const result = await getUserPosts(userProfile, addPost);
+        const result = await getUserPosts(userProfile, addPost, postsData, postCount);
         if (result !== false) {
             setHasMore(localStorage.getItem("hasMore") === "true");
         }
@@ -77,7 +86,7 @@ function ProfilePosts() {
   const handleImageLoad = useCallback(() => {
     setLoadedImages(prev => {
       const newCount = prev + 1;
-      if (newCount === 4) {
+      if (newCount === PAGINATION_LIMIT) {
         // All images are loaded, wait 1 second before showing the button
         setTimeout(() => {
           setShowLoadMore(true);
@@ -87,14 +96,20 @@ function ProfilePosts() {
     });
   }, [postsData.length]);
 
-  // Modify the render logic for posts
+  {/*const handleDeleteStatusChange = useCallback((isDeleting) => {
+    setIsDeleting(isDeleting);
+  });*/}
+
   const renderPosts = () => (
     <>
       {postsData.map((post, idx) => (
         <ProfilePost 
           key={`${isFirstTime ? 'initial' : 'loaded'}-${idx}`} 
           post={post}
+          index={idx} 
           onImageLoad={handleImageLoad}
+          deletePost={deletePost}
+          isDeleting={isDeleting}
         />
       ))}
       { showLoadMore && hasMore && (
@@ -131,10 +146,11 @@ function ProfilePosts() {
 
   return (
     <Container maxW="container.lg">
-      {!isLoading && isFirstTime && renderPosts()}
-      {!isLoading && !isFirstTime && renderPosts()}
+      
+      {!isLoading && !isDeleting && isFirstTime && renderPosts()}
+      {!isLoading && !isDeleting && !isFirstTime && renderPosts()}
 
-      {isLoading &&
+      { (isLoading || isDeleting) &&
         [0, 1, 2, 3].map((_, idx) => (
           <Flex
             key={`skeleton-${idx}`}

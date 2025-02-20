@@ -13,9 +13,8 @@ import { useUserProfile } from '../../../context/UserProfileContext';
 import { useTab } from '../../../context/TabContext';
 
 function  MissionaryHeader({ unauthenticated }) {
-  const[fontSize, setFontSize] = useState("16px");
+  const[fontSize, setFontSize] = useState("auto");
   const [isLargerThan360] = useMediaQuery("(min-width: 371px)");
-  const responsiveFontSize = { base: '10px', sm: '12px', md: '14px', lg: '16px', xl: '18px' };
 
   const {activeTab, setActiveTab} = useTab();
 
@@ -35,7 +34,6 @@ function  MissionaryHeader({ unauthenticated }) {
   const isFollowing = followStatus ? followStatus.isFollowed : false;
 
   const visitingOwnProfileAndAuth = authUser && authUser.username === userProfile.username;
-  const visitingAnotherProfileAndAuth = authUser && authUser.username !== userProfile.username;
   
   const {isOpen, onOpen, onClose} = useDisclosure();
   const {isOpen: isLinkOpen, onOpen: onLinkOpen, onClose: onLinkClose} = useDisclosure();
@@ -87,7 +85,7 @@ function  MissionaryHeader({ unauthenticated }) {
     navigate(`/${authUser.username}/Followers`);
   };
 
-  useEffect(() => {
+  {/*useEffect(() => {
     const handleResize = () => {
       const zoomLevel = 1;
       const width = window.innerWidth;
@@ -105,7 +103,7 @@ function  MissionaryHeader({ unauthenticated }) {
         newFontSize = 18 * zoomLevel + 'px';
       }
 
-      setFontSize(newFontSize)
+      setFontSize(newFontSize);
     };
 
     window.addEventListener('resize', handleResize);
@@ -113,7 +111,7 @@ function  MissionaryHeader({ unauthenticated }) {
     return () => {
       window.removeEventListener('resize', handleResize);
     }
-  }, []);
+  }, []);*/}
 
   return (
     <Container
@@ -157,30 +155,24 @@ function  MissionaryHeader({ unauthenticated }) {
             }
           `}
           </style>
-          
-          {/*<Avatar 
-            src={userProfile?.profilePicture} 
-            alt="Missionary" 
-            size={{base: "md", md: "lg"}} 
-            style={{
-              filter: imageLoaded ? 'blur(0px)' : 'blur(20px)',
-              transition: 'filter 0.5s ease-out',
-              backgroundColor: imageLoaded ? 'transparent' : 'rgb(247, 200, 112)',
-            }}
-          />*/}
 
           <Flex 
-          gap={4}
+          gap={3}
           >
             { visitingOwnProfileAndAuth ? (
               <>
                 <Button
-                width={"auto"}
                 height={["30px", "35px", "35px", "35px", "35px"]}
                 border={"2px solid black"}
                 borderRadius={50}
                 backgroundColor={"#FFEFE7"}
-                _hover={{background: "#FFB999"}}
+                boxShadow={"0 0 10px rgba(255, 185, 153, 0.5)"}
+                _hover={{
+                    background: "#FFB999",
+                    boxShadow: "0 0 15px rgba(255, 185, 153, 0.8)",
+                    transform: "scale(1.02)",
+                }}
+                transition="all 0.2s ease-in-out"
                 onClick={handleFollowersClick}
                 >
                   <Text fontSize={fontSize}>
@@ -189,12 +181,17 @@ function  MissionaryHeader({ unauthenticated }) {
                 </Button>
 
                 <Button
-                width={"auto"}
                 height={["30px", "35px", "35px", "35px", "35px"]}
                 border={"2px solid black"}
                 borderRadius={50}
                 backgroundColor={"#FFEFE7"}
-                _hover={{background: "#FFB999"}}
+                boxShadow={"0 0 10px rgba(255, 185, 153, 0.5)"}
+                _hover={{
+                    background: "#FFB999",
+                    boxShadow: "0 0 15px rgba(255, 185, 153, 0.8)",
+                    transform: "scale(1.02)",
+                }}
+                transition="all 0.2s ease-in-out"
                 onClick={handleEditClick}
                 >
                   <Text fontSize={fontSize}>
@@ -206,12 +203,17 @@ function  MissionaryHeader({ unauthenticated }) {
             ) : !unauthenticated ? (
               <>
                 <Button
-                width={"auto"}
                 height={["30px", "35px", "35px", "35px", "35px"]}
                 border={"2px solid black"}
                 borderRadius={50}
                 backgroundColor={"#FFEFE7"}
-                _hover={{background: "#FFB999"}}
+                boxShadow={"0 0 10px rgba(255, 185, 153, 0.5)"}
+                _hover={{
+                    background: "#FFB999",
+                    boxShadow: "0 0 15px rgba(255, 185, 153, 0.8)",
+                    transform: "scale(1.02)",
+                }}
+                transition="all 0.2s ease-in-out"
                 onClick={handleFollowUnfollow}
                 isLoading={isUpdatingFollow || isUpdatingUnfollow}
                 >
@@ -220,12 +222,17 @@ function  MissionaryHeader({ unauthenticated }) {
                   </Text>
                 </Button>
                 <Button
-                width={"auto"}
                 height={["30px", "35px", "35px", "35px", "35px"]}
                 border={"2px solid black"}
                 borderRadius={50}
                 backgroundColor={"#FFEFE7"}
-                _hover={{background: "#FFB999"}}
+                boxShadow={"0 0 10px rgba(255, 185, 153, 0.5)"}
+                _hover={{
+                    background: "#FFB999",
+                    boxShadow: "0 0 15px rgba(255, 185, 153, 0.8)",
+                    transform: "scale(1.02)",
+                }}
+                transition="all 0.2s ease-in-out"
                 >
                   <Text fontSize={fontSize}>
                     Doar
@@ -235,12 +242,17 @@ function  MissionaryHeader({ unauthenticated }) {
             ): (
               <>
                 <Button
-                width={"auto"}
                 height={["30px", "35px", "35px", "35px", "35px"]}
                 border={"2px solid black"}
                 borderRadius={50}
                 backgroundColor={"#FFEFE7"}
-                _hover={{background: "#FFB999"}}
+                boxShadow={"0 0 10px rgba(255, 185, 153, 0.5)"}
+                _hover={{
+                    background: "#FFB999",
+                    boxShadow: "0 0 15px rgba(255, 185, 153, 0.8)",
+                    transform: "scale(1.02)",
+                }}
+                transition="all 0.2s ease-in-out"
                 onClick={onUnauthDonateOpen}
                 >
                   <Text fontSize={fontSize}>
@@ -290,28 +302,39 @@ function  MissionaryHeader({ unauthenticated }) {
         alignIte ms={"center"}
         >
           <Button
-            width={"auto"} 
+            width={"auto"}
             height={["30px", "35px", "35px", "35px", "35px"]}
             border={"2px solid black"}
             borderRadius={50}
             backgroundColor={"#FFEFE7"}
-            _hover={{background: "#FFB999"}}
+            boxShadow={"0 0 10px rgba(255, 185, 153, 0.5)"}
+            _hover={{
+                background: "#FFB999",
+                boxShadow: "0 0 15px rgba(255, 185, 153, 0.8)",
+                transform: "scale(1.02)",
+            }}
+            transition="all 0.2s ease-in-out"
             overflow={"hidden"}
             textOverflow={"ellipsis"}
             whiteSpace={"nowrap"}
             onClick={handleLinkClick}
             >
             <Text fontSize={fontSize}>
-              Compartilhar
+              Link
             </Text>
           </Button>
             <Button
-            width={"auto"}
             height={["30px", "35px", "35px", "35px", "35px"]}
-            border={"2px solid black"} 
+            border={"2px solid black"}
             borderRadius={50}
             backgroundColor={"#FFEFE7"}
-            _hover={{background: "#FFB999"}}
+            boxShadow={"0 0 10px rgba(255, 185, 153, 0.5)"}
+            _hover={{
+                background: "#FFB999",
+                boxShadow: "0 0 15px rgba(255, 185, 153, 0.8)",
+                transform: "scale(1.02)",
+            }}
+            transition="all 0.2s ease-in-out"
             overflow={"hidden"}
             textOverflow={"ellipsis"}
             whiteSpace={"nowrap"}
@@ -325,18 +348,23 @@ function  MissionaryHeader({ unauthenticated }) {
             {visitingOwnProfileAndAuth ? (
               <>
                 <Button
-                width={"auto"}
                 height={["30px", "35px", "35px", "35px", "35px"]}
                 border={"2px solid black"}
                 borderRadius={50}
                 backgroundColor={"#FFEFE7"}
-                _hover={{background: "#FFB999"}}
+                boxShadow={"0 0 10px rgba(255, 185, 153, 0.5)"}
+                _hover={{
+                    background: "#FFB999",
+                    boxShadow: "0 0 15px rgba(255, 185, 153, 0.8)",
+                    transform: "scale(1.02)",
+                }}
+                transition="all 0.2s ease-in-out"
                 overflow={"hidden"}
                 textOverflow={"ellipsis"}
                 whiteSpace={"nowrap"}
                 >
                   <Text fontSize={fontSize}>
-                    Área de doações
+                    Doações
                   </Text>
                 </Button>
               </>

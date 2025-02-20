@@ -14,6 +14,7 @@ import MissionaryHeaderSkeleton from '../../../components/MissionaryComponents/S
 import { UserProfileProvider } from '../../../context/UserProfileContext';
 import { useTab } from '../../../context/TabContext';
 import { PostDataContext } from '../../../context/PostDataContext';
+import useFetchPostCount from '../../../hooks/useFetchPostCount';
 
 
 function HomePage({unauthenticated, username, errorMessage, setErrorMessage}) {
@@ -23,7 +24,8 @@ function HomePage({unauthenticated, username, errorMessage, setErrorMessage}) {
   const toast = useToast();
   const authUser = useAuth();
   const userNotFound = !isLoading && !userProfile;
-  const { setPostsData } = useContext(PostDataContext);
+  const { setPostsData, setPostCount, gotPostCount, setGotPostCount } = useContext(PostDataContext);
+  const { isFetching, fetchPostCount } = useFetchPostCount();
 
   useEffect(() =>{
     setPostsData([]);
@@ -32,6 +34,12 @@ function HomePage({unauthenticated, username, errorMessage, setErrorMessage}) {
     localStorage.removeItem("hasMore");
     localStorage.removeItem("noPosts");
     localStorage.removeItem("lastDocId");
+    const fetchPost = async () => {
+      if(!gotPostCount && authUser.username === username) {
+        await fetchPostCount(setPostCount, setGotPostCount);
+      }
+    };
+    fetchPost();
   }, []);
 
   useEffect(() => {
@@ -100,7 +108,7 @@ function HomePage({unauthenticated, username, errorMessage, setErrorMessage}) {
                   {!isLoading && unauthenticated && <MissionaryHeader unauthenticated={unauthenticated}
                   activeTab={activeTab} handleTabClick={handleTabClick} />}
                   {!isLoading && userProfile && !unauthenticated && <MissionaryHeader activeTab={activeTab} handleTabClick={handleTabClick} />}
-                  {isLoading && <MissionaryHeaderSkeleton />}
+                  {(isLoading || isFetching) && <MissionaryHeaderSkeleton />}
                 </Box>
                 { activeTab === 'Postagens' && visitingOwnProfileAndAuth ? (
                   <Box>

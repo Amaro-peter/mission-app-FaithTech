@@ -3,15 +3,15 @@ import { collection, getDocs, limit, orderBy, query, startAfter, Timestamp } fro
 import { db } from "../utils/firebase";
 import { useToast } from "@chakra-ui/react";
 
+const PAGINATION_LIMIT = 4;
 
 function useGetUserPosts () {
     const [isLoading, setIsLoading] = useState(false);
     const storedLastDoc = localStorage.getItem('lastDocId');
     const lastDoc = storedLastDoc ? Timestamp.fromMillis(JSON.parse(storedLastDoc)) : null;
-    console.log(lastDoc);
     const toast = useToast(); 
 
-    const getUserPosts = async (userProfile, addPost) => {
+    const getUserPosts = async (userProfile, addPost, postsData, postCount) => {
 
         if(!userProfile.uid) {
             return;
@@ -42,7 +42,6 @@ function useGetUserPosts () {
         setIsLoading(true);
 
         try{
-            console.log("Overhead");
             const postsColRef = collection(db, "personalPosts", userProfile.uid, "posts");
 
             let postsQuery;
@@ -51,43 +50,49 @@ function useGetUserPosts () {
                     postsColRef, 
                     orderBy("createdAt", "desc"), 
                     startAfter(lastDoc), 
-                    limit(4)
+                    limit(PAGINATION_LIMIT)
                 );
             } else {
                 postsQuery = query(
                     postsColRef, 
                     orderBy("createdAt", "desc"), 
-                    limit(4)
+                    limit(PAGINATION_LIMIT)
                 );
             }
 
             const snapshot = await getDocs(postsQuery);
 
-            if(snapshot.empty && (localStorage.getItem("hasVisitedMeuFeed") === "true")) {
-                setIsLoading(false);
+            const check = localStorage.getItem("hasVisitedMeuFeed") === "true";
+
+            if((snapshot.empty || !snapshot) && check) {
                 localStorage.setItem("hasMore", "false");
                 return;
-            } else if (snapshot.empty && (localStorage.getItem("hasVisitedMeuFeed") === "false")) {
-                setIsLoading(false);
+            } else if ((snapshot.empty || !snapshot) && !check) {
                 localStorage.setItem("noPosts", "true");
                 localStorage.setItem("hasMore", "false");
                 return;
             }
 
             const lastVisible = snapshot.docs[snapshot.docs.length - 1];
-            const lastVisibleTimeStamp = lastVisible.data().createdAt.toMillis();
-            console.log(lastVisibleTimeStamp)
-            localStorage.setItem('lastDocId', JSON.stringify(lastVisibleTimeStamp));
+            if(lastVisible) {
+                const lastVisibleTimeStamp = lastVisible.data().createdAt.toMillis();
+                localStorage.setItem('lastDocId', JSON.stringify(lastVisibleTimeStamp));
 
-            if(snapshot.docs.length < 4) {
-                localStorage.setItem("hasMore", "false");
-            } else {
-                localStorage.setItem("hasMore", "true");
             }
 
             const data = snapshot.docs.map((docSnapShot) => docSnapShot.data());
 
+            let size = postsData ? postsData.length : 0;
+
+            size = size + data.length;
+
             addPost(data);
+
+            if(postCount === size) {
+                localStorage.setItem("hasMore", "false");
+            } else {
+                localStorage.setItem("hasMore", "true");
+            }
 
             localStorage.setItem("noPosts", "false");
 

@@ -10,19 +10,20 @@ function useLogout() {
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const logoutUser = useAuthStore((state) => state.logout);
 
-    const handleLogout = async (setPostsData) => {
+    const handleLogout = async (setPostsData, setPostCount, setGotPostCount) => {
         setIsLoggingOut(true);
         try{
-            await signOut(auth);
             localStorage.removeItem("user-info");
             localStorage.removeItem("hasVisitedMeuFeed");
             localStorage.removeItem("loadMoreData");
             localStorage.removeItem("hasMore");
             localStorage.removeItem("noPosts");
-            localStorage.removeItem("lastDocId")
+            localStorage.removeItem("lastDocId");
             logoutUser();
             setPostsData([]);
-            
+            setPostCount(0);
+            setGotPostCount(false);
+            await signOut(auth);
             
         } catch (error) {
             toast({

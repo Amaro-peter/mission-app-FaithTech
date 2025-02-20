@@ -1,4 +1,4 @@
-import { Box, Flex, Button, Text } from '@chakra-ui/react'
+import { Box, Flex, Button, Text, SkeletonCircle, Skeleton } from '@chakra-ui/react'
 import { IoIosLogOut } from 'react-icons/io'
 import { useLocation, useNavigate } from 'react-router-dom'
 import useLogout from '../../hooks/useLogOut'
@@ -7,16 +7,16 @@ import { PostDataContext } from '../../context/PostDataContext';
 
 function LogOut({ sizeOfIcon, sizeOfText }) {
 
-  const { handleLogout } = useLogout();
+  const { handleLogout, isLoggingOut } = useLogout();
 
-  const {setPostsData} = useContext(PostDataContext);
+  const {setPostsData, setPostCount, setGotPostCount} = useContext(PostDataContext);
 
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleLogoutAndNavigate = async () => {
-    await handleLogout(setPostsData);
-    navigate("/landingPage");
+    await handleLogout(setPostsData, setPostCount, setGotPostCount);
+    navigate('/landingPage');
   };
 
   const isEditPage = location.pathname.includes('/EditHeader') || location.pathname.includes('/EditProject');

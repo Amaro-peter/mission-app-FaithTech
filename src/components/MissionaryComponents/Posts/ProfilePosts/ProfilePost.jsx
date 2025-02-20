@@ -11,8 +11,13 @@ import PostFooter from "../PostFooter/PostFooter";
 import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
-function ProfilePost({ post, onImageLoad }) {
+function ProfilePost({ post, index, onImageLoad, deletePost, isDeleting }) {
+
+  const [isExpanded, setIsExpanded] = useState(false);
+  const description = post.caption;
+  const truncatedDescription = description.length > 300 ? description.slice(0, 300) + '...' : description;
 
   const [imageLoaded, setImageLoaded] = useState(false);
 
@@ -20,11 +25,19 @@ function ProfilePost({ post, onImageLoad }) {
     setImageLoaded(true);
     onImageLoad && onImageLoad();
   };
+
+  {/*useEffect(() => {
+    onDeleteStatusChange && onDeleteStatusChange(isDeleting);
+  }, [isDeleting, onDeleteStatusChange]);*/}
   
   useEffect(() => {
-    const img = new Image();
-    img.src = post?.imageURL;
-    img.onload = handleImageLoad;
+    if(post.imageURL) {
+      const img = new Image();
+      img.src = post.imageURL;
+      img.onload = handleImageLoad;
+    } else {
+      handleImageLoad();
+    }
   }, [post?.imageURL]);
 
   if(!imageLoaded) {
@@ -70,15 +83,23 @@ function ProfilePost({ post, onImageLoad }) {
       mx={"auto"}
       mb={4}
     >
-      <PostHeader />
+      <PostHeader deletePost={deletePost} isDeleting={isDeleting} index={index} post={post} />
       <Flex mt={2} direction={"column"} gap={3}>
         <Text
           fontSize={"md"}
           fontFamily={"Inter, sans-serif"}
           whiteSpace="normal"
-          textAlign="justify"
+          textAlign="left"
+          lineHeight="1.6"
         >
-          {post.caption}
+          {isExpanded ? description : truncatedDescription}
+          {description.length > 300 && (
+            <Link onClick = {() => setIsExpanded(!isExpanded)}>
+              <Text color={"blue.500"} fontWeight={"bold"}>
+                {isExpanded ? " Ler menos" : " Ler mais"}
+              </Text>
+            </Link>
+          )}
         </Text>
 
         <Box
@@ -87,25 +108,29 @@ function ProfilePost({ post, onImageLoad }) {
           overflow={"hidden"}
           cursor={"pointer"}
         >
-          <Zoom
-            zoomMargin={10} // Adjusts the margin around the zoomed image
-            overlayBgColorEnd="rgba(0, 0, 0, 0.85)" // Smooth dark overlay for better focus
-            transitionDuration={300} // Smooth zoom animation duration
-          >
-            <img
-              src={post.imageURL}
-              alt="Missionary"
-              style={{
-                width: '100%',
-                height: 'auto',
-                borderRadius: '4px',
-              }}
-              loading='lazy'
-            />
-          </Zoom>
+          {(post && post.imageURL) ?
+            <Zoom
+              zoomMargin={10} // Adjusts the margin around the zoomed image
+              overlayBgColorEnd="rgba(0, 0, 0, 0.85)" // Smooth dark overlay for better focus
+              transitionDuration={300} // Smooth zoom animation duration
+            >
+              <img
+                src={post.imageURL}
+                alt="Missionary"
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                  borderRadius: '4px',
+                }}
+                loading='lazy'
+              />
+            </Zoom> : null}
         </Box>
       </Flex>
       <PostFooter />
+
+
+      
     </Flex>
   );
 }

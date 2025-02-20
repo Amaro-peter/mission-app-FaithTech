@@ -1,4 +1,25 @@
-import { Container, Flex, Heading, Input, VStack, Textarea, Text, Button,  Image, useToast, FormControl, FormLabel, Center, Stack } from '@chakra-ui/react'
+import { 
+    Container, 
+    Flex,
+    Input, 
+    VStack, 
+    Textarea, 
+    Text,
+    Image, 
+    useToast, 
+    FormControl,
+    FormLabel, 
+    Center,
+    Button, 
+    Stack, 
+    useDisclosure, 
+    Modal, 
+    ModalOverlay, 
+    ModalContent, 
+    ModalHeader, 
+    ModalBody, 
+    Heading, 
+ } from '@chakra-ui/react';
 import React, { useContext, useRef, useState } from 'react'
 import { BsFillImageFill } from 'react-icons/bs'
 import { useAuth } from '../../../../context/AuthContext';
@@ -10,6 +31,9 @@ import { PostDataContext } from '../../../../context/PostDataContext';
 import { useTab } from '../../../../context/TabContext';
 import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
+import useFetchPostCount from '../../../../hooks/useFetchPostCount';
+
+const POST_QUANTITY_LIMIT = 12;
 
 
 function PostModal() {
@@ -20,15 +44,21 @@ function PostModal() {
 
     const toast = useToast();
 
+    const {isOpen, onOpen, onClose} = useDisclosure();
+
     const {selectedFile, handleImageChange, setSelectedFile} = usePreviewImage();
 
     const fileRef = useRef(null);
 
     const {createPost, isCreating} = useCreatePost();
 
-    const { addPost } = useContext(PostDataContext);
+    const {isFetching, fetchPostCount} = useFetchPostCount();
+
+    const { addPost, postCount, setPostCount } = useContext(PostDataContext);
 
     const { setInitialTab, setShouldResetTabs } = useTab();
+
+    const [replaceLast, setReplaceLast] = useState(false);
 
 
     const [inputs, setInputs] = useState({
@@ -36,6 +66,15 @@ function PostModal() {
         link: "",
         imageURL: "",
     });
+
+    {/*useEffect(() => {
+        const fetchPost = async () => {
+            if(!gotPostCount) {
+                await fetchPostCount(setPostCount, setGotPostCount);
+            }
+        };
+        fetchPost();
+    }, []);*/}
 
     const [charLimitReached, setCharLimitReached] = useState(false);
     
@@ -59,8 +98,15 @@ function PostModal() {
       };
 
       const handleCreatePost = async () => {
+
+        if(postCount === POST_QUANTITY_LIMIT) {
+            setReplaceLast(true);
+            onOpen();
+            return;
+        }
+
         try{
-            const success = await createPost(inputs, selectedFile, addPost);
+            const success = await createPost(inputs, selectedFile, addPost, setPostCount, replaceLast);
             if(success) {
                 setSelectedFile(null);
                 setInitialTab('Postagens');
@@ -68,10 +114,34 @@ function PostModal() {
                 navigate(`/${authUser.username}`);
             }
         } catch(error) {
-            if(!toast.isActive("editProjectError")) {
+            if(!toast.isActive("createPostError")) {
                 toast({
-                  id: "editProjectError",
-                  title: "Erro ao editar projeto",
+                  id: "createPostError",
+                  title: "Erro ao criar postagem",
+                  description: error.message,
+                  status: "error",
+                  duration: 5000,
+                  isClosable: true,
+                });
+              }
+        }
+      };
+
+      const handleCreatePostModal = async () => {
+
+        try{
+            const success = await createPost(inputs, selectedFile, addPost, setPostCount, replaceLast);
+            if(success) {
+                setSelectedFile(null);
+                setInitialTab('Postagens');
+                setShouldResetTabs(false);
+                navigate(`/${authUser.username}`);
+            }
+        } catch(error) {
+            if(!toast.isActive("createPostError")) {
+                toast({
+                  id: "createPostError",
+                  title: "Erro ao criar postagem",
                   description: error.message,
                   status: "error",
                   duration: 5000,
@@ -183,8 +253,9 @@ function PostModal() {
                                                 if(isValidURL(data)) {
                                                     setInputs({ ...inputs, link: data});
                                                 } else {
-                                                    if(!toast.isActive("Link inválido")) {
+                                                    if(!toast.isActive("invalidLink")) {
                                                         toast({
+                                                            id: "invalidLink",
                                                             title: "Link inválido",
                                                             description: "Por favor, insira um URL válido.",
                                                             status: "error",
@@ -267,7 +338,7 @@ function PostModal() {
                                             setShouldResetTabs(false);
                                             navigate(`/${authUser.username}`);
                                         }}
-                                        isDisabled={isCreating}
+                                        isDisabled={isCreating || isFetching}
                                         >
                                             Voltar
                                         </Button>
@@ -278,12 +349,59 @@ function PostModal() {
                                         border={"1px solid black"}
                                         _hover={{ background: "#FFB999"}}
                                         onClick={handleCreatePost}
-                                        isLoading={isCreating}
+                                        isLoading={isCreating || isFetching}
+                                        isDisabled={isFetching}
                                         >
                                             Postar
                                         </Button>
                                     </Flex>
                                 </Flex>
+                                <Modal isOpen={isOpen} onClose={onClose}>
+                                    <ModalOverlay />
+                                    <ModalContent bg={"white"} boxShadow={"xl"} border={"1px solid gray"} mx={3}>
+                                        <ModalHeader />
+                                        <ModalBody>
+                                            <Flex bg={"black"}>
+                                                <Stack spacing={4} w={"full"} maxW={"md"} bg={"white"} p={6} my={0}>
+                                                    <Center>
+                                                        <Heading lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl" }} textAlign={"center"}>
+                                                            Limite de 120 postagens atingido!
+                                                        </Heading>
+                                                    </Center>
+                                                        
+                                                    <VStack mt={2} gap={1} alignItems={"center"} textAlign={"center"}>
+                                                        <Text fontSize={"lg"} fontWeight={"bold"}>A postagem mais antiga será apagada.</Text>
+                                                        <Text fontSize={"lg"} fontWeight={"bold"}>A postagem atual ficará no lugar.</Text>
+                                                        <Text fontSize={"lg"} fontWeight={"bold"}>Deseja prosseguir?</Text>
+                                                    </VStack>
+
+                                                    <Button
+                                                    bg={"blue.400"}
+                                                    color={"white"}
+                                                    size='sm'
+                                                    w='full'
+                                                    _hover={{ bg: "blue.500" }}
+                                                    onClick={onClose}
+                                                    isDisabled={isCreating}
+                                                    >
+                                                        Não
+                                                    </Button>
+                                                    <Button
+                                                    bg={"red.400"}
+                                                    color={"white"}
+                                                    size='sm'
+                                                    w='full'
+                                                    _hover={{ bg: "red.500" }}
+                                                    onClick={handleCreatePostModal}
+                                                    isLoading={isCreating}
+                                                    >
+                                                        Sim
+                                                    </Button>
+                                                </Stack>
+                                            </Flex>
+                                        </ModalBody>
+                                    </ModalContent>
+                                </Modal>
                             </Container>
                         </VStack>
                     </Container>
