@@ -72,6 +72,19 @@ function App() {
           <Routes>
             <Route path="*" element={<PageNotFound />} />
 
+            <Route 
+            path='/' 
+            element={isMissionary ? (
+                <Navigate to={`/${authUser.username}`} />
+                ) : isAdmin ? (
+                <Navigate to="/adminRegistrationPanel" />
+                ) : isUser ? (
+                  <Navigate to={`/${authUser.username}`} />
+                ) : (
+                  <LandingPage />
+                )} 
+            />
+
             <Route path="/adminMissionarySignUpSucess" element={ isAdmin ? <AdminMissionarySignUpSucess /> : isMissionary ? (
               <Navigate to={`/${authUser.username}`} />
             ) : isUser ? (
@@ -402,7 +415,7 @@ function PageNotFound() {
         <h1>Página não encontrada</h1>
         <p>A página que você procura não existe.</p>
         <Flex direction={"column"} gap={1}>
-        <Button onClick={() => navigate("/")}>Voltar para página inicial</Button>
+        <Button onClick={() => navigate("/landingPage")}>Voltar para página inicial</Button>
         </Flex>
     </VStack>
   );

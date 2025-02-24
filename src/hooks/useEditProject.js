@@ -73,7 +73,7 @@ function useEditProject() {
 
         if (inputs.publicYoutubeLink) {
             const youtubeLink = inputs.publicYoutubeLink;
-            const regex = /(?:https?:\/\/)?(?:www\.|m\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+            const regex = /(?:https?:\/\/)?(?:www\.|m\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
             const match = youtubeLink.match(regex);
             
             if (match) {

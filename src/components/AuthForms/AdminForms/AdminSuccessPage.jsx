@@ -13,7 +13,7 @@ function AdminMissionarySignUpSucess({authUser}) {
   return (
     <Box textAlign="center" mt={10}>
       <Text fontSize="2xl" mb={4}>Missionário foi cadastrado com sucesso!</Text>
-      <Button backgroundColor={"#FFAA85"} _hover={{background: "#FF6A00", color: "gray.200"}} onClick={handleSignUpMore} mr={4}>Sign Up More Users</Button>
+      <Button backgroundColor={"#FFAA85"} _hover={{background: "#FF6A00", color: "gray.200"}} onClick={handleSignUpMore} mr={4}>Cadastrar mais usuários</Button>
       <LogOutAdmin />
     </Box>
   );

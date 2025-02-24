@@ -22,6 +22,7 @@ function PageLayout({children, loading, authUser}) {
 
 
   const canRenderNavBar = pathname !== "/landingPage"
+  && pathname !== "/"
   && pathname !== "/donorSignPage"
   && pathname !== "/missionarySignPage"
   && pathname !== "/resetForm"
