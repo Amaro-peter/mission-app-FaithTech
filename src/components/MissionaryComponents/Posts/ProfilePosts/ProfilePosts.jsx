@@ -37,10 +37,6 @@ function ProfilePosts() {
 
   const isFirstTime = localStorage.getItem("hasVisitedMeuFeed") !== "true";
 
-  const noPosts = localStorage.getItem("noPosts") === "true";
-
-  const noPostFound = !isLoading && noPosts;
-
   const [loadedImages, setLoadedImages] = useState(0);
 
   const [showLoadMore, setShowLoadMore] = useState(false);
@@ -52,12 +48,24 @@ function ProfilePosts() {
       const hasVisited = localStorage.getItem("hasVisitedMeuFeed");
       if (myPosts === 'Meu feed' && !hasVisited) {
         localStorage.setItem("hasVisitedMeuFeed", "true");
-        await getUserPosts(userProfile, addPost);
+        const result = await getUserPosts(userProfile, addPost);
+        if(result === false) {
+          const noPostsFlag = localStorage.getItem("noPosts");
+          if(noPostsFlag === null) {
+            localStorage.setItem("noPosts", "true");
+          }
+        }
         setHasMore(localStorage.getItem("hasMore") === "true");
       }
     };
     fetchData();
   }, []);
+
+  const noPosts = localStorage.getItem("noPosts") === "true";
+
+  const noPostFound = !isLoading && noPosts;
+
+  console.log(noPostFound);
 
   const handleLoadMore = async () => {
     try {
@@ -141,14 +149,12 @@ function ProfilePosts() {
     </>
   );
 
-
-  if (noPostFound) return <NoPostsFound />;
-
   return (
     <Container maxW="container.lg">
       
-      {!isLoading && !isDeleting && isFirstTime && renderPosts()}
-      {!isLoading && !isDeleting && !isFirstTime && renderPosts()}
+      {noPostFound && <NoPostsFound />}
+      {!noPostFound && !isLoading && !isDeleting && isFirstTime && renderPosts()}
+      {!noPostFound && !isLoading && !isDeleting && !isFirstTime && renderPosts()}
 
       { (isLoading || isDeleting) &&
         [0, 1, 2, 3].map((_, idx) => (

@@ -33,7 +33,7 @@ import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
 import useFetchPostCount from '../../../../hooks/useFetchPostCount';
 
-const POST_QUANTITY_LIMIT = 12;
+const POST_QUANTITY_LIMIT = 120;
 
 
 function PostModal() {

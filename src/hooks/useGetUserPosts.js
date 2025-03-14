@@ -14,7 +14,7 @@ function useGetUserPosts () {
     const getUserPosts = async (userProfile, addPost, postsData, postCount) => {
 
         if(!userProfile.uid) {
-            return;
+            return false;
         }
 
         if(isLoading || !userProfile) {
@@ -66,11 +66,11 @@ function useGetUserPosts () {
 
             if((snapshot.empty || !snapshot) && check) {
                 localStorage.setItem("hasMore", "false");
-                return;
+                return false;
             } else if ((snapshot.empty || !snapshot) && !check) {
                 localStorage.setItem("noPosts", "true");
                 localStorage.setItem("hasMore", "false");
-                return;
+                return false;
             }
 
             const lastVisible = snapshot.docs[snapshot.docs.length - 1];

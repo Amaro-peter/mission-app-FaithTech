@@ -21,7 +21,7 @@ function NoPostsFound() {
         >
             <Flex flexDir={"column"} textAlign={"center"} mx={"auto"}>
                 <Text fontSize={"2xl"} fontWeight={"bold"}>
-                    Nenhum postagem encontrada
+                    Nenhuma postagem encontrada
                 </Text>
             </Flex>
         </Flex>

@@ -3,7 +3,6 @@ import { auth } from '../utils/firebase';
 import { useToast } from '@chakra-ui/react';
 import { useState } from "react";
 import useAuthStore from '../store/authStore';
-import { useNavigate } from 'react-router-dom';
 
 function useLogout() {
     const toast = useToast();
