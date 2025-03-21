@@ -21,8 +21,7 @@ import {
     Heading,
     Spinner, 
  } from '@chakra-ui/react';
-import React, { useContext, useRef, useState } from 'react'
-import { BsFillImageFill } from 'react-icons/bs'
+import React, { useContext, useRef, useState } from 'react';
 import { useAuth } from '../../../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';

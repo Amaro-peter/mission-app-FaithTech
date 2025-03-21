@@ -16,6 +16,8 @@ import { useTab } from '../../../context/TabContext';
 import { PostDataContext } from '../../../context/PostDataContext';
 import useFetchPostCount from '../../../hooks/useFetchPostCount';
 import { usePreviousPath } from '../../../context/PreviousPathContext';
+import SelectPostTypeSkeleton from '../../../components/MissionaryComponents/Skeletons/SelectPostTypeSkeleton';
+import ProfilePostsSkeleton from '../../../components/MissionaryComponents/Skeletons/ProfilePostsSkeleton';
 
 
 function HomePage({unauthenticated, username, errorMessage, setErrorMessage}) {
@@ -121,7 +123,8 @@ function HomePage({unauthenticated, username, errorMessage, setErrorMessage}) {
                 </Box>
                 { activeTab === 'Postagens' && visitingOwnProfileAndAuth ? (
                   <Box>
-                    <SelectPostType myPosts={myPosts} handleSelectionPostTabClick={handleSelectionPostTabClick} />
+                    {(isLoading || isFetching) && <SelectPostTypeSkeleton />}
+                    {!isLoading && !isFetching && <SelectPostType myPosts={myPosts} handleSelectionPostTabClick={handleSelectionPostTabClick} />}
                   </Box>
                 ) : (null)
                 }
@@ -133,13 +136,24 @@ function HomePage({unauthenticated, username, errorMessage, setErrorMessage}) {
                 </Box>
                 {activeTab === 'Postagens' && visitingOwnProfileAndAuth ? (
                   <>
-                  {myPosts === 'Meu feed' && 
+                  {(isLoading  || isFetching) && myPosts === 'Meu feed' &&
+                    [0, 1, 2, 3].map((_, idx) => (
+                      <ProfilePostsSkeleton key={`skeleton-${idx}`} />
+                  ))}
+
+                  {(isLoading  || isFetching) && myPosts === 'Feed de amigos' &&
+                    [0, 1, 2, 3].map((_, idx) => (
+                      <ProfilePostsSkeleton key={`skeleton-${idx}`} />
+                  ))}
+
+                  { !isLoading  && !isFetching && myPosts === 'Meu feed' && 
                   
                     <Box>
                       <ProfilePosts />
                     </Box>
                   }
-                  {myPosts === 'Feed de amigos' && 
+
+                  {!isLoading  && !isFetching && myPosts === 'Feed de amigos' && 
                     <Box>
                       <FeedPosts />
                     </Box>
@@ -149,7 +163,12 @@ function HomePage({unauthenticated, username, errorMessage, setErrorMessage}) {
                   
                 ) : (
                   <>
-                    {activeTab === 'Postagens' && <ProfilePosts />}
+                    {(isLoading  || isFetching) && activeTab === 'Postagens' &&
+                    [0, 1, 2, 3].map((_, idx) => (
+                      <ProfilePostsSkeleton key={`skeleton-${idx}`} />
+                    ))}
+
+                    {!isLoading  && !isFetching && activeTab === 'Postagens' && <ProfilePosts />}
                   </>
                 )}
               </VStack>
