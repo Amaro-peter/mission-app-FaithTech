@@ -18,6 +18,8 @@ function PageLayout({children, loading, authUser}) {
 
   const [isLargerThanBase, setIsLargerThanBase] = useState(window.innerWidth >= 1000);
 
+  const [isFetching, setIsFetching] = useState(false);
+
   const lastScrollY = useRef(0);
 
 
@@ -84,7 +86,7 @@ function PageLayout({children, loading, authUser}) {
         {canRenderNavBar && (
           <Box w={"full"} justifyContent={"center"} alignItems={"center"}
           >
-            <NavBar isLargerThanBase={isLargerThanBase} />
+            <NavBar isLargerThanBase={isLargerThanBase} setIsFetching={setIsFetching} />
           </Box>
         )}
               
@@ -103,10 +105,11 @@ function PageLayout({children, loading, authUser}) {
             width="100%"
             direction={"column"}
             >
-              {loading ? (
+              {loading || isFetching ? (
                 <>
-                  <Spinner size="xl" />
-
+                  <Flex justifyContent="center" alignItems="center" flex={1}>
+                    <Spinner size="xl" />
+                  </Flex>
                 </>
               ) : (
                 <>

@@ -9,13 +9,13 @@ function LogOut({ sizeOfIcon, sizeOfText }) {
 
   const { handleLogout, isLoggingOut } = useLogout();
 
-  const {setPostsData, setPostCount, setGotPostCount} = useContext(PostDataContext);
+  const {setPostsData} = useContext(PostDataContext);
 
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleLogoutAndNavigate = async () => {
-    await handleLogout(setPostsData, setPostCount, setGotPostCount);
+    await handleLogout(setPostsData);
     navigate('/landingPage');
   };
 

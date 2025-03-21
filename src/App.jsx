@@ -69,7 +69,7 @@ function App() {
       <PostDataProvider>
         <ScrollToTop />
         <PageLayout loading={loading} authUser={authUser}>
-          <Routes>
+          <Routes> 
             <Route path="*" element={<PageNotFound />} />
 
             <Route 

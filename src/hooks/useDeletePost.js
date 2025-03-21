@@ -3,10 +3,10 @@ import { useContext, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { deleteObject, ref } from "firebase/storage";
 import { db, storage } from "../utils/firebase";
-import { collection, deleteDoc, doc, getDocs, increment, limit, orderBy, query, startAfter, Timestamp, updateDoc } from "firebase/firestore";
-import useGetUserPosts from "./useGetUserPosts";
+import { collection, deleteDoc, doc, getDoc, getDocs, increment, limit, orderBy, query, startAfter, Timestamp, updateDoc } from "firebase/firestore";
 import { PostDataContext } from "../context/PostDataContext";
 
+const PAGINATION_LIMIT = 4;
 
 function useDeletePost(){
     const [isDeleting, setIsDeleting] = useState(false);
@@ -14,7 +14,9 @@ function useDeletePost(){
     const authUser = useAuth();
     const { postsData, addPost, removePost } = useContext(PostDataContext);
 
-    const deletePost = async (post, postIndex, setPostCount) => {
+    const deletePost = async (post, postIndex, postCount) => {
+
+        let totalPosts = postCount;
 
         if(isDeleting || !authUser) {
             return;
@@ -33,7 +35,8 @@ function useDeletePost(){
             await deleteDoc(postRef);
 
             const lastDocId = localStorage.getItem("lastDocId");
-            const isLast = lastDocId && postsData[postIndex].createdAt.toMillis() === JSON.parse(lastDocId);
+
+            const isLast = lastDocId && postsData[postIndex].createdAt?.seconds * 1000 === JSON.parse(lastDocId);
             if(isLast) {
                 localStorage.removeItem("lastDocId");
             }
@@ -44,12 +47,17 @@ function useDeletePost(){
 
             size = size - 1;
 
-            if(size < 3 && size >= 1) {
-                localStorage.setItem("hasMore", "false");
-                return;
-            } else if (size === 0) {
+            totalPosts = totalPosts - 1;
+
+            localStorage.setItem("postCount", totalPosts);
+
+            if (size === 0) {
                 localStorage.setItem("noPosts", "true");
                 localStorage.setItem("hasMore", "false");
+                const userRef = doc(db, "users", authUser.uid);
+                await updateDoc(userRef, {
+                    postCount: increment(-1)
+                });
                 return;
             }
 
@@ -118,6 +126,7 @@ function useDeletePost(){
                 const data = snapshot.docs.map((docSnapShot) => docSnapShot.data());
     
                 addPost(data);
+                
             }
 
             const userRef = doc(db, "users", authUser.uid);
@@ -125,7 +134,11 @@ function useDeletePost(){
                 postCount: increment(-1)
             });
 
-            setPostCount((prevCount) => prevCount - 1);
+            const newSize = size + 1;
+
+            if(totalPosts === newSize) {
+                localStorage.setItem("hasMore", "false");
+            }
 
             if (!toast.isActive("postDeleted")) {
                 toast({

@@ -1,6 +1,6 @@
 import { Box, Container, Divider, Flex, Skeleton, SkeletonCircle, useToast, VStack } from '@chakra-ui/react';
 import MissionaryHeader from '../../../components/MissionaryComponents/MissionaryHeader/MissionaryHeader';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import NewPost from '../../../components/MissionaryComponents/Posts/NewPost/NewPost';
 import Campaign from '../../../components/MissionaryComponents/Campaign/Campaign';
 import MyWork from '../../../components/MissionaryComponents/MyWork/MyWork';
@@ -15,6 +15,7 @@ import { UserProfileProvider } from '../../../context/UserProfileContext';
 import { useTab } from '../../../context/TabContext';
 import { PostDataContext } from '../../../context/PostDataContext';
 import useFetchPostCount from '../../../hooks/useFetchPostCount';
+import { usePreviousPath } from '../../../context/PreviousPathContext';
 
 
 function HomePage({unauthenticated, username, errorMessage, setErrorMessage}) {
@@ -24,23 +25,31 @@ function HomePage({unauthenticated, username, errorMessage, setErrorMessage}) {
   const toast = useToast();
   const authUser = useAuth();
   const userNotFound = !isLoading && !userProfile;
-  const { setPostsData, setPostCount, gotPostCount, setGotPostCount } = useContext(PostDataContext);
+  const { setPostsData } = useContext(PostDataContext);
   const { isFetching, fetchPostCount } = useFetchPostCount();
 
-  useEffect(() =>{
-    setPostsData([]);
-    localStorage.removeItem("hasVisitedMeuFeed");
-    localStorage.removeItem("loadMoreData");
-    localStorage.removeItem("hasMore");
-    localStorage.removeItem("noPosts");
-    localStorage.removeItem("lastDocId");
-    const fetchPost = async () => {
-      if(!gotPostCount && authUser.username === username) {
-        await fetchPostCount(setPostCount, setGotPostCount);
-      }
+  const isPageInitialized = useRef(false);
+
+  const { previousPath } = usePreviousPath();
+  const isComingFromCreatePost = previousPath?.includes('/CreatePost');
+
+  useEffect(() => {
+    const initializeData = async () => {
+      setPostsData([]);
+      localStorage.removeItem("postCount");
+      localStorage.removeItem("hasVisitedMeuFeed");
+      localStorage.removeItem("loadMoreData");
+      localStorage.removeItem("hasMore");
+      localStorage.removeItem("noPosts");
+      localStorage.removeItem("lastDocId");
+      await fetchPostCount(userProfile);
     };
-    fetchPost();
-  }, []);
+  
+    if(!isLoading && userProfile && !isPageInitialized.current && !isComingFromCreatePost) {
+      isPageInitialized.current = true;
+      initializeData();
+    }
+  }, [isLoading]);
 
   useEffect(() => {
     if(shouldResetTabs) {
@@ -127,7 +136,7 @@ function HomePage({unauthenticated, username, errorMessage, setErrorMessage}) {
                   {myPosts === 'Meu feed' && 
                   
                     <Box>
-                      <ProfilePosts userProfile={userProfile} />
+                      <ProfilePosts />
                     </Box>
                   }
                   {myPosts === 'Feed de amigos' && 

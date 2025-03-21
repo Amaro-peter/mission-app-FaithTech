@@ -1,15 +1,39 @@
-import { Box, Flex, Button, Image, Text, Spacer, useBreakpointValue } from "@chakra-ui/react";
+import { Box, Flex, Button, Image, Text, Spacer, useBreakpointValue, useEditable } from "@chakra-ui/react";
 import LogOut from "../NavBarItems/LogOut";
 import NavBarItems from "../NavBarItems/NavBarItems";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import Return from "../NavBarItems/Return";
+import { useTab } from "../../context/TabContext";
+import { useContext, useEffect, useState } from "react";
+import { PostDataContext } from "../../context/PostDataContext";
+import useFetchPostCount from "../../hooks/useFetchPostCount";
 
-function NavBar( { isLargerThanBase } ) {
+function NavBar( { isLargerThanBase, setIsFetching } ) {
 
   const authUser = useAuth();
 
   const navigate = useNavigate();
+
+  const { resetTabs, setInitialTab } = useTab();
+
+  const { setPostsData } = useContext(PostDataContext);
+
+  const {isFetching, fetchPostCount} = useFetchPostCount();
+
+  const handleLogoClick = async () => {
+    localStorage.removeItem("postCount");
+    setIsFetching(true);
+    await fetchPostCount(authUser);
+    localStorage.removeItem("hasMore");
+    setPostsData([]);
+    localStorage.removeItem("hasVisitedMeuFeed");
+    localStorage.removeItem("loadMoreData");
+    localStorage.removeItem("noPosts");
+    localStorage.removeItem("lastDocId");
+    setInitialTab("Projeto");
+    resetTabs();
+  };
 
   const imageWidth = useBreakpointValue({
     base: "40%", // For very small screens
@@ -68,7 +92,18 @@ function NavBar( { isLargerThanBase } ) {
           justifyContent={"center"}
           
           >
-            <Link to={`${authUser.username}`} style={{ textDecoration: "none" }}>
+            <Link
+            style={{ textDecoration: "none" }}
+            onClick={(e) => {
+              e.preventDefault();
+              handleLogoClick();
+              navigate(`/${authUser.username}`);
+              setTimeout(() => {
+                setIsFetching(false);
+              }, 100);
+            }}
+            
+            >
               <Image
               src={"/Mission.png"}  // Image source
               alt="Mission Logo"
@@ -95,7 +130,18 @@ function NavBar( { isLargerThanBase } ) {
 
               <Return />
 
-              <Link to={`${authUser.username}`} style={{ textDecoration: "none" }}>
+              <Link
+              style={{ textDecoration: "none" }}
+              onClick={(e) => {
+                e.preventDefault();
+                handleLogoClick();
+                navigate(`/${authUser.username}`);
+                setTimeout(() => {
+                  setIsFetching(false);
+                }, 100);
+              }}
+              
+              >
                 <Image
                 src={"/Mission.png"}  // Image source
                 alt="Mission Logo"

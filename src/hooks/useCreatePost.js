@@ -6,6 +6,7 @@ import { deleteObject, getDownloadURL, ref, uploadString } from "firebase/storag
 import { collection, deleteDoc, doc, getDocs, increment, limit, orderBy, query, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from 'uuid';
 
+const POST_QUANTITY_LIMIT = 12;
 
 function useCreatePost() {
     const [isCreating, setIsCreating] = useState(false);
@@ -14,7 +15,7 @@ function useCreatePost() {
 
     const toast = useToast();
     
-    const createPost = async (inputs, selectedFile, addPost, setPostCount, replaceLast) => {
+    const createPost = async (inputs, selectedFile, addPost, removePost, postsData, postCount, replaceLast) => {
         if(isCreating || !authUser) {
             return false;
         }
@@ -35,6 +36,10 @@ function useCreatePost() {
         }
 
         setIsCreating(true);
+
+        let totalPosts = postCount;
+
+        let size = postsData.length;
 
         const uniqueId = uuidv4();
         let URL = "";
@@ -65,8 +70,24 @@ function useCreatePost() {
             
             const userDocRef = doc(db, "personalPosts", authUser.uid);
             await setDoc(doc(userDocRef, "posts", uniqueId), newPost);
+
+            if(!replaceLast) {
+                size = size + 1;
+
+                totalPosts = totalPosts + 1;
+            }
             
-            addPost(newPost);
+            addPost(newPost, (updatedPosts) => {
+                
+            });
+            
+            if (postsData && size > 4) {
+                const lastElement = postsData[size - 1];
+                if (lastElement && lastElement.createdAt) {
+                    const lastVisibleTimeStamp = lastElement.createdAt.toMillis();
+                    localStorage.setItem('lastDocId', JSON.stringify(lastVisibleTimeStamp));
+                }
+            }
 
             if(replaceLast) {
                 const postsQuery = query(
@@ -75,20 +96,39 @@ function useCreatePost() {
                     limit(1)
                 );
                 const querySnapshot = await getDocs(postsQuery);
-                querySnapshot.forEach(async (doc) => {
-                    const oldestPost = doc.data();
-                    if(oldestPost.imageURL) {
-                        const oldImageRef = ref(storage, `postPics/${authUser.uid}/${oldestPost.uniqueId}`);
-                        await deleteObject(oldImageRef);
+                if(!querySnapshot.empty) {
+                    for (const doc of querySnapshot.docs) {
+                        const oldestPost = doc.data();
+                        if (oldestPost.imageURL) {
+                            const oldImageRef = ref(storage, `postPics/${authUser.uid}/${oldestPost.uniqueId}`);
+                            await deleteObject(oldImageRef);
+                        }
+                        await deleteDoc(doc.ref);
                     }
-                    await deleteDoc(doc.ref);
-                });
+
+                    if(size === POST_QUANTITY_LIMIT) {
+                        removePost(totalPosts - 1);
+                    }
+
+                } else {
+                    if(!toast.isActive("noPostError")) {
+                        toast({
+                            id: "noPostError",
+                            title: "Nenhum post encontrado",	
+                            status: "success",
+                            duration: 5000,
+                            isClosable: true,
+                            position: "top"
+                        });
+                    }
+                    return false;
+                }
             } else {
                 const userRef = doc(db, "users", authUser.uid);
                 await updateDoc(userRef, {
                     postCount: increment(1)
                 });
-                setPostCount((prev) => prev + 1);
+                localStorage.setItem("postCount", totalPosts);
             }
 
             if(!toast.isActive("postCreated")) {
@@ -101,6 +141,9 @@ function useCreatePost() {
                     position: "top-left",
                 });
             }
+
+            localStorage.setItem("noPosts", "false");
+
             return true;
         } catch(error) {
             if(!toast.isActive("postError")) {

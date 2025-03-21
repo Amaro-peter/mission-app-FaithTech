@@ -7,6 +7,7 @@ import { extendTheme } from '@chakra-ui/react'
 import {mode} from '@chakra-ui/theme-tools'
 import { BrowserRouter } from 'react-router-dom'
 import { TabProvider } from './context/TabContext.jsx'
+import { PathContextProvider } from './context/PreviousPathContext.jsx'
 
 const styles = {
   global: (props) => ({
@@ -29,11 +30,13 @@ const theme = extendTheme({ config, styles })
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
-      <ChakraProvider theme={theme}>
-        <TabProvider>
-          <App />
-        </TabProvider>
-      </ChakraProvider>
+      <PathContextProvider>
+        <ChakraProvider theme={theme}>
+          <TabProvider>
+            <App />
+          </TabProvider>
+        </ChakraProvider>
+      </PathContextProvider>
     </BrowserRouter>
   </React.StrictMode>,
 )

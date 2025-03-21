@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { collection, getDocs, limit, orderBy, query, startAfter, Timestamp } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, limit, orderBy, query, startAfter, Timestamp } from "firebase/firestore";
 import { db } from "../utils/firebase";
 import { useToast } from "@chakra-ui/react";
 
 const PAGINATION_LIMIT = 4;
+const POST_QUANTITY_LIMIT = 12;
 
 function useGetUserPosts () {
     const [isLoading, setIsLoading] = useState(false);
@@ -11,7 +12,7 @@ function useGetUserPosts () {
     const lastDoc = storedLastDoc ? Timestamp.fromMillis(JSON.parse(storedLastDoc)) : null;
     const toast = useToast(); 
 
-    const getUserPosts = async (userProfile, addPost, postsData, postCount) => {
+    const getUserPosts = async (userProfile, addPost, postsData, postCount, hasVisited) => {
 
         if(!userProfile.uid) {
             return false;
@@ -65,11 +66,9 @@ function useGetUserPosts () {
             const check = localStorage.getItem("hasVisitedMeuFeed") === "true";
 
             if((snapshot.empty || !snapshot) && check) {
-                localStorage.setItem("hasMore", "false");
                 return false;
             } else if ((snapshot.empty || !snapshot) && !check) {
                 localStorage.setItem("noPosts", "true");
-                localStorage.setItem("hasMore", "false");
                 return false;
             }
 
@@ -86,17 +85,15 @@ function useGetUserPosts () {
 
             size = size + data.length;
 
-            addPost(data);
+            addPost(data, (updatedPosts) => {
+                // Update the postsData state with the new post
+            });
 
-            if(postCount === size) {
-                localStorage.setItem("hasMore", "false");
-            } else {
-                localStorage.setItem("hasMore", "true");
-            }
+            const totalPosts = parseInt(postCount, 10) || 0;
 
             localStorage.setItem("noPosts", "false");
 
-            return true;
+            return {size, totalPosts};
 
         } catch(error) {
             if (!toast.isActive("postsError")) {

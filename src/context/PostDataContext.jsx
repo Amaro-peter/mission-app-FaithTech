@@ -8,13 +8,20 @@ export const PostDataProvider = ({ children }) => {
     const [postCount, setPostCount] = useState(0);
     const [gotPostCount, setGotPostCount] = useState(false);
 
-    const addPost = (post) => {
+    const addPost = (post, callback) => {
         if(Array.isArray(post)) {
-            setPostsData((prevPosts) => [ ...prevPosts, ...post ]);
+            setPostsData((prevPosts) => {
+                const updatedPosts = [...prevPosts, ...post];
+                if (callback) callback(updatedPosts);
+                return updatedPosts;
+            });
         } else {
-            setPostsData((prevPosts) => [ post, ...prevPosts ]);
+            setPostsData((prevPosts) => {
+                const updatedPosts = [post, ...prevPosts];
+                if (callback) callback(updatedPosts);
+                return updatedPosts;
+            });
         }
-        
     };
 
     const removePost = (index) => {

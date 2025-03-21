@@ -18,7 +18,8 @@ import {
     ModalContent, 
     ModalHeader, 
     ModalBody, 
-    Heading, 
+    Heading,
+    Spinner, 
  } from '@chakra-ui/react';
 import React, { useContext, useRef, useState } from 'react'
 import { BsFillImageFill } from 'react-icons/bs'
@@ -31,9 +32,8 @@ import { PostDataContext } from '../../../../context/PostDataContext';
 import { useTab } from '../../../../context/TabContext';
 import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
-import useFetchPostCount from '../../../../hooks/useFetchPostCount';
 
-const POST_QUANTITY_LIMIT = 120;
+const POST_QUANTITY_LIMIT = 12;
 
 
 function PostModal() {
@@ -52,29 +52,32 @@ function PostModal() {
 
     const {createPost, isCreating} = useCreatePost();
 
-    const {isFetching, fetchPostCount} = useFetchPostCount();
-
-    const { addPost, postCount, setPostCount } = useContext(PostDataContext);
+    const { postsData, addPost, removePost } = useContext(PostDataContext);
 
     const { setInitialTab, setShouldResetTabs } = useTab();
 
-    const [replaceLast, setReplaceLast] = useState(false);
+    const [postCount, setPostCount] = useState(null);
+    const [isLoadingPostCount, setIsLoadingPostCount] = useState(true);
 
+    useEffect(() => {
+        const fetchPostCountLocalStorage = async () => {
+            let count = localStorage.getItem("postCount");
+            while(isNaN(parseInt(count, 10))) {
+                await new Promise((resolve) => setTimeout)
+            }
+
+            setPostCount(parseInt(count, 10));
+            setIsLoadingPostCount(false);
+        };
+
+        fetchPostCountLocalStorage();
+    }, []);
 
     const [inputs, setInputs] = useState({
         caption: "",
         link: "",
         imageURL: "",
     });
-
-    {/*useEffect(() => {
-        const fetchPost = async () => {
-            if(!gotPostCount) {
-                await fetchPostCount(setPostCount, setGotPostCount);
-            }
-        };
-        fetchPost();
-    }, []);*/}
 
     const [charLimitReached, setCharLimitReached] = useState(false);
     
@@ -100,37 +103,38 @@ function PostModal() {
       const handleCreatePost = async () => {
 
         if(postCount === POST_QUANTITY_LIMIT) {
-            setReplaceLast(true);
             onOpen();
-            return;
-        }
-
-        try{
-            const success = await createPost(inputs, selectedFile, addPost, setPostCount, replaceLast);
-            if(success) {
-                setSelectedFile(null);
-                setInitialTab('Postagens');
-                setShouldResetTabs(false);
-                navigate(`/${authUser.username}`);
+        } else {
+            try{
+                const replaceLast = false;
+                const success = await createPost(inputs, selectedFile, addPost, removePost, postsData, postCount, replaceLast);
+                
+                if(success) {
+                    setSelectedFile(null);
+                    setInitialTab('Postagens');
+                    setShouldResetTabs(false);
+                    navigate(`/${authUser.username}`);
+                }
+            } catch(error) {
+                if(!toast.isActive("createPostError")) {
+                    toast({
+                      id: "createPostError",
+                      title: "Erro ao criar postagem",
+                      description: error.message,
+                      status: "error",
+                      duration: 5000,
+                      isClosable: true,
+                    });
+                }
             }
-        } catch(error) {
-            if(!toast.isActive("createPostError")) {
-                toast({
-                  id: "createPostError",
-                  title: "Erro ao criar postagem",
-                  description: error.message,
-                  status: "error",
-                  duration: 5000,
-                  isClosable: true,
-                });
-              }
         }
       };
 
       const handleCreatePostModal = async () => {
 
         try{
-            const success = await createPost(inputs, selectedFile, addPost, setPostCount, replaceLast);
+            const replaceLast = true;
+            const success = await createPost(inputs, selectedFile, addPost, removePost, postsData, postCount, replaceLast);
             if(success) {
                 setSelectedFile(null);
                 setInitialTab('Postagens');
@@ -338,7 +342,7 @@ function PostModal() {
                                             setShouldResetTabs(false);
                                             navigate(`/${authUser.username}`);
                                         }}
-                                        isDisabled={isCreating || isFetching}
+                                        isDisabled={isCreating}
                                         >
                                             Voltar
                                         </Button>
@@ -349,8 +353,8 @@ function PostModal() {
                                         border={"1px solid black"}
                                         _hover={{ background: "#FFB999"}}
                                         onClick={handleCreatePost}
-                                        isLoading={isCreating || isFetching}
-                                        isDisabled={isFetching}
+                                        isLoading={isCreating}
+                                        isDisabled={isCreating}
                                         >
                                             Postar
                                         </Button>
@@ -403,6 +407,13 @@ function PostModal() {
                                     </ModalContent>
                                 </Modal>
                             </Container>
+                            {isLoadingPostCount && (
+                                <>
+                                    <Center height={"100vh"}>
+                                        <Spinner size={"xl"} color='black.400'/>
+                                    </Center>
+                                </>
+                            )}
                         </VStack>
                     </Container>
                 </Flex>

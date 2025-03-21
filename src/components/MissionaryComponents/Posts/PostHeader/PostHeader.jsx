@@ -14,16 +14,15 @@ import {
     Center,
     Heading,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useContext } from 'react';
 import { useAuth } from '../../../../context/AuthContext';
 import { useUserProfile } from '../../../../context/UserProfileContext';
 import { IoTrash } from "react-icons/io5";
-import { useContext } from 'react';
 import { PostDataContext } from '../../../../context/PostDataContext';
 
-function PostHeader({ deletePost, isDeleting, index, post }) {
+function PostHeader({ deletePost, isDeleting, index, post, setDeleteTrigger }) {
 
-    const { setPostCount } = useContext(PostDataContext);
+    const postCount = localStorage.getItem("postCount");
 
     const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -34,7 +33,8 @@ function PostHeader({ deletePost, isDeleting, index, post }) {
     const visitingMyOwnProfileAndAuth = authUser && userProfile && authUser.uid === userProfile.uid;
 
     const handleDeletePost = async () => {
-        await deletePost(post, index, setPostCount);
+        await deletePost(post, index, postCount);
+        setDeleteTrigger((prev) => !prev);
         onClose();
     }
 

@@ -24,8 +24,9 @@ function ProfilePosts() {
   const {
     postsData,
     addPost,
-    postCount,
   } = useContext(PostDataContext);
+
+  let postCount = localStorage.getItem("postCount");
 
   const userProfile = useUserProfile();
 
@@ -33,48 +34,180 @@ function ProfilePosts() {
 
   const {deletePost, isDeleting} = useDeletePost();
 
-  const [hasMore, setHasMore] = useState(localStorage.getItem("hasMore") === "true");
+  const [hasMore, setHasMore] = useState(true);
+
+  const [deleteTrigger, setDeleteTrigger] = useState(false);
 
   const isFirstTime = localStorage.getItem("hasVisitedMeuFeed") !== "true";
 
   const [loadedImages, setLoadedImages] = useState(0);
 
-  const [showLoadMore, setShowLoadMore] = useState(false);
+  const [showLoadMore, setShowLoadMore] = useState(true);
 
-  {/*const [isDeleting, setIsDeleting] = useState(false);*/}
+  const [hasMoreReady, setHasMoreReady] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const hasVisited = localStorage.getItem("hasVisitedMeuFeed");
-      if (myPosts === 'Meu feed' && !hasVisited) {
-        localStorage.setItem("hasVisitedMeuFeed", "true");
-        const result = await getUserPosts(userProfile, addPost);
-        if(result === false) {
-          const noPostsFlag = localStorage.getItem("noPosts");
-          if(noPostsFlag === null) {
-            localStorage.setItem("noPosts", "true");
-          }
-        }
-        setHasMore(localStorage.getItem("hasMore") === "true");
+    const verifyHasMore = async () => {
+      try {
+        const storedHasMore = localStorage.getItem("hasMore") === "true";
+        
+        setHasMore(storedHasMore);
+        
+      } catch (error) {
+        console.error("Error verifying hasMore:", error);
+      } finally {
+        setHasMoreReady(true); // Ensure this is always set
       }
     };
-    fetchData();
+  
+    if (!isFirstTime) {
+      verifyHasMore();
+    }
+  }, [deleteTrigger]);
+  
+
+  useEffect(() => {
+    if (isFirstTime) {
+      const fetchData = async () => {
+
+        postCount = localStorage.getItem("postCount");
+        while (isNaN(parseInt(postCount, 10))) {
+          await new Promise ((resolve) => setTimeout(resolve, 10));
+          postCount = localStorage.getItem("postCount");
+        }
+
+        const hasVisited = localStorage.getItem("hasVisitedMeuFeed");
+        if (myPosts === 'Meu feed' && !hasVisited) {
+          localStorage.setItem("hasVisitedMeuFeed", "true");
+          const result = await getUserPosts(userProfile, addPost, postsData, postCount, hasVisited);
+          if (result === false) {
+            const noPostsFlag = localStorage.getItem("noPosts");
+            if (noPostsFlag === null) {
+              localStorage.setItem("noPosts", "true");
+            }
+            localStorage.setItem("hasMore", "false");
+            setHasMore(false);
+            setHasMoreReady(true);
+            return;
+          }
+
+          const { size, totalPosts } = result;
+
+          if(size === totalPosts) {
+            localStorage.setItem("hasMore", "false");
+            setHasMore(false);
+            setHasMoreReady(true);
+          } else if(size < 5 && totalPosts < 5) {
+            localStorage.setItem("hasMore", "false");
+            setHasMore(false);
+            setHasMoreReady(true);
+          } else {
+            localStorage.setItem("hasMore", "true");
+            setHasMore(true);
+            setHasMoreReady(true);
+          }
+        }
+
+      };
+      fetchData();
+    }
   }, []);
+  
+
+  {/*useEffect(() => {
+    if (!isFirstTime) {
+      const verifyHasMore = async () => {
+          const storedHasMore = localStorage.getItem("hasMore") === "true";
+          setHasMore(storedHasMore);
+
+          console.log("hasMore:", hasMore);
+          console.log("storedHasMore:", storedHasMore);
+
+          await new Promise((resolve) => {
+              const interval = setInterval(() => {
+                  if (hasMore === storedHasMore) {
+                      clearInterval(interval);
+                      resolve();
+                  }
+              }, 10);
+          });
+      };
+
+      verifyHasMore();
+    }
+  }, [deleteTrigger]);
+
+  useEffect(() => {
+    if (isFirstTime) {
+      const fetchData = async () => {
+          setHasMoreLoading(true);
+          const hasVisited = localStorage.getItem("hasVisitedMeuFeed");
+          if (myPosts === 'Meu feed' && !hasVisited) {
+              localStorage.setItem("hasVisitedMeuFeed", "true");
+              const result = await getUserPosts(userProfile, addPost, postsData, postCount);
+              console.log("Aqui");
+              if (result === false) {
+                  const noPostsFlag = localStorage.getItem("noPosts");
+                  if (noPostsFlag === null) {
+                      localStorage.setItem("noPosts", "true");
+                  }
+              }
+              const storedHasMore = localStorage.getItem("hasMore") === "true";
+              setHasMore(storedHasMore);
+
+              await new Promise((resolve) => {
+                const interval = setInterval(() => {
+                  if(hasMore === storedHasMore) {
+                    clearInterval(interval);
+                    resolve();
+                  }
+                }, 5);
+              });
+          }
+          setHasMoreLoading(false);
+      };
+      fetchData();
+    }
+  }, []);
+
+  useEffect(() => {
+    const storedHasMore = localStorage.getItem("hasMore") === "true";
+    setHasMore(storedHasMore);
+  }, [userProfile]);*/}
 
   const noPosts = localStorage.getItem("noPosts") === "true";
 
   const noPostFound = !isLoading && noPosts;
 
-  console.log(noPostFound);
-
   const handleLoadMore = async () => {
     try {
+        const hasVisited = localStorage.getItem("hasVisitedMeuFeed");
         document.body.style.overflow = "hidden";
         localStorage.setItem("loadMoreData", "true");
         setShowLoadMore(false);
-        const result = await getUserPosts(userProfile, addPost, postsData, postCount);
+        const result = await getUserPosts(userProfile, addPost, postsData, postCount, hasVisited);
+        if(result === false) {
+          localStorage.setItem("hasMore", "false");
+          setHasMore(false);
+          setHasMoreReady(true);
+        }
         if (result !== false) {
-            setHasMore(localStorage.getItem("hasMore") === "true");
+
+          const { size, totalPosts } = result;
+  
+          if(size === totalPosts) {
+            localStorage.setItem("hasMore", "false");
+            setHasMore(false);
+            setHasMoreReady(true);
+          } else if(size < 5 && totalPosts < 5) {
+            localStorage.setItem("hasMore", "false");
+            setHasMore(false);
+            setHasMoreReady(true);
+          } else {
+            localStorage.setItem("hasMore", "true");
+            setHasMore(true);
+            setHasMoreReady(true);
+          }
         }
     } catch (error) {
         console.error("Error loading more data:", error);
@@ -94,7 +227,7 @@ function ProfilePosts() {
   const handleImageLoad = useCallback(() => {
     setLoadedImages(prev => {
       const newCount = prev + 1;
-      if (newCount === PAGINATION_LIMIT) {
+      if (newCount === postsData.length) {
         // All images are loaded, wait 1 second before showing the button
         setTimeout(() => {
           setShowLoadMore(true);
@@ -103,10 +236,6 @@ function ProfilePosts() {
       return newCount;
     });
   }, [postsData.length]);
-
-  {/*const handleDeleteStatusChange = useCallback((isDeleting) => {
-    setIsDeleting(isDeleting);
-  });*/}
 
   const renderPosts = () => (
     <>
@@ -118,9 +247,10 @@ function ProfilePosts() {
           onImageLoad={handleImageLoad}
           deletePost={deletePost}
           isDeleting={isDeleting}
+          setDeleteTrigger={setDeleteTrigger}
         />
       ))}
-      { showLoadMore && hasMore && (
+      {showLoadMore && hasMore && (
         <Flex
           width={{ base: '100%', md: '80%' }}
           bg="white"
@@ -153,10 +283,14 @@ function ProfilePosts() {
     <Container maxW="container.lg">
       
       {noPostFound && <NoPostsFound />}
-      {!noPostFound && !isLoading && !isDeleting && isFirstTime && renderPosts()}
-      {!noPostFound && !isLoading && !isDeleting && !isFirstTime && renderPosts()}
 
-      { (isLoading || isDeleting) &&
+      {!noPostFound && 
+      !isLoading && 
+      !isDeleting &&
+      hasMoreReady && 
+      renderPosts()}
+
+      { (isLoading || isDeleting || !hasMoreReady) &&
         [0, 1, 2, 3].map((_, idx) => (
           <Flex
             key={`skeleton-${idx}`}

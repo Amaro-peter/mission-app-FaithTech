@@ -13,7 +13,7 @@ import 'react-medium-image-zoom/dist/styles.css';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-function ProfilePost({ post, index, onImageLoad, deletePost, isDeleting }) {
+function ProfilePost({ post, index, onImageLoad, deletePost, isDeleting, setDeleteTrigger }) {
 
   const [isExpanded, setIsExpanded] = useState(false);
   const description = post.caption;
@@ -83,7 +83,13 @@ function ProfilePost({ post, index, onImageLoad, deletePost, isDeleting }) {
       mx={"auto"}
       mb={4}
     >
-      <PostHeader deletePost={deletePost} isDeleting={isDeleting} index={index} post={post} />
+      <PostHeader 
+      deletePost={deletePost} 
+      isDeleting={isDeleting} 
+      index={index} 
+      post={post}
+      setDeleteTrigger={setDeleteTrigger}
+      />
       <Flex mt={2} direction={"column"} gap={3}>
         <Text
           fontSize={"md"}
