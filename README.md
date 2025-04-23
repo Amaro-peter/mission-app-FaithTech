@@ -1,1 +1,1 @@
-# Open source Missionary awareness and donation plataform
+# Open source platform for non-profits
